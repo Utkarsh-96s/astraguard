@@ -1,0 +1,53 @@
+{
+  "benchmark_dataset": "ASTRA-GUARD Synthetic Physics Benchmark (ESA-ADB structure)",
+  "window_size": 64,
+  "channels": [
+    "wheel_temp",
+    "bus_current",
+    "battery_v",
+    "gyro_rate_x",
+    "gyro_rate_y",
+    "gyro_rate_z",
+    "sun_sensor"
+  ],
+  "evaluation_duration_hours": 8.0,
+  "primary_model": {
+    "name": "PyTorch LSTM Autoencoder",
+    "type": "deep_reconstruction",
+    "metrics": {
+      "event_precision": 0.25,
+      "event_recall": 0.6667,
+      "event_f1": 0.3636,
+      "event_f05": 0.2857,
+      "false_alarms_per_day": 25.642,
+      "point_precision": 0.5406,
+      "point_recall": 0.5448,
+      "point_f1": 0.5427,
+      "total_true_events": 3,
+      "detected_true_events": 2,
+      "false_alarm_events": 6
+    }
+  },
+  "baseline_model": {
+    "name": "Isolation Forest Baseline",
+    "type": "tabular_spectral_stats",
+    "metrics": {
+      "event_precision": 0.125,
+      "event_recall": 1.0,
+      "event_f1": 0.2222,
+      "event_f05": 0.1515,
+      "false_alarms_per_day": 89.746,
+      "point_precision": 0.4818,
+      "point_recall": 0.9463,
+      "point_f1": 0.6385,
+      "total_true_events": 3,
+      "detected_true_events": 3,
+      "false_alarm_events": 21
+    }
+  },
+  "comparison_delta": {
+    "f1_improvement": 0.1414,
+    "false_alarms_reduction_per_day": 64.104
+  },
+  "timestamp": "2026-10-20T00:29:13.350669"
+}
