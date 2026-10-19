@@ -1,0 +1,146 @@
+"""Script to generate notebooks/phase3_debris_exploration.ipynb."""
+import json
+
+notebook = {
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "# ASTRA-GUARD: Phase 3 — Debris Collision Risk AI Exploration\n",
+                "**AI-Powered Integrated Space Mission Safety & Intelligence**\n",
+                "Team OMEN · AITHON 2.0 · Track 11 Aerospace, Telemetry & SpaceTech\n",
+                "\n",
+                "This notebook demonstrates:\n",
+                "1. **SGP4 Analytical Orbit Propagation:** High-fidelity propagation of primary asset (Sentinel-2A) and tracked space debris (Fengyun-1C).\n",
+                "2. **3-Stage Conjunction Screening:** Coarse altitude envelope overlap, KD-Tree spatial screening, and sub-second TCA refinement.\n",
+                "3. **Foster 2-D Collision Probability ($P_c$):** B-plane projection and 2-D encounter integration (with screening-grade assumed covariance).\n",
+                "4. **XGBoost Kelvins CDM Classifier:** Machine learning risk severity classification and feature attributions.\n"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": 1,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "import os\n",
+                "import sys\n",
+                "sys.path.insert(0, os.path.abspath('..'))\n",
+                "from datetime import datetime, UTC\n",
+                "import numpy as np\n",
+                "import pandas as pd\n",
+                "from ml.debris.propagator import SGP4Propagator\n",
+                "from ml.debris.screener import ConjunctionScreener\n",
+                "from ml.debris.pc_engine import FosterCollisionProbabilityEngine\n",
+                "from ml.debris.module import DebrisRiskModule\n",
+                "print('Environment and Debris AI modules loaded successfully.')"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 1. SGP4 Orbital Propagation & Physical Envelopes"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": 2,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "s2a_tle1 = '1 40697U 15028A   26292.50000000  .00000100  00000-0  20000-4 0  9991'\n",
+                "s2a_tle2 = '2 40697  98.5700 125.0000 0001200  85.0000 275.1000 14.30820000500001'\n",
+                "fy1c_tle1 = '1 29834U 99025DF  26292.50000000  .00001500  00000-0  15000-3 0  9992'\n",
+                "fy1c_tle2 = '2 29834  98.6000 125.0200 0015000  90.0000 270.0000 14.30825000450002'\n",
+                "\n",
+                "prim = SGP4Propagator.from_tle(s2a_tle1, s2a_tle2, name='SENTINEL-2A')\n",
+                "deb = SGP4Propagator.from_tle(fy1c_tle1, fy1c_tle2, name='FENGYUN-1C-DEB')\n",
+                "\n",
+                "print('Primary Orbital Envelope:', prim.get_orbit_envelope())\n",
+                "print('Debris Orbital Envelope: ', deb.get_orbit_envelope())"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 2. 3-Stage Conjunction Screening & TCA Refinement"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": 3,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "screener = ConjunctionScreener()\n",
+                "start_time = datetime(2026, 10, 20, 0, 0, 0, tzinfo=UTC)\n",
+                "conjunctions = screener.screen_catalog(prim, [deb], start_time, horizon_hours=48.0)\n",
+                "print(f'Detected Conjunctions: {len(conjunctions)}')\n",
+                "for c in conjunctions:\n",
+                "    print(f'  Encounter with {c[\"secondary_name\"]}: TCA={c[\"tca\"]}, Miss={c[\"miss_distance_m\"]}m, RelVel={c[\"relative_velocity_kms\"]} km/s')"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 3. Foster 2-D Collision Probability (Pc) Engine"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": 4,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "pc_engine = FosterCollisionProbabilityEngine()\n",
+                "res_screening = pc_engine.compute_screening_pc(miss_distance_m=350.0)\n",
+                "print('Screening-grade Pc calculation (assumed covariance):')\n",
+                "print(f'  Pc:         {res_screening[\"pc\"]:.2e}')\n",
+                "print(f'  Risk Class: {res_screening[\"risk_class\"]}')\n",
+                "print(f'  Method:     {res_screening[\"pc_method\"]} (Screening-Grade={res_screening[\"screening_grade\"]})')"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4. Debris Risk Module & Machine Learning Contract"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": 5,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "module = DebrisRiskModule()\n",
+                "module.fit()\n",
+                "mod_res = module.score({'miss_distance_m': 350.0, 'pc': 2.4e-4, 'time_to_tca_hours': 12.0})\n",
+                "print('Debris ModuleResult:')\n",
+                "print(f'  Risk Score (r_d): {mod_res.score} (0..1)')\n",
+                "print(f'  Confidence:       {mod_res.confidence}')\n",
+                "print(f'  Critical Class:   {mod_res.evidence.get(\"risk_class\")}')\n",
+                "print('\\nFactor Attributions:')\n",
+                "attributions = module.explain({'miss_distance_m': 350.0, 'pc': 2.4e-4, 'time_to_tca_hours': 12.0})\n",
+                "for a in attributions:\n",
+                "    print(f'  - {a.driver:25s} contribution: {a.contribution * 100:.1f}% ({a.direction})')"
+            ]
+        }
+    ],
+    "metadata": {
+        "language_info": {
+            "name": "python"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 2
+}
+
+output_path = "notebooks/phase3_debris_exploration.ipynb"
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(notebook, f, indent=1)
+print(f"Created {output_path}")

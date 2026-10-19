@@ -1,0 +1,66 @@
+{
+  "benchmark_dataset": "ESA Kelvins Collision Avoidance & CelesTrak TLE Benchmark",
+  "sgp4_propagation_error": {
+    "horizons_hours": [
+      6,
+      12,
+      24,
+      36,
+      48,
+      60,
+      72
+    ],
+    "error_km": [
+      0.653,
+      1.481,
+      3.398,
+      5.563,
+      7.925,
+      10.458,
+      13.144
+    ],
+    "error_24h_km": 3.398,
+    "error_48h_km": 7.925,
+    "error_72h_km": 13.144
+  },
+  "conjunction_screening": {
+    "found_seeded_conjunction": true,
+    "total_catalog_size": 2,
+    "conjunctions_detected": 58,
+    "closest_encounter": {
+      "primary_name": "SENTINEL-2A",
+      "secondary_name": "FENGYUN-1C-DEB",
+      "tca": "2026-10-20 00:45:44.863174+00:00",
+      "miss_distance_km": 7.3146,
+      "miss_distance_m": 7314.6,
+      "relative_velocity_kms": 0.009,
+      "rel_pos_km": [
+        0.47482640443695345,
+        -2.7158730747687514,
+        -6.77506454737977
+      ],
+      "rel_vel_kms": [
+        0.0005697599706180334,
+        -0.008277026465006276,
+        0.0033599503293819666
+      ]
+    }
+  },
+  "xgboost_cdm_model": {
+    "name": "XGBoost CDM Risk Classifier",
+    "features": [
+      "time_to_tca_hours",
+      "miss_distance_m",
+      "relative_velocity_ms",
+      "c_obs_b",
+      "c_obs_t",
+      "c_obs_n",
+      "log10_pc"
+    ],
+    "metrics": {
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    }
+  },
+  "timestamp": "2026-10-20T00:52:58.987577"
+}
