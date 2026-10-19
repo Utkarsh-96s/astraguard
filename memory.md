@@ -26,7 +26,7 @@
 
 ## 4. Status Tracker (agent updates)
 - [x] P0 Foundation
-- [ ] P1 Data & Simulation
+- [x] P1 Data & Simulation
 - [ ] P2 Health AI
 - [ ] P3 Debris AI
 - [ ] P4 Disaster AI
@@ -36,7 +36,7 @@
 - [ ] P8 Demo Mode
 - [ ] P9 Evaluation / Hardening / Docs
 
-**Current phase:** P0 (Completed, awaiting 'continue' for P1) · **Last updated:** 2026-10-19 12:12 · **Last action:** Completed Phase 0 foundation scaffolding, monorepo layout, Next.js dashboard with design.md tokens, FastAPI backend with /healthz, SQLAlchemy models, Alembic baseline migration, and CI passing.
+**Current phase:** P1 (Completed, awaiting 'continue' for P2) · **Last updated:** 2026-10-20 00:03 · **Last action:** Completed Phase 1 Data & Simulation layer with synthetic telemetry/debris/disaster generators, ingestion services, API endpoints, committed samples, docs/data.md, exploration notebook, and 12/12 passing test suite.
 
 ## 5. Measured Metrics (fill from evaluation outputs only)
 | Module | Metric | Value | Dataset | Commit |
@@ -49,9 +49,9 @@
 
 ## 6. Known Issues / Open Questions
 1. Verify all deck references exist (esp. arXiv 2406.17826, "NASA Operations Review 2025", "ESA Spacecraft Health 2024").
-2. Choose telemetry dataset: ESA-ADB (preferred) vs SMAP/MSL fallback — confirm size/license.
-3. Space-Track account needed? (CelesTrak sufficient for MVP.)
-4. GPU availability for U-Net/LSTM training (else use small models / Colab / pretrained).
+2. Telemetry: ESA-ADB benchmark structure documented; synthetic generator provides physics-based 96-min orbit cycle with thermal drift, electrical spikes, and stuck sensors.
+3. CelesTrak active catalog sample committed (`celestrak_active_sample.json`).
+4. GPU availability for U-Net/LSTM training (fallback: lightweight PyTorch architectures + synthetic/sample datasets).
 5. Email/SMS provider choice (default: SMTP + webhook; SMS optional).
 
 ## 7. Deck Fix List (for final submission)
@@ -63,5 +63,6 @@
 
 ## 8. Session Log (append newest on top)
 ```
+2026-10-20 00:03 — Antigravity (Lead Engineer) — Phase 1 completed: synthetic generators (telemetry, debris encounter, flood chips), sample datasets (ESA-ADB, CelesTrak, Kelvins, Sen1Floods11), ingest & query API routers, docs/data.md data cards, exploration notebook + diagnostic plots, pytest 12/12 passing, CI clean — branch phase-1/data-simulation — Ready for Phase 2 Health AI
 2026-10-19 12:12 — Antigravity (Lead Engineer) — Phase 0 completed: monorepo layout, FastAPI + /healthz, Next.js + design.md tokens, Alembic baseline, and CI verification — apps/api/, apps/web/, ml/, docker-compose.yml, Makefile, .env.example — Ready for Phase 1 Data & Simulation
 ```

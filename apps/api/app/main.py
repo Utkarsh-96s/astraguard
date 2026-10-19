@@ -7,7 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.logging import logger, setup_logging
+from app.routers.conjunctions import router as conjunctions_router
+from app.routers.disaster import router as disaster_router
 from app.routers.health import router as health_router
+from app.routers.ingest import router as ingest_router
+from app.routers.objects import router as objects_router
+from app.routers.telemetry import router as telemetry_router
 
 
 @asynccontextmanager
@@ -40,9 +45,14 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Health check router mounted at root and under /api/v1
+    # Include Routers
     app.include_router(health_router)
     app.include_router(health_router, prefix="/api/v1")
+    app.include_router(ingest_router)
+    app.include_router(telemetry_router)
+    app.include_router(objects_router)
+    app.include_router(disaster_router)
+    app.include_router(conjunctions_router)
 
     @app.get("/", tags=["Root"])
     async def root() -> dict[str, str]:

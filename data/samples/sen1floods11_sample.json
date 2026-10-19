@@ -1,0 +1,34 @@
+{
+  "product": {
+    "id": "IMG-SEN1-FL-202610-01",
+    "source": "Sentinel-1 SAR",
+    "bbox": {
+      "min_lon": 66.51,
+      "min_lat": 24.36,
+      "max_lon": 67.51,
+      "max_lat": 25.36
+    },
+    "acquired_at": "2026-10-19T06:50:54.812496+00:00",
+    "cloud_pct": 15.0,
+    "uri": "data/synthetic/tiles/IMG-SEN1-FL-202610-01.png",
+    "synthetic": false
+  },
+  "event": {
+    "id": "SEN1-FL-202610-01",
+    "product_id": "IMG-SEN1-FL-202610-01",
+    "type": "flood",
+    "area_km2": 184.2,
+    "mask_uri": "data/synthetic/masks/SEN1-FL-202610-01_mask.png",
+    "priority": 0.666,
+    "confidence": 0.92,
+    "synthetic": false,
+    "created_at": "2026-10-19T06:50:54.812496+00:00"
+  },
+  "chip_dim": [
+    64,
+    64
+  ],
+  "sample_backscatter_mean": 92.7412109375,
+  "sample_water_pixel_count": 1229,
+  "sample_water_ratio": 0.300048828125
+}
