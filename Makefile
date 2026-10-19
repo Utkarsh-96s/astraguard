@@ -1,0 +1,46 @@
+.PHONY: help setup dev-api dev-web lint type-check test ci up down demo
+
+help:
+	@echo "ASTRA-GUARD Makefile commands:"
+	@echo "  make setup        - Install backend and frontend dependencies"
+	@echo "  make dev-api      - Run FastAPI dev server (port 8000)"
+	@echo "  make dev-web      - Run Next.js dev server (port 3000)"
+	@echo "  make lint         - Run ruff on Python and eslint on TypeScript"
+	@echo "  make type-check   - Run mypy and tsc"
+	@echo "  make test         - Run pytest"
+	@echo "  make ci           - Run full CI checks (lint, type-check, test)"
+	@echo "  make up           - Start full stack via docker compose"
+	@echo "  make down         - Stop docker compose containers"
+	@echo "  make demo         - Build and run demo mode stack"
+
+setup:
+	cd apps/api && pip install -e ".[dev]"
+	cd apps/web && npm install
+
+dev-api:
+	cd apps/api && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+dev-web:
+	cd apps/web && npm run dev
+
+lint:
+	cd apps/api && ruff check .
+	cd apps/web && npm run lint
+
+type-check:
+	mypy --explicit-package-bases apps/api/app ml
+	cd apps/web && npm run type-check
+
+test:
+	cd apps/api && pytest -v
+
+ci: lint type-check test
+
+up:
+	docker compose up -d
+
+down:
+	docker compose down
+
+demo:
+	docker compose up --build

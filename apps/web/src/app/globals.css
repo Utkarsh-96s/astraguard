@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Colors from design.md */
+  --color-void-canvas: #080808;
+  --color-absolute-black: #000000;
+  --color-charcoal-plate: #171617;
+  --color-smoke-plate: #262525;
+  --color-graphite-lift: #393939;
+  --color-bone-white: #fcfcfc;
+  --color-linen: #f3efef;
+  --color-ash: #d4d2d2;
+  --color-pebble: #b5b2b2;
+  --color-iron: #525252;
+  --color-arterial-red: #fe1e34;
+  --color-crimson-pure: #ff0000;
+
+  /* Typography Scale */
+  --text-caption: 10px;
+  --text-body: 14px;
+  --text-subheading: 24px;
+  --text-heading-sm: 32px;
+  --text-heading: 42px;
+  --text-heading-lg: 64px;
+  --text-display: 80px;
+  --text-display-xl: 160px;
+
+  /* Spacing */
+  --spacing-8: 8px;
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+}
+
+body {
+  background-color: var(--color-void-canvas);
+  color: var(--color-bone-white);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom utility classes per design.md */
+.font-display {
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.tracking-nav {
+  letter-spacing: 0.071em;
+}
+
+.border-arterial {
+  border-color: #fe1e34;
+}
+
+.text-arterial {
+  color: #fe1e34;
+}
+
+.bg-void {
+  background-color: #080808;
+}
+
+.bg-charcoal {
+  background-color: #171617;
+}
+
+.bg-smoke {
+  background-color: #262525;
+}
+
+.badge-simulated {
+  background: rgba(254, 30, 52, 0.12);
+  border: 1px solid rgba(254, 30, 52, 0.4);
+  color: #fe1e34;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
