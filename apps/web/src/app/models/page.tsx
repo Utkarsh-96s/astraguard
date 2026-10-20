@@ -140,11 +140,11 @@ export default function ModelsPage() {
             <div className="pt-3 border-t border-white/10 space-y-1 text-[11px] font-mono text-pebble">
               <div className="flex items-center gap-1.5 truncate">
                 <Database className="w-3.5 h-3.5 text-ash shrink-0" />
-                <span className="truncate">Dataset: {m.data_source}</span>
+                <span className="truncate" title={`Dataset: ${m.data_source}`}>Dataset: {m.data_source}</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 truncate">
                 <Hash className="w-3.5 h-3.5 text-ash shrink-0" />
-                <span>SHA-256 Digest: {m.data_hash}</span>
+                <span className="truncate" title={m.data_hash}>SHA-256: {m.data_hash}</span>
               </div>
             </div>
           </div>

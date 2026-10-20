@@ -105,9 +105,9 @@ export function ConstellationMatrix({ onSelectAsset }: ConstellationMatrixProps)
             >
               {/* Card Header */}
               <div className="flex items-start justify-between border-b border-white/10 pb-2">
-                <div>
-                  <div className="font-bold font-mono text-sm text-bone">{asset.name}</div>
-                  <div className="text-[11px] text-pebble font-mono">NORAD #{asset.norad_id} · {asset.type}</div>
+                <div className="min-w-0 pr-2">
+                  <div className="font-bold font-mono text-sm text-bone truncate">{asset.name}</div>
+                  <div className="text-[11px] text-pebble font-mono truncate">NORAD #{asset.norad_id} · {asset.type}</div>
                 </div>
                 <StatusBadge level={asset.risk_level} size="sm" />
               </div>
@@ -192,10 +192,10 @@ export function ConstellationMatrix({ onSelectAsset }: ConstellationMatrixProps)
         </div>
 
         {/* Table of Cross Conjunctions */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
+        <div className="overflow-x-auto w-full -mx-1 px-1">
+          <table className="w-full min-w-[720px] text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-white/10 text-pebble uppercase text-[10px]">
+              <tr className="border-b border-white/10 text-pebble uppercase text-[10px] whitespace-nowrap">
                 <th className="py-2 px-3">Primary Asset</th>
                 <th className="py-2 px-3">Secondary Debris</th>
                 <th className="py-2 px-3">TCA (Hours)</th>
@@ -205,7 +205,7 @@ export function ConstellationMatrix({ onSelectAsset }: ConstellationMatrixProps)
                 <th className="py-2 px-3">Risk Severity</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-white/5 whitespace-nowrap">
               {filteredConjunctions.map((c) => (
                 <tr key={c.id} className="hover:bg-smoke/40 transition-colors">
                   <td className="py-2.5 px-3 font-bold text-sky-300">{c.primary_name}</td>

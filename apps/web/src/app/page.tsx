@@ -70,12 +70,12 @@ export default function OverviewPage() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold tracking-tight text-bone">
-                {selectedAsset.name} Mission Intelligence
+                {selectedAsset.id} Mission Intelligence
               </h1>
               <SimulatedBadge />
             </div>
             <p className="text-xs text-ash font-mono mt-0.5">
-              NORAD {selectedAsset.norad_id} · {selectedAsset.type} · Ingestion 10Hz Nominal
+              {selectedAsset.name} · NORAD #{selectedAsset.norad_id} · Ingestion 10Hz Nominal
             </p>
           </div>
         </div>

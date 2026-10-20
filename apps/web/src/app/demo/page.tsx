@@ -320,7 +320,7 @@ export default function DemoPage() {
                   <span className="text-pebble">T + {s.hour}h</span>
                   <StatusBadge level={s.snapshot.level} size="sm" />
                 </div>
-                <div className="text-xs font-bold font-mono text-bone truncate">{s.name}</div>
+                <div className="text-xs font-bold font-mono text-bone line-clamp-2 leading-snug min-h-[2.2rem]">{s.name}</div>
               </button>
             );
           })}
@@ -386,10 +386,10 @@ export default function DemoPage() {
             {activeScenario.snapshot.recommendations.map((rec, i) => (
               <div
                 key={i}
-                className="p-3 rounded bg-smoke/40 border border-white/5 flex items-center justify-between text-xs font-mono"
+                className="p-3 rounded bg-smoke/40 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono"
               >
-                <span className="text-bone font-semibold">{rec.action}</span>
-                <span className="text-pebble text-[11px]">{rec.rationale}</span>
+                <span className="text-bone font-semibold shrink-0">{rec.action}</span>
+                <span className="text-pebble text-[11px] sm:text-right">{rec.rationale}</span>
               </div>
             ))}
           </div>

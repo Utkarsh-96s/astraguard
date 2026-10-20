@@ -148,9 +148,9 @@ export default function DisasterPage() {
         </div>
 
         {simulateDegradedHealth ? (
-          <div className="p-3 rounded-card bg-amber-950/40 border border-amber-500/50 flex items-center justify-between text-amber-200 text-xs font-mono">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <div className="p-3 rounded-card bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-200 text-xs font-mono">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
                 <strong className="uppercase">Observation Tasking Deferred: </strong>
                 Spacecraft health anomaly (r_h &ge; 0.50) forces optical/radar observation task deferral.
@@ -158,7 +158,7 @@ export default function DisasterPage() {
                 {degradedPriority.toFixed(2)} to protect spacecraft bus power margins.
               </div>
             </div>
-            <span className="shrink-0 px-2 py-0.5 rounded bg-amber-500/20 font-mono text-[10px] font-bold">
+            <span className="shrink-0 px-2 py-0.5 rounded bg-amber-500/20 font-mono text-[10px] font-bold self-end sm:self-center">
               PENALTY -60%
             </span>
           </div>

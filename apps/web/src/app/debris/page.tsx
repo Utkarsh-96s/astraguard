@@ -241,12 +241,12 @@ export default function DebrisPage() {
                       : "bg-void/60 border-white/5 hover:border-white/15"
                   }`}
                 >
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between text-xs gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 min-w-0">
                       <StatusBadge level={c.riskClass} size="sm" />
-                      <span className="font-mono text-bone font-bold">{c.secondaryName}</span>
+                      <span className="font-mono text-bone font-bold truncate">{c.secondaryName}</span>
                     </div>
-                    <span className="font-mono text-ash text-[11px]">NORAD #{c.noradId}</span>
+                    <span className="font-mono text-ash text-[11px] shrink-0">NORAD #{c.noradId}</span>
                   </div>
 
                   <div className="mt-2 grid grid-cols-3 gap-2 text-xs font-mono text-pebble">

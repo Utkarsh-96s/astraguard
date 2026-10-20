@@ -80,11 +80,11 @@ export function ObservabilityWidget() {
         title="Q3: Pipeline Observability Telemetry"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-        <span className="text-pebble hidden xl:inline">LATENCY:</span>
+        <span className="text-pebble hidden 2xl:inline">LATENCY:</span>
         <span className="text-cyan-400 font-semibold">{metrics.latency_ms.p95.toFixed(2)}ms</span>
-        <span className="text-iron">|</span>
-        <span className="text-pebble hidden xl:inline">RATE:</span>
-        <span className="text-bone">{Math.round(metrics.throughput_evals_per_sec).toLocaleString()}/s</span>
+        <span className="text-iron hidden 2xl:inline">|</span>
+        <span className="text-pebble hidden 2xl:inline">RATE:</span>
+        <span className="text-bone hidden 2xl:inline">{Math.round(metrics.throughput_evals_per_sec).toLocaleString()}/s</span>
         <ChevronDown className="w-3 h-3 text-pebble group-hover:text-bone transition-transform" />
       </button>
 
