@@ -73,7 +73,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
 
   return (
     <header className="sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-white/10 transition-colors w-full">
-      <div className="w-full max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 w-full gap-2">
           {/* Logo & Platform Name */}
           <div className="flex items-center gap-2.5 shrink-0">
@@ -120,8 +120,8 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
             </div>
           </div>
 
-          {/* Nav Links (Desktop >= 1280px) */}
-          <nav className="hidden xl:flex items-center space-x-0.5 shrink-0">
+          {/* Nav Links (Desktop >= 1024px) */}
+          <nav className="hidden lg:flex items-center space-x-0.5 shrink-0">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -198,9 +198,9 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
         </div>
       </div>
 
-      {/* Sub-navigation bar for screens < 1280px */}
-      <div className="xl:hidden border-t border-white/5 bg-charcoal px-3 py-2 flex overflow-x-auto space-x-2 scrollbar-none items-center justify-between">
-        <div className="flex space-x-2 overflow-x-auto">
+      {/* Sub-navigation bar for screens < 1024px */}
+      <div className="lg:hidden border-t border-white/5 bg-charcoal px-3 py-2 flex overflow-x-auto space-x-2 scrollbar-none items-center justify-between">
+        <div className="flex space-x-2 overflow-x-auto scrollbar-none">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;

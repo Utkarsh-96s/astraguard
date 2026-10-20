@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* Colors from design.md */
+  /* Colors from design-dashboard.md */
   --color-void-canvas: #080808;
   --color-absolute-black: #000000;
   --color-charcoal-plate: #171617;
@@ -44,9 +44,20 @@
   --spacing-64: 64px;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
 html,
 body {
-  background-color: var(--color-void-canvas);
+  background-color: #000000;
   color: var(--color-bone-white);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
@@ -55,6 +66,32 @@ body {
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom dark aerospace scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #080808;
+}
+::-webkit-scrollbar-thumb {
+  background: #262525;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+/* Scrollbar utilities */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Custom utility classes per design.md */
@@ -100,6 +137,15 @@ body {
 }
 
 /* SpaceX-style marketing utilities */
+.font-d-din {
+  font-family: var(--font-d-din);
+}
+
+.font-d-din-bold {
+  font-family: var(--font-d-din-bold);
+  font-weight: 700;
+}
+
 .tnum {
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
@@ -118,4 +164,3 @@ body {
     scroll-behavior: auto !important;
   }
 }
-

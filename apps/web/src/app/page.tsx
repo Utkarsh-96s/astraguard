@@ -43,6 +43,7 @@ export default function MarketingHomePage() {
           imageSrc="/images/home/hero-earth.webp"
           imageAlt="Earth curvature against deep space void"
           priority
+          contentVerticalAlign="center"
         >
           <SectionHeadline as="h1">
             MONITOR THE SPACECRAFT. PREDICT THE THREAT.

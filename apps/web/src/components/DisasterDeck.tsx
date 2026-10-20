@@ -112,7 +112,7 @@ export function DisasterDeck({
       </div>
 
       {/* Scenario Selector Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {scenarios.map((s) => {
           const isSelected = s.id === selectedId;
           const isFlood = s.disaster_type === "flood";
