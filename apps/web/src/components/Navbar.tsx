@@ -73,10 +73,10 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
 
   return (
     <header className="sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-white/10 transition-colors w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 w-full gap-2">
           {/* Logo & Platform Name */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             <Link href="/" className="flex items-center gap-2 group shrink-0">
               <div className="w-8 h-8 rounded-nav bg-charcoal border border-white/20 flex items-center justify-center group-hover:border-arterial transition-colors">
                 <Shield className="w-4 h-4 text-arterial" />
@@ -121,7 +121,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
           </div>
 
           {/* Nav Links (Desktop >= 1280px) */}
-          <nav className="hidden xl:flex items-center space-x-1 shrink-0">
+          <nav className="hidden xl:flex items-center space-x-0.5 shrink-0">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -129,7 +129,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-nav text-xs font-medium tracking-nav transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-nav text-xs font-medium tracking-nav transition-all whitespace-nowrap ${
                     isActive
                       ? "bg-smoke text-bone border border-white/20 shadow-glass"
                       : "text-ash hover:text-bone hover:bg-white/5"
@@ -143,7 +143,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
           </nav>
 
           {/* Actions & Telemetry Widgets */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             {/* Q1 Guided Judge Tour */}
             {onStartTour && <JudgeTourTriggerButton onStartTour={onStartTour} />}
 
@@ -192,7 +192,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
             {/* Live Stream indicator */}
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-nav bg-smoke border border-emerald-500/30 text-[10px] sm:text-[11px] font-mono text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="hidden md:inline">STREAM:</span> LIVE
+              <span>LIVE</span>
             </div>
           </div>
         </div>
