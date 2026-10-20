@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
+import { FaultInjectionLab } from "../../components/FaultInjectionLab";
 
 interface ChannelData {
   name: string;
@@ -153,6 +154,9 @@ export default function HealthPage() {
           );
         })}
       </div>
+
+      {/* F5 & F4 Interactive Fault Injection Lab & Detector Arena */}
+      <FaultInjectionLab />
 
       {/* Main Analysis Dual Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

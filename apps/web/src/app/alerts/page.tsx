@@ -17,11 +17,13 @@ import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "../../lib/ap
 import { StatusBadge } from "../../components/StatusBadge";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
 import { ProvenanceModal } from "../../components/ProvenanceModal";
+import { TelegramBotModal } from "../../components/TelegramBotModal";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [provenanceAlertId, setProvenanceAlertId] = useState<string | null>(null);
+  const [botAlertId, setBotAlertId] = useState<string | null>(null);
   const [actionType, setActionType] = useState<"approve" | "dismiss" | "snooze">("approve");
   const [operatorUser, setOperatorUser] = useState("FlightDirector_Sarah");
   const [operatorNote, setOperatorNote] = useState("");
@@ -219,7 +221,16 @@ export default function AlertsPage() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setBotAlertId(alert.id)}
+                    className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
+                    title="Open Mobile Telegram Alert Bot Simulator (F10)"
+                  >
+                    <Send className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Telegram Bot (F10)</span>
+                  </button>
+
                   <button
                     onClick={() => setProvenanceAlertId(alert.id)}
                     className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-cyan-500/30 hover:border-cyan-500/60 text-xs font-mono font-semibold text-cyan-300 flex items-center gap-1.5 transition-colors"
@@ -384,6 +395,15 @@ export default function AlertsPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Phone Alert Bot (Telegram) Simulator Modal (F10) */}
+      {botAlertId && (
+        <TelegramBotModal
+          alertId={botAlertId}
+          onClose={() => setBotAlertId(null)}
+          onActionComplete={loadAlerts}
+        />
       )}
     </div>
   );

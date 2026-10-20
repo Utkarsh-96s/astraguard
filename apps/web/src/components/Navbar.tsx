@@ -1,16 +1,48 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Radio, Activity, Orbit, AlertTriangle, Layers, PlayCircle } from "lucide-react";
+import {
+  Shield,
+  Radio,
+  Activity,
+  Orbit,
+  AlertTriangle,
+  Layers,
+  PlayCircle,
+  Volume2,
+  VolumeX,
+  Mic,
+  MicOff,
+  Command,
+} from "lucide-react";
 import { useAsset } from "../lib/assetContext";
 import { ObservabilityWidget } from "./ObservabilityWidget";
 import { JudgeTourTriggerButton } from "./JudgeTourOverlay";
+import { soundFx } from "../lib/audio";
+import { voiceAnnouncer } from "../lib/voice";
 
 export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
   const pathname = usePathname();
   const { selectedAsset } = useAsset();
+  const [soundMuted, setSoundMuted] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+
+  useEffect(() => {
+    setSoundMuted(soundFx.getMuted());
+    setVoiceEnabled(voiceAnnouncer.getEnabled());
+  }, []);
+
+  const toggleSound = () => {
+    const next = soundFx.toggleMute();
+    setSoundMuted(next);
+  };
+
+  const toggleVoice = () => {
+    const next = voiceAnnouncer.toggle();
+    setVoiceEnabled(next);
+  };
 
   const navLinks = [
     { href: "/", label: "Overview", icon: Shield },
@@ -98,6 +130,45 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
           <div className="flex items-center gap-2">
             {/* Q1 Guided Judge Tour */}
             {onStartTour && <JudgeTourTriggerButton onStartTour={onStartTour} />}
+
+            {/* Q4 Command Palette Trigger */}
+            <button
+              onClick={() => {
+                soundFx.playClickFx();
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }));
+              }}
+              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-nav bg-charcoal hover:bg-smoke border border-white/15 text-[11px] font-mono text-ash hover:text-bone transition-colors"
+              title="Open Command Palette (Ctrl+K / Cmd+K)"
+            >
+              <Command className="w-3 h-3 text-cyan-400" />
+              <span>⌘K</span>
+            </button>
+
+            {/* Q6 Sound FX Toggle */}
+            <button
+              onClick={toggleSound}
+              className={`p-1.5 rounded-nav border transition-colors ${
+                soundMuted
+                  ? "bg-charcoal border-white/10 text-pebble hover:text-bone"
+                  : "bg-smoke border-cyan-500/30 text-cyan-300 hover:border-cyan-500/60"
+              }`}
+              title={soundMuted ? "Unmute Sound FX (Q6)" : "Mute Sound FX (Q6)"}
+            >
+              {soundMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
+            </button>
+
+            {/* Q5 Voice Announcer Toggle */}
+            <button
+              onClick={toggleVoice}
+              className={`p-1.5 rounded-nav border transition-colors ${
+                voiceEnabled
+                  ? "bg-smoke border-emerald-500/30 text-emerald-300 hover:border-emerald-500/60"
+                  : "bg-charcoal border-white/10 text-pebble hover:text-bone"
+              }`}
+              title={voiceEnabled ? "Voice Announcer Active (Q5)" : "Voice Announcer Muted (Q5)"}
+            >
+              {voiceEnabled ? <Mic className="w-3.5 h-3.5 text-emerald-400" /> : <MicOff className="w-3.5 h-3.5" />}
+            </button>
 
             {/* Q3 Pipeline Observability */}
             <ObservabilityWidget />

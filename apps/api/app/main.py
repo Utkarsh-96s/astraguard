@@ -9,11 +9,13 @@ from app.core.config import settings
 from app.core.logging import logger, setup_logging
 from app.routers.alerts import router as alerts_router
 from app.routers.assets import router as assets_router
+from app.routers.bot import router as bot_router
 from app.routers.conjunctions import router as conjunctions_router
 from app.routers.demo import router as demo_router
 from app.routers.disaster import router as disaster_router
 from app.routers.features import router as features_router
 from app.routers.health import router as health_router
+from app.routers.health_lab import router as health_lab_router
 from app.routers.ingest import router as ingest_router
 from app.routers.metrics import router as metrics_router
 from app.routers.models import router as models_router
@@ -69,6 +71,8 @@ def create_app() -> FastAPI:
     app.include_router(models_router)
     app.include_router(websocket_router)
     app.include_router(demo_router)
+    app.include_router(health_lab_router, prefix="/api/v1")
+    app.include_router(bot_router, prefix="/api/v1")
     app.include_router(features_router, prefix="/api/v1")
     app.include_router(metrics_router)
     app.include_router(metrics_router, prefix="/api/v1")
