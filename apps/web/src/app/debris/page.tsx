@@ -12,17 +12,19 @@ import {
   Globe,
   Sliders,
   Sparkles,
+  Radio,
 } from "lucide-react";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
 import { StatusBadge } from "../../components/StatusBadge";
 import { ManeuverSimulator } from "../../components/ManeuverSimulator";
 import { UncertaintyLab } from "../../components/UncertaintyLab";
 import { OrbitTwin3D } from "../../components/OrbitTwin3D";
+import { ObservationTaskingModal } from "../../components/ObservationTaskingModal";
 import { playAudioCue } from "../../lib/audio";
 
 export default function DebrisPage() {
   const [selectedConjunction, setSelectedConjunction] = useState<string>("CONJ-29834");
-  const [activeTab, setActiveTab] = useState<"twin" | "simulator" | "uncertainty" | "overview">("twin");
+  const [activeTab, setActiveTab] = useState<"twin" | "simulator" | "uncertainty" | "tasking" | "overview">("twin");
 
   const conjunctions = [
     {
@@ -145,6 +147,21 @@ export default function DebrisPage() {
         <button
           onClick={() => {
             playAudioCue("click");
+            setActiveTab("tasking");
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-nav text-xs font-mono transition-all whitespace-nowrap ${
+            activeTab === "tasking"
+              ? "bg-sky-500/20 text-sky-300 border border-sky-400/50 shadow-glass font-bold"
+              : "text-ash hover:text-bone hover:bg-smoke"
+          }`}
+        >
+          <Radio className="w-3.5 h-3.5 text-sky-400" />
+          <span>Sensor Tasking Optimizer (F12)</span>
+        </button>
+
+        <button
+          onClick={() => {
+            playAudioCue("click");
             setActiveTab("overview");
           }}
           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-nav text-xs font-mono transition-all whitespace-nowrap ${
@@ -157,6 +174,16 @@ export default function DebrisPage() {
           <span>All Mission Diagnostics</span>
         </button>
       </div>
+
+      {/* Tab 4: Observation Tasking Optimizer (F12) */}
+      {(activeTab === "tasking" || activeTab === "overview") && (
+        <ObservationTaskingModal
+          conjunctionId={active.id}
+          secondaryName={active.secondaryName}
+          hoursToTca={active.tcaHours}
+          isEmbedded
+        />
+      )}
 
       {/* Tab 1: 3D Orbit Digital Twin */}
       {(activeTab === "twin" || activeTab === "overview") && (

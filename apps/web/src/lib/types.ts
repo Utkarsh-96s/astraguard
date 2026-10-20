@@ -342,3 +342,184 @@ export interface LiveTelemetryPacket {
   synthetic: boolean;
 }
 
+export interface CalibrationBinData {
+  bin_index: number;
+  conf_range: string;
+  confidence: number;
+  accuracy: number;
+  samples: number;
+}
+
+export interface DriftChannelData {
+  channel: string;
+  subsystem: string;
+  ks_statistic: number;
+  p_value: number;
+  kl_divergence: number;
+  status: "STABLE" | "DRIFT_ALERT" | "WARNING" | string;
+  baseline_mean: number;
+  current_mean: number;
+  unit: string;
+  note?: string;
+}
+
+export interface TrustLayerMetrics {
+  timestamp: string;
+  overall_trust_grade: string;
+  summary: {
+    active_models_monitored: number;
+    channels_monitored: number;
+    channels_with_drift_alert: number;
+    in_distribution: boolean;
+    overall_ece: number;
+    overall_brier_score: number;
+  };
+  calibration: {
+    ece: number;
+    mce: number;
+    brier_score: number;
+    reliability_bins: CalibrationBinData[];
+  };
+  drift_monitoring: {
+    test_method: string;
+    channels: DriftChannelData[];
+  };
+  out_of_distribution: {
+    ood_score: number;
+    threshold_nominal: number;
+    threshold_alert: number;
+    status: string;
+    mahalanobis_distance: number;
+    latent_reconstruction_error: number;
+    percentile_rank: number;
+    description: string;
+  };
+  tle_staleness: {
+    primary_asset: {
+      id: string;
+      tle_age_hours: number;
+      status: string;
+      covariance_growth_factor: number;
+      projected_position_sigma_km: number;
+    };
+    secondary_debris: {
+      id: string;
+      norad_id: number;
+      tle_age_hours: number;
+      status: string;
+      covariance_growth_factor: number;
+      projected_position_sigma_km: number;
+      drag_inflation_pct: number;
+      recommendation: string;
+    };
+    space_weather_context: {
+      kp_index: number;
+      storm_level: string;
+      f10_7_solar_flux: number;
+      atmospheric_density_anomaly_pct: number;
+    };
+    staleness_curve: {
+      hours: number;
+      position_error_km: number;
+      covariance_scale: number;
+    }[];
+  };
+  provenance_hash: string;
+  synthetic: boolean;
+}
+
+export interface GroundStation {
+  id: string;
+  name: string;
+  operator: string;
+  location: string;
+  lat: number;
+  lon: number;
+  alt_m: number;
+  type: string;
+  min_elevation_deg: number;
+  accuracy_m: number;
+  all_weather: boolean;
+}
+
+export interface ScheduledSensorPass {
+  pass_id: string;
+  station: GroundStation;
+  start_utc: string;
+  peak_utc: string;
+  end_utc: string;
+  duration_sec: number;
+  duration_min: number;
+  max_elevation_deg: number;
+  approach_azimuth_deg: number;
+  departure_azimuth_deg: number;
+  track_quality_snr_db: number;
+  sensor_modality: string;
+  recommended: boolean;
+  shrinkage_contribution_pct: number;
+}
+
+export interface ObservationTaskingPlan {
+  conjunction_id: string;
+  secondary_name: string;
+  hours_to_tca: number;
+  tca_epoch_utc: string;
+  station_network_size: number;
+  stations_available: GroundStation[];
+  scheduled_passes: ScheduledSensorPass[];
+  optimal_primary_pass: ScheduledSensorPass;
+  covariance_projection: {
+    initial_sigma_in_track_m: number;
+    initial_sigma_normal_m: number;
+    projected_sigma_in_track_m: number;
+    projected_sigma_normal_m: number;
+    uncertainty_reduction_pct: number;
+    projected_pc_resolution: number;
+    potential_cam_avoidance: boolean;
+    projected_fuel_savings_g: number;
+  };
+  tdm_command_preview: string;
+  synthetic: boolean;
+}
+
+export interface IncidentReportData {
+  incident_id: string;
+  classification: string;
+  asset_id: string;
+  asset_norad: number;
+  timestamp: string;
+  risk_level: RiskLevel;
+  risk_score: number;
+  pc: number;
+  r_h: number;
+  r_d: number;
+  r_e: number;
+  secondary_name: string;
+  secondary_norad: number;
+  miss_distance_m: number;
+  relative_velocity_kms: number;
+  tca_hours: number;
+  b_plane_sigma_y_m: number;
+  b_plane_sigma_x_m: number;
+  recommended_burn: string;
+  delta_v_ms: number;
+  fuel_expenditure_g: number;
+  post_cam_miss_m: number;
+  post_cam_pc: number;
+  operator_audit_trail: OperatorAction[];
+  space_weather: {
+    kp: number;
+    status: string;
+    f10_7: number;
+    drag_factor_pct: number;
+  };
+  telemetry_anomalies: {
+    channel: string;
+    value: number;
+    baseline: number;
+    unit: string;
+    dev: string;
+  }[];
+  provenance_sha256: string;
+}
+

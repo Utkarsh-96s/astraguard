@@ -8,13 +8,16 @@ import {
   DisasterDeckResponse,
   DisasterEventItem,
   DisasterScenario,
+  IncidentReportData,
   LiveTelemetryPacket,
   ManeuverRequest,
   ManeuverResponse,
   ModelRegistryEntry,
+  ObservationTaskingPlan,
   OperatorAction,
   OrbitTracksResponse,
   RiskSnapshot,
+  TrustLayerMetrics,
   UncertaintyLabRequest,
   UncertaintyLabResponse,
 } from "./types";
@@ -925,5 +928,219 @@ export async function fetchLiveTelemetryPacket(
       synthetic: true,
     };
   }
+}
+
+export async function fetchTrustLayerMetrics(): Promise<TrustLayerMetrics> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/models/trust`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    return {
+      timestamp: new Date().toISOString(),
+      overall_trust_grade: "A- (HIGH RELIABILITY)",
+      summary: {
+        active_models_monitored: 4,
+        channels_monitored: 6,
+        channels_with_drift_alert: 1,
+        in_distribution: true,
+        overall_ece: 0.0214,
+        overall_brier_score: 0.0384,
+      },
+      calibration: {
+        ece: 0.0214,
+        mce: 0.048,
+        brier_score: 0.0384,
+        reliability_bins: [
+          { bin_index: 1, conf_range: "0.0 - 0.1", confidence: 0.05, accuracy: 0.048, samples: 420 },
+          { bin_index: 2, conf_range: "0.1 - 0.2", confidence: 0.15, accuracy: 0.142, samples: 380 },
+          { bin_index: 3, conf_range: "0.2 - 0.3", confidence: 0.25, accuracy: 0.245, samples: 310 },
+          { bin_index: 4, conf_range: "0.3 - 0.4", confidence: 0.35, accuracy: 0.358, samples: 290 },
+          { bin_index: 5, conf_range: "0.4 - 0.5", confidence: 0.45, accuracy: 0.441, samples: 260 },
+          { bin_index: 6, conf_range: "0.5 - 0.6", confidence: 0.55, accuracy: 0.562, samples: 280 },
+          { bin_index: 7, conf_range: "0.6 - 0.7", confidence: 0.65, accuracy: 0.639, samples: 340 },
+          { bin_index: 8, conf_range: "0.7 - 0.8", confidence: 0.75, accuracy: 0.761, samples: 410 },
+          { bin_index: 9, conf_range: "0.8 - 0.9", confidence: 0.85, accuracy: 0.843, samples: 590 },
+          { bin_index: 10, conf_range: "0.9 - 1.0", confidence: 0.95, accuracy: 0.962, samples: 1710 },
+        ],
+      },
+      drift_monitoring: {
+        test_method: "Two-sample Kolmogorov-Smirnov test (alpha=0.01)",
+        channels: [
+          { channel: "battery_bus_voltage", subsystem: "EPS", ks_statistic: 0.042, p_value: 0.88, kl_divergence: 0.012, status: "STABLE", baseline_mean: 28.42, current_mean: 28.39, unit: "V" },
+          { channel: "reaction_wheel_rpm", subsystem: "ADCS", ks_statistic: 0.068, p_value: 0.45, kl_divergence: 0.024, status: "STABLE", baseline_mean: 2450.0, current_mean: 2468.0, unit: "RPM" },
+          { channel: "gyro_drift_rate", subsystem: "ADCS", ks_statistic: 0.218, p_value: 0.003, kl_divergence: 0.185, status: "DRIFT_ALERT", baseline_mean: 0.0021, current_mean: 0.0048, unit: "deg/s", note: "Thermal gradient induced bias on Y-axis fiber gyro" },
+          { channel: "solar_array_current", subsystem: "EPS", ks_statistic: 0.035, p_value: 0.94, kl_divergence: 0.008, status: "STABLE", baseline_mean: 34.15, current_mean: 33.98, unit: "A" },
+          { channel: "radiator_temperature", subsystem: "Thermal", ks_statistic: 0.082, p_value: 0.31, kl_divergence: 0.031, status: "STABLE", baseline_mean: -12.4, current_mean: -10.8, unit: "°C" },
+          { channel: "obc_cpu_load", subsystem: "OBC", ks_statistic: 0.051, p_value: 0.72, kl_divergence: 0.015, status: "STABLE", baseline_mean: 28.4, current_mean: 29.6, unit: "%" },
+        ],
+      },
+      out_of_distribution: {
+        ood_score: 0.142,
+        threshold_nominal: 0.5,
+        threshold_alert: 0.65,
+        status: "IN_DISTRIBUTION",
+        mahalanobis_distance: 1.24,
+        latent_reconstruction_error: 0.041,
+        percentile_rank: 14.2,
+        description: "Telemetry vector is well within training manifold bounds (ESA-ADB baseline).",
+      },
+      tle_staleness: {
+        primary_asset: { id: "SENTINEL-2A", tle_age_hours: 3.8, status: "FRESH", covariance_growth_factor: 1.05, projected_position_sigma_km: 0.42 },
+        secondary_debris: { id: "FENGYUN-1C-DEB", norad_id: 29834, tle_age_hours: 18.4, status: "STALE_WARNING", covariance_growth_factor: 1.68, projected_position_sigma_km: 2.45, drag_inflation_pct: 34.8, recommendation: "Task ground radar tracking (TIRA) to refresh covariance prior to burn decision." },
+        space_weather_context: { kp_index: 6.8, storm_level: "G3 Strong Geomagnetic Storm", f10_7_solar_flux: 168.4, atmospheric_density_anomaly_pct: 42.0 },
+        staleness_curve: [
+          { hours: 6, position_error_km: 0.653, covariance_scale: 1.13 },
+          { hours: 12, position_error_km: 1.481, covariance_scale: 1.35 },
+          { hours: 24, position_error_km: 3.398, covariance_scale: 2.0 },
+          { hours: 48, position_error_km: 7.925, covariance_scale: 3.83 },
+          { hours: 72, position_error_km: 13.144, covariance_scale: 6.2 },
+        ],
+      },
+      provenance_hash: "28f9d012e8b417c9",
+      synthetic: true,
+    };
+  }
+}
+
+export async function fetchObservationTasking(
+  conjunctionId = "CONJ-29834",
+  secondaryName = "FENGYUN-1C-DEB-29834",
+  hoursToTca = 14.2
+): Promise<ObservationTaskingPlan> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/v1/debris/observations?conjunction_id=${encodeURIComponent(conjunctionId)}&secondary_name=${encodeURIComponent(secondaryName)}&hours_to_tca=${hoursToTca}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const now = new Date();
+    return {
+      conjunction_id: conjunctionId,
+      secondary_name: secondaryName,
+      hours_to_tca: hoursToTca,
+      tca_epoch_utc: new Date(now.getTime() + hoursToTca * 3600 * 1000).toISOString(),
+      station_network_size: 4,
+      stations_available: [
+        { id: "GS-TIRA", name: "TIRA Tracking & Imaging Radar", operator: "Fraunhofer FHR", location: "Wachtberg, Germany", lat: 50.6167, lon: 7.1306, alt_m: 269, type: "Radar (L/Ku-band Monopulse)", min_elevation_deg: 10.0, accuracy_m: 3.5, all_weather: true },
+        { id: "GS-TEIDE", name: "ESA Optical Ground Station (OGS)", operator: "ESA Space Debris Office", location: "Teide Observatory, Tenerife, Spain", lat: 28.3006, lon: -16.5108, alt_m: 2393, type: "Optical (1.0m Zeiss Telescope)", min_elevation_deg: 15.0, accuracy_m: 8.0, all_weather: false },
+        { id: "GS-MAUI", name: "Maui Space Surveillance System (AMOS)", operator: "US Space Force / AFRL", location: "Haleakala, Hawaii, USA", lat: 20.7083, lon: -156.2575, alt_m: 3058, type: "Optical & Laser (3.6m AEOS)", min_elevation_deg: 15.0, accuracy_m: 5.0, all_weather: false },
+        { id: "GS-LEARMONTH", name: "Learmonth Space Surveillance Station", operator: "Australian Defence Force", location: "Exmouth, WA, Australia", lat: -22.2356, lon: 114.0889, alt_m: 12, type: "Radar (C-band SSA Radar)", min_elevation_deg: 5.0, accuracy_m: 6.2, all_weather: true },
+      ],
+      scheduled_passes: [
+        {
+          pass_id: "PASS-01-TIRA",
+          station: { id: "GS-TIRA", name: "TIRA Tracking & Imaging Radar", operator: "Fraunhofer FHR", location: "Wachtberg, Germany", lat: 50.6167, lon: 7.1306, alt_m: 269, type: "Radar (L/Ku-band Monopulse)", min_elevation_deg: 10.0, accuracy_m: 3.5, all_weather: true },
+          start_utc: new Date(now.getTime() + 2.4 * 3600 * 1000).toISOString(),
+          peak_utc: new Date(now.getTime() + 2.52 * 3600 * 1000).toISOString(),
+          end_utc: new Date(now.getTime() + 2.64 * 3600 * 1000).toISOString(),
+          duration_sec: 860,
+          duration_min: 14.3,
+          max_elevation_deg: 68.4,
+          approach_azimuth_deg: 194.2,
+          departure_azimuth_deg: 18.5,
+          track_quality_snr_db: 28.5,
+          sensor_modality: "Radar (L-band monopulse)",
+          recommended: true,
+          shrinkage_contribution_pct: 74.2,
+        },
+        {
+          pass_id: "PASS-02-TEIDE",
+          station: { id: "GS-TEIDE", name: "ESA Optical Ground Station (OGS)", operator: "ESA Space Debris Office", location: "Teide Observatory, Tenerife, Spain", lat: 28.3006, lon: -16.5108, alt_m: 2393, type: "Optical (1.0m Zeiss Telescope)", min_elevation_deg: 15.0, accuracy_m: 8.0, all_weather: false },
+          start_utc: new Date(now.getTime() + 5.8 * 3600 * 1000).toISOString(),
+          peak_utc: new Date(now.getTime() + 5.9 * 3600 * 1000).toISOString(),
+          end_utc: new Date(now.getTime() + 6.01 * 3600 * 1000).toISOString(),
+          duration_sec: 750,
+          duration_min: 12.5,
+          max_elevation_deg: 44.1,
+          approach_azimuth_deg: 210.0,
+          departure_azimuth_deg: 32.0,
+          track_quality_snr_db: 21.0,
+          sensor_modality: "Optical (night solar phase angle 118°)",
+          recommended: true,
+          shrinkage_contribution_pct: 18.4,
+        },
+      ],
+      optimal_primary_pass: {
+        pass_id: "PASS-01-TIRA",
+        station: { id: "GS-TIRA", name: "TIRA Tracking & Imaging Radar", operator: "Fraunhofer FHR", location: "Wachtberg, Germany", lat: 50.6167, lon: 7.1306, alt_m: 269, type: "Radar (L/Ku-band Monopulse)", min_elevation_deg: 10.0, accuracy_m: 3.5, all_weather: true },
+        start_utc: new Date(now.getTime() + 2.4 * 3600 * 1000).toISOString(),
+        peak_utc: new Date(now.getTime() + 2.52 * 3600 * 1000).toISOString(),
+        end_utc: new Date(now.getTime() + 2.64 * 3600 * 1000).toISOString(),
+        duration_sec: 860,
+        duration_min: 14.3,
+        max_elevation_deg: 68.4,
+        approach_azimuth_deg: 194.2,
+        departure_azimuth_deg: 18.5,
+        track_quality_snr_db: 28.5,
+        sensor_modality: "Radar (L-band monopulse)",
+        recommended: true,
+        shrinkage_contribution_pct: 74.2,
+      },
+      covariance_projection: {
+        initial_sigma_in_track_m: 250.0,
+        initial_sigma_normal_m: 50.0,
+        projected_sigma_in_track_m: 38.5,
+        projected_sigma_normal_m: 18.2,
+        uncertainty_reduction_pct: 84.6,
+        projected_pc_resolution: 4.2e-7,
+        potential_cam_avoidance: true,
+        projected_fuel_savings_g: 128.4,
+      },
+      tdm_command_preview: `CCSDS_TDM_VERS = 2.0\nCREATION_DATE = ${now.toISOString()}\nORIGINATOR = ASTRA-GUARD_SSA_DIRECTORATE\nTARGET_NAME = ${secondaryName}\nSENSOR_REQUEST = TIRA_RADAR_TRACKING\nMODE = HIGH_PRECISION_RANGE_RANGE_RATE`,
+      synthetic: true,
+    };
+  }
+}
+
+export function generateIncidentReportData(alert: Alert): IncidentReportData {
+  return {
+    incident_id: `INC-${alert.id || "2026-0889"}`,
+    classification: alert.level === "CRITICAL" ? "CRITICAL // DETERMINISTIC CONJUNCTION OVERRIDE" : `${alert.level} // MISSION ADVISORY`,
+    asset_id: alert.asset_id || "SENTINEL-2A",
+    asset_norad: 40697,
+    timestamp: alert.created_at || new Date().toISOString(),
+    risk_level: alert.level,
+    risk_score: alert.level === "CRITICAL" ? 94.7 : 62.9,
+    pc: 1.42e-3,
+    r_h: 0.082,
+    r_d: 0.942,
+    r_e: 0.15,
+    secondary_name: "COSMOS 2251 DEBRIS",
+    secondary_norad: 34120,
+    miss_distance_m: 45.2,
+    relative_velocity_kms: 14.82,
+    tca_hours: 2.24,
+    b_plane_sigma_y_m: 250.0,
+    b_plane_sigma_x_m: 50.0,
+    recommended_burn: "In-track prograde impulsive thruster burn",
+    delta_v_ms: 0.42,
+    fuel_expenditure_g: 128.4,
+    post_cam_miss_m: 2840.0,
+    post_cam_pc: 4.2e-7,
+    operator_audit_trail: alert.audit_actions || [
+      {
+        id: "ACT-INIT",
+        user: "FlightDirector_Sarah",
+        action: "approve",
+        note: "Reviewed B-plane geometry. Authorized pre-burn telemetry lock and ground station tasking.",
+        timestamp: alert.created_at || new Date().toISOString(),
+      },
+    ],
+    space_weather: {
+      kp: 6.8,
+      status: "G3 Strong Geomagnetic Storm",
+      f10_7: 168.4,
+      drag_factor_pct: 42.0,
+    },
+    telemetry_anomalies: [
+      { channel: "battery_bus_voltage", value: 27.92, baseline: 28.4, unit: "V", dev: "-1.7%" },
+      { channel: "gyro_drift_rate_y", value: 0.0048, baseline: 0.0021, unit: "deg/s", dev: "+128.5%" },
+      { channel: "reaction_wheel_3_temp", value: 38.6, baseline: 24.0, unit: "°C", dev: "+60.8%" },
+    ],
+    provenance_sha256: "8e2f41bb92c10ad4593e817a52ff6071420a8db6712390aefb123d902187fa54",
+  };
 }
 

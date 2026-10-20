@@ -15,6 +15,7 @@ import {
 import { ModelRegistryEntry } from "../../lib/types";
 import { fetchModelRegistry, FALLBACK_MODELS } from "../../lib/api";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
+import { TrustLayerCard } from "../../components/TrustLayerCard";
 
 export default function ModelsPage() {
   const [models, setModels] = useState<ModelRegistryEntry[]>(FALLBACK_MODELS);
@@ -57,6 +58,9 @@ export default function ModelsPage() {
           <span>Integrity Verified: 4 Deployed Artifacts</span>
         </div>
       </div>
+
+      {/* AI Trust Layer & Observability (F9) */}
+      <TrustLayerCard />
 
       {/* Model Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

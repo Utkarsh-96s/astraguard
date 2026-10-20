@@ -144,6 +144,30 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
 
     // Interactive Labs
     {
+      id: "lab-incident-report",
+      category: "Interactive Labs",
+      title: "Generate Mission Safety Incident Report (F7)",
+      subtitle: "Formal printable ECSS/NASA report with cryptographic seal",
+      icon: Shield,
+      action: () => router.push("/alerts"),
+    },
+    {
+      id: "lab-trust-layer",
+      category: "Interactive Labs",
+      title: "AI Trust Layer & Calibration Engine (F9)",
+      subtitle: "ECE reliability curves, KS-drift hypothesis test, OOD scoring",
+      icon: Radio,
+      action: () => router.push("/models"),
+    },
+    {
+      id: "lab-sensor-tasking",
+      category: "Interactive Labs",
+      title: "Ground Sensor Tasking Optimizer (F12)",
+      subtitle: "Schedule TIRA & Teide passes to shrink covariance and avoid CAM burns",
+      icon: Orbit,
+      action: () => router.push("/debris"),
+    },
+    {
       id: "lab-fault-injection",
       category: "Interactive Labs",
       title: "Fault Injection Lab & Detector Arena (F5)",

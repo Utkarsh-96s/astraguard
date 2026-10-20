@@ -22,6 +22,7 @@ from app.routers.maneuver import router as maneuver_router
 from app.routers.metrics import router as metrics_router
 from app.routers.models import router as models_router
 from app.routers.objects import router as objects_router
+from app.routers.observations import router as observations_router
 from app.routers.provenance import router as provenance_router
 from app.routers.risk import router as risk_router
 from app.routers.telemetry import router as telemetry_router
@@ -72,6 +73,7 @@ def create_app() -> FastAPI:
     app.include_router(alerts_router)
     app.include_router(provenance_router)
     app.include_router(models_router)
+    app.include_router(observations_router)
     app.include_router(websocket_router)
     app.include_router(demo_router)
     app.include_router(health_lab_router, prefix="/api/v1")

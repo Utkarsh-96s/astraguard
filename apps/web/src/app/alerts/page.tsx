@@ -11,6 +11,7 @@ import {
   History,
   Send,
   UserCheck,
+  FileText,
 } from "lucide-react";
 import { Alert, AlertStatus, RiskLevel } from "../../lib/types";
 import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "../../lib/api";
@@ -18,12 +19,14 @@ import { StatusBadge } from "../../components/StatusBadge";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
 import { ProvenanceModal } from "../../components/ProvenanceModal";
 import { TelegramBotModal } from "../../components/TelegramBotModal";
+import { IncidentReportModal } from "../../components/IncidentReportModal";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [provenanceAlertId, setProvenanceAlertId] = useState<string | null>(null);
   const [botAlertId, setBotAlertId] = useState<string | null>(null);
+  const [incidentAlert, setIncidentAlert] = useState<Alert | null>(null);
   const [actionType, setActionType] = useState<"approve" | "dismiss" | "snooze">("approve");
   const [operatorUser, setOperatorUser] = useState("FlightDirector_Sarah");
   const [operatorNote, setOperatorNote] = useState("");
@@ -109,10 +112,21 @@ export default function AlertsPage() {
           </p>
         </div>
 
-        {/* Advisory Only Badge */}
-        <div className="px-3 py-1.5 rounded-nav bg-smoke border border-arterial/40 text-xs font-mono text-red-300 flex items-center gap-1.5">
-          <UserCheck className="w-3.5 h-3.5 text-arterial" />
-          <span>Human-in-the-Loop Required</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setIncidentAlert(alerts[0] || FALLBACK_ALERTS[0])}
+            className="px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/50 text-xs font-mono text-red-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            title="Generate and print formal mission safety incident report"
+          >
+            <FileText className="w-3.5 h-3.5 text-arterial" />
+            <span>Generate Incident Report (F7)</span>
+          </button>
+
+          {/* Advisory Only Badge */}
+          <div className="px-3 py-1.5 rounded-nav bg-smoke border border-arterial/40 text-xs font-mono text-red-300 flex items-center gap-1.5">
+            <UserCheck className="w-3.5 h-3.5 text-arterial" />
+            <span>Human-in-the-Loop Required</span>
+          </div>
         </div>
       </div>
 
@@ -222,6 +236,15 @@ export default function AlertsPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setIncidentAlert(alert)}
+                    className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/40 hover:border-arterial/80 text-xs font-mono font-semibold text-red-300 flex items-center gap-1.5 transition-colors"
+                    title="Generate formal mission safety incident report (F7)"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-arterial" />
+                    <span>Incident Report (F7)</span>
+                  </button>
+
                   <button
                     onClick={() => setBotAlertId(alert.id)}
                     className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
@@ -403,6 +426,23 @@ export default function AlertsPage() {
           alertId={botAlertId}
           onClose={() => setBotAlertId(null)}
           onActionComplete={loadAlerts}
+        />
+      )}
+
+      {/* Cryptographic Provenance & Mathematical Reproducibility Modal (Q2) */}
+      {provenanceAlertId && (
+        <ProvenanceModal
+          alertId={provenanceAlertId}
+          isOpen={true}
+          onClose={() => setProvenanceAlertId(null)}
+        />
+      )}
+
+      {/* Formal Printable Mission Safety Incident Report (F7) */}
+      {incidentAlert && (
+        <IncidentReportModal
+          alert={incidentAlert}
+          onClose={() => setIncidentAlert(null)}
         />
       )}
     </div>

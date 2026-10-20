@@ -6,7 +6,15 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from app.services.trust_layer_service import trust_layer_service
+
 router = APIRouter(prefix="/api/v1/models", tags=["Model Registry"])
+
+
+@router.get("/trust", summary="Get AI Model Trust Layer, Calibration, Drift, and OOD metrics")
+async def get_model_trust_metrics() -> dict[str, Any]:
+    """Retrieve statistical trustworthiness, ECE calibration, KS telemetry drift, and TLE staleness."""
+    return trust_layer_service.get_trust_metrics()
 
 
 def _load_metric_file(filename: str) -> dict[str, Any]:

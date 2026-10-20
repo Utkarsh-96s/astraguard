@@ -7,6 +7,7 @@ import { AssetProvider } from "../lib/assetContext";
 import { Navbar } from "./Navbar";
 import { JudgeTourOverlay } from "./JudgeTourOverlay";
 import { CommandPalette } from "./CommandPalette";
+import { OperatorCopilot } from "./OperatorCopilot";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -21,6 +22,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           </main>
           <JudgeTourOverlay isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
           <CommandPalette onStartTour={() => setIsTourOpen(true)} />
+          <OperatorCopilot />
         </AssetProvider>
       </TimeProvider>
     </FeaturesProvider>

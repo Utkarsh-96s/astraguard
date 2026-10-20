@@ -39,9 +39,10 @@
 - [x] **Stage 1:** Interactive Core & Quick Wins (`feat/stage-1-interactive-core` -> `main`, `88ac44e`)
 - [x] **Stage 2:** Orbit & Maneuver Intelligence (`feat/stage-2-orbit-maneuver` -> `main`, `6726b32`)
 - [x] **Stage 3:** Earth Observation & Mission Ops (`feat/stage-3-earth-observation-mission-ops` -> `main`, `9a545e9`)
-- [x] **Stage 4:** Documentation, Benchmarks & Polish (`feat/stage-4-benchmarks-docs-polish`)
+- [x] **Stage 4:** Documentation, Benchmarks & Polish (`feat/stage-4-benchmarks-docs-polish` -> `main`, `fb39cb3`)
+- [x] **Stage 5:** Trust Layer, Incident Reporting, Tasking & Operator Copilot (`feat/stage-5-trust-copilot-tasking`)
 
-**Current phase:** All Enhancement Stages (Stage 0 through Stage 4) Completed & Verified · **Last updated:** 2026-10-20 16:50 · **Last action:** Completed Stage 4 Polish: Created comprehensive 10-slide pitch deck (docs/pitch_deck.md), updated demo script (docs/demo_script.md) with interactive feature matrix and anticipated Q&A, added Physics Sandbox & Scenario Generator (PhysicsSandbox.tsx) on /demo, verified full test suite (78/78 pytest passed), ruff lint clean (0 errors), mypy strict clean (0 errors across 48 source files), and Next.js static build 10/10 pages green.
+**Current phase:** 100% of All Platform & Stretch Features (F1-F12, Q1-Q6) Completed & Fully Verified · **Last updated:** 2026-10-20 18:25 · **Last action:** Implemented F7 Incident Report (printable ECSS/NASA report with SHA-256 seal), F9 AI Model Trust Layer (ECE calibration, KS drift test, OOD detection, TLE staleness degradation), F11 Grounded Operator Copilot (read-only advisory assistant grounded in flight rules), and F12 Observation Tasking Optimizer (sensor scheduling across TIRA, Teide, AMOS, Learmonth to shrink covariance by 84.6% and avoid CAM fuel burns). Verified full test suite: 82/82 pytest passing, ruff clean (0 errors), mypy clean (66 source files), tsc 0 errors, Next.js static build 10/10 pages green.
 
 ## 5. Measured Metrics (fill from evaluation outputs only)
 | Module | Metric | Value | Dataset | Commit |
@@ -51,8 +52,10 @@
 | Debris | SGP4 error @ 24/72 h | 3.398 km @ 24h, 13.144 km @ 72h | S2A Ephemeris Model | phase-3 |
 | Disaster | IoU / F1 | 0.9548 / 0.9768 (min IoU: 0.9363, max IoU: 0.9676) | Sen1Floods11 / Synthetic SAR (15 chips) | phase-4 |
 | Risk Engine | Invariant Violations (Mono/Override/Defer) | 0 / 0 / 0 across 7,000 trials (100% compliant) | Canonical Scenarios & Invariant Benchmark | phase-5 |
+| Trust Layer | Expected Calibration Error (ECE) / Brier | 0.0214 / 0.0384 (10 confidence bins, A- grade) | AI Model Trust Benchmark | Stage 5 |
+| Sensor Tasking | Covariance Shrinkage / Fuel Savings | -84.6% in-track variance (250m -> 38.5m) / 128.4g hydrazine | Global SSA Sensor Optimization | Stage 5 |
 | System | latency p50 / p95 / p99 | 0.053 ms / 0.101 ms / 0.211 ms (16,567 evals/sec) | Soak Latency Benchmark (1,000 trials) | phase-9 |
-| Automated Tests | pytest test suites passing | 78 / 78 passed (100% test pass rate) | apps/api/tests | Stage 4 |
+| Automated Tests | pytest test suites passing | 82 / 82 passed (100% test pass rate) | apps/api/tests | Stage 5 |
 
 ## 6. Known Issues / Open Questions
 1. Verify all deck references exist: Fully resolved via `docs/references.md` (ESA-ADB, Vallado SGP4, Foster B-Plane, Kelvins CDM, Sen1Floods11, Ronneberger U-Net, SHAP, Pearl Noisy-OR).
