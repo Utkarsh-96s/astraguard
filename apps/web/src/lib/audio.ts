@@ -171,3 +171,15 @@ class SoundSynthesizer {
 }
 
 export const soundFx = new SoundSynthesizer();
+
+export function playAudioCue(cue: "click" | "affirmative" | "ping" | "alert"): void {
+  if (cue === "click") {
+    soundFx.playClickFx();
+  } else if (cue === "affirmative") {
+    soundFx.playSuccessChirp();
+  } else if (cue === "ping") {
+    soundFx.playRadarPing();
+  } else if (cue === "alert") {
+    soundFx.playAlertKlaxon("CRITICAL");
+  }
+}

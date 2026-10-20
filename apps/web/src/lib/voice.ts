@@ -58,3 +58,7 @@ class VoiceAnnouncer {
 }
 
 export const voiceAnnouncer = new VoiceAnnouncer();
+
+export function speakAdvisory(text: string): void {
+  voiceAnnouncer.announce(text);
+}

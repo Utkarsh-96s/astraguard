@@ -17,6 +17,7 @@ from app.routers.features import router as features_router
 from app.routers.health import router as health_router
 from app.routers.health_lab import router as health_lab_router
 from app.routers.ingest import router as ingest_router
+from app.routers.maneuver import router as maneuver_router
 from app.routers.metrics import router as metrics_router
 from app.routers.models import router as models_router
 from app.routers.objects import router as objects_router
@@ -73,6 +74,7 @@ def create_app() -> FastAPI:
     app.include_router(demo_router)
     app.include_router(health_lab_router, prefix="/api/v1")
     app.include_router(bot_router, prefix="/api/v1")
+    app.include_router(maneuver_router, prefix="/api/v1")
     app.include_router(features_router, prefix="/api/v1")
     app.include_router(metrics_router)
     app.include_router(metrics_router, prefix="/api/v1")

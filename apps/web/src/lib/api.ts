@@ -5,9 +5,14 @@ import {
   Alert,
   ConjunctionItem,
   DisasterEventItem,
+  ManeuverRequest,
+  ManeuverResponse,
   ModelRegistryEntry,
   OperatorAction,
+  OrbitTracksResponse,
   RiskSnapshot,
+  UncertaintyLabRequest,
+  UncertaintyLabResponse,
 } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -317,5 +322,222 @@ export async function fetchDisasterEvents(): Promise<DisasterEventItem[]> {
         created_at: new Date().toISOString(),
       },
     ];
+  }
+}
+
+export async function simulateManeuver(req: ManeuverRequest): Promise<ManeuverResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/debris/simulate-maneuver`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const initialMiss = req.initial_miss_m ?? 315.4;
+    const deltaV = req.delta_v_ms ?? 0.25;
+    const leadTime = req.lead_time_hours ?? 8.0;
+    const direction = req.direction ?? "prograde";
+    const dryMass = 1140.0;
+    const isp = 220.0;
+    const g0 = 9.80665;
+    const fuelKg = dryMass * (1.0 - Math.exp(-deltaV / (isp * g0)));
+
+    // Displacement offset approx
+    const dtSec = leadTime * 3600;
+    const dInTrack = 1.5 * deltaV * dtSec * 0.4;
+    const newMiss = Math.round(Math.sqrt(Math.pow(initialMiss + dInTrack, 2) + 2500) * 10) / 10;
+    const initialPc = initialMiss < 100 ? 6.7e-4 : 2.4e-4;
+    const simulatedPc = Math.max(1e-12, initialPc / Math.pow(newMiss / initialMiss, 3));
+
+    return {
+      conjunction_id: req.conjunction_id || "CONJ-29834",
+      secondary_name: req.secondary_name || "FENGYUN-1C-DEB-29834",
+      maneuver_direction: direction,
+      delta_v_ms: deltaV,
+      lead_time_hours: leadTime,
+      burn_epoch_utc: new Date(Date.now() + 1000 * 3600 * 6.2).toISOString(),
+      tca_epoch_utc: new Date(Date.now() + 1000 * 3600 * (6.2 + leadTime)).toISOString(),
+      original: {
+        miss_distance_m: initialMiss,
+        pc: initialPc,
+        log10_pc: Math.round(Math.log10(initialPc) * 1000) / 1000,
+        risk_class: initialPc >= 1e-4 ? "CRITICAL" : "WATCH",
+        screening_grade: true,
+      },
+      simulated: {
+        miss_distance_m: newMiss,
+        pc: simulatedPc,
+        log10_pc: Math.round(Math.log10(simulatedPc) * 1000) / 1000,
+        risk_class: "NOMINAL",
+        screening_grade: true,
+        delta_in_track_m: Math.round(dInTrack * 10) / 10,
+        delta_radial_m: 0.0,
+        delta_normal_m: 0.0,
+        displacement_vector_m: Math.round(dInTrack * 10) / 10,
+        fuel_consumed_kg: Math.round(fuelKg * 1000) / 1000,
+        fuel_mass_percent: Math.round((fuelKg / 120.0) * 10000) / 100,
+        pc_reduction_factor: Math.round(initialPc / simulatedPc),
+        maneuver_feasible: deltaV <= 1.5 && fuelKg < 5.0,
+      },
+      advisory_directive: `ADVISORY ONLY: Optimal CAM candidate applies ${deltaV.toFixed(2)} m/s ${direction} impulse at T-${leadTime.toFixed(1)}h. Expands miss distance to ${newMiss.toFixed(1)}m. Formal approval required.`,
+      synthetic: true,
+    };
+  }
+}
+
+export async function runUncertaintyLab(req: UncertaintyLabRequest): Promise<UncertaintyLabResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/debris/uncertainty-lab`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const missX = req.miss_x_m ?? 315.4;
+    const missY = req.miss_y_m ?? 0.0;
+    const sigX = req.sigma_x_m ?? 50.0;
+    const sigY = req.sigma_y_m ?? 250.0;
+    const radius = req.radius_m ?? 5.0;
+    const trials = req.num_trials ?? 2000;
+
+    // Generate synthetic scatter points
+    const scatterPoints = [];
+    let hits = 0;
+    for (let i = 0; i < 400; i++) {
+      // Gaussian Box-Muller approximation
+      const u1 = Math.max(1e-6, Math.random());
+      const u2 = Math.random();
+      const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+      const z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+      const px = missX + z0 * sigX;
+      const py = missY + z1 * sigY;
+      const dist = Math.sqrt(px * px + py * py);
+      const isHit = dist <= radius;
+      if (isHit) hits++;
+      scatterPoints.push({
+        x: Math.round(px * 10) / 10,
+        y: Math.round(py * 10) / 10,
+        is_hit: isHit,
+        dist_from_origin: Math.round(dist * 10) / 10,
+      });
+    }
+
+    const analyticalPc = missX < 100 ? 6.7e-4 : 2.4e-4;
+    const empiricalPc = hits / 400;
+
+    return {
+      conjunction_id: req.conjunction_id || "CONJ-29834",
+      secondary_name: req.secondary_name || "FENGYUN-1C-DEB-29834",
+      encounter_geometry: {
+        miss_x_m: missX,
+        miss_y_m: missY,
+        miss_distance_m: Math.round(Math.sqrt(missX * missX + missY * missY) * 10) / 10,
+        hard_body_radius_m: radius,
+      },
+      uncertainty_covariance: {
+        sigma_x_m: sigX,
+        sigma_y_m: sigY,
+        rho: 0.0,
+        ellipse_1sigma: {
+          semi_major_m: sigY,
+          semi_minor_m: sigX,
+          theta_rad: 0.0,
+          theta_deg: 0.0,
+          area_m2: Math.round(Math.PI * sigX * sigY),
+        },
+        ellipse_2sigma: {
+          semi_major_m: sigY * 2,
+          semi_minor_m: sigX * 2,
+          theta_rad: 0.0,
+          theta_deg: 0.0,
+          area_m2: Math.round(Math.PI * sigX * sigY * 4),
+        },
+        ellipse_3sigma: {
+          semi_major_m: sigY * 3,
+          semi_minor_m: sigX * 3,
+          theta_rad: 0.0,
+          theta_deg: 0.0,
+          area_m2: Math.round(Math.PI * sigX * sigY * 9),
+        },
+      },
+      comparison: {
+        foster_2d_analytical_pc: analyticalPc,
+        foster_latency_ms: 0.14,
+        monte_carlo_empirical_pc: empiricalPc,
+        monte_carlo_latency_ms: 1.82,
+        monte_carlo_trials: trials,
+        monte_carlo_hits: hits,
+        monte_carlo_error_estimate: Math.round(Math.sqrt(Math.max(1e-10, (analyticalPc * (1 - analyticalPc)) / trials)) * 1e6) / 1e6,
+        speedup_factor: 13.0,
+        risk_class: analyticalPc >= 1e-4 ? "CRITICAL" : "WATCH",
+      },
+      scatter_points: scatterPoints,
+      regulatory_disclaimer: "Per Space Safety Rules, TLE-derived encounter covariances are assumed screening models. CDM covariance required for definitive CAM execution.",
+    };
+  }
+}
+
+export async function fetchOrbitTracks(assetId: string = "SENTINEL-2A"): Promise<OrbitTracksResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/debris/orbit-tracks/${assetId}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const primaryTrack = [];
+    const debrisTrack = [];
+    const points = 48;
+    for (let i = 0; i < points; i++) {
+      const frac = i / points;
+      const angle = frac * 2 * Math.PI;
+      // SSO track
+      const lat1 = Math.sin(angle) * 82.0;
+      const lon1 = (((frac * 360.0 - 180.0) + 180.0) % 360.0) - 180.0;
+      const rKm = 7164.0;
+      primaryTrack.push({
+        lat: Math.round(lat1 * 100) / 100,
+        lon: Math.round(lon1 * 100) / 100,
+        alt_km: 786.0,
+        time_offset_min: Math.round((frac * 100.5) * 10) / 10,
+        x_eci_km: Math.round(rKm * Math.cos(angle) * 10) / 10,
+        y_eci_km: Math.round(rKm * Math.sin(angle) * 0.15 * 10) / 10,
+        z_eci_km: Math.round(rKm * Math.sin(angle) * 0.98 * 10) / 10,
+      });
+
+      // Debris retrograde crossing track
+      const lat2 = Math.sin(angle + 0.8) * 74.0;
+      const lon2 = (((-frac * 360.0 + 90.0) + 180.0) % 360.0) - 180.0;
+      debrisTrack.push({
+        lat: Math.round(lat2 * 100) / 100,
+        lon: Math.round(lon2 * 100) / 100,
+        alt_km: 840.0,
+        time_offset_min: Math.round((frac * 102.0) * 10) / 10,
+        x_eci_km: Math.round(7218.0 * Math.cos(angle + 0.8) * 10) / 10,
+        y_eci_km: Math.round(7218.0 * Math.sin(angle + 0.8) * 0.5 * 10) / 10,
+        z_eci_km: Math.round(7218.0 * Math.sin(angle + 0.8) * 0.85 * 10) / 10,
+      });
+    }
+
+    return {
+      asset_id: assetId,
+      primary_track: primaryTrack,
+      debris_track: debrisTrack,
+      encounter_waypoint: {
+        lat: 14.25,
+        lon: -48.12,
+        alt_km: 786.0,
+        time_offset_min: 42.5,
+        x_eci_km: 6920.0,
+        y_eci_km: 1250.0,
+        z_eci_km: 1480.0,
+      },
+      orbital_period_min: 100.5,
+      inclination_deg: 98.62,
+      altitude_km: 786.0,
+      synthetic: true,
+    };
   }
 }

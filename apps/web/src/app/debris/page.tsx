@@ -3,19 +3,26 @@
 import React, { useState } from "react";
 import {
   Orbit,
-  AlertTriangle,
   Compass,
   Crosshair,
   ShieldAlert,
-  ArrowUpRight,
   Clock,
   Layers,
+  Rocket,
+  Globe,
+  Sliders,
+  Sparkles,
 } from "lucide-react";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
 import { StatusBadge } from "../../components/StatusBadge";
+import { ManeuverSimulator } from "../../components/ManeuverSimulator";
+import { UncertaintyLab } from "../../components/UncertaintyLab";
+import { OrbitTwin3D } from "../../components/OrbitTwin3D";
+import { playAudioCue } from "../../lib/audio";
 
 export default function DebrisPage() {
   const [selectedConjunction, setSelectedConjunction] = useState<string>("CONJ-29834");
+  const [activeTab, setActiveTab] = useState<"twin" | "simulator" | "uncertainty" | "overview">("twin");
 
   const conjunctions = [
     {
@@ -88,96 +95,95 @@ export default function DebrisPage() {
         </div>
       </div>
 
-      {/* 2D Orbital Ground Track Map Visualization */}
-      <div className="p-5 rounded-card bg-charcoal border border-white/10 space-y-3">
-        <div className="flex items-center justify-between border-b border-white/10 pb-2">
-          <div className="flex items-center gap-2 text-xs font-mono text-ash uppercase tracking-wider">
-            <Crosshair className="w-4 h-4 text-rose-400" />
-            Equirectangular Orbit Ground Track & Close Encounter Waypoint
-          </div>
-          <div className="flex items-center gap-3 text-[11px] font-mono">
-            <span className="flex items-center gap-1 text-sky-400">
-              <span className="w-2 h-0.5 bg-sky-400 inline-block" /> SENTINEL-2A (SSO)
-            </span>
-            <span className="flex items-center gap-1 text-arterial">
-              <span className="w-2 h-0.5 bg-arterial inline-block" /> {active.secondaryName}
-            </span>
-          </div>
-        </div>
+      {/* Navigation Sub-Tabs */}
+      <div className="flex items-center gap-2 border-b border-white/10 pb-2 overflow-x-auto">
+        <button
+          onClick={() => {
+            playAudioCue("click");
+            setActiveTab("twin");
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-nav text-xs font-mono transition-all whitespace-nowrap ${
+            activeTab === "twin"
+              ? "bg-sky-500/20 text-sky-300 border border-sky-400/50 shadow-glass font-bold"
+              : "text-ash hover:text-bone hover:bg-smoke"
+          }`}
+        >
+          <Globe className="w-3.5 h-3.5" />
+          <span>3D Orbit Digital Twin (F1)</span>
+        </button>
 
-        {/* SVG Orbital Ground Track Visualizer */}
-        <div className="relative w-full aspect-[2/1] max-h-[300px] bg-void rounded-card border border-white/5 overflow-hidden flex items-center justify-center">
-          <svg viewBox="0 0 720 360" className="w-full h-full">
-            {/* World Grid Lines */}
-            <defs>
-              <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#171617" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="720" height="360" fill="url(#grid)" />
+        <button
+          onClick={() => {
+            playAudioCue("click");
+            setActiveTab("simulator");
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-nav text-xs font-mono transition-all whitespace-nowrap ${
+            activeTab === "simulator"
+              ? "bg-sky-500/20 text-sky-300 border border-sky-400/50 shadow-glass font-bold"
+              : "text-ash hover:text-bone hover:bg-smoke"
+          }`}
+        >
+          <Rocket className="w-3.5 h-3.5" />
+          <span>CAM What-If Simulator (F2)</span>
+        </button>
 
-            {/* Equator & Prime Meridian */}
-            <line x1="0" y1="180" x2="720" y2="180" stroke="#222" strokeWidth="1" />
-            <line x1="360" y1="0" x2="360" y2="360" stroke="#222" strokeWidth="1" />
+        <button
+          onClick={() => {
+            playAudioCue("click");
+            setActiveTab("uncertainty");
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-nav text-xs font-mono transition-all whitespace-nowrap ${
+            activeTab === "uncertainty"
+              ? "bg-sky-500/20 text-sky-300 border border-sky-400/50 shadow-glass font-bold"
+              : "text-ash hover:text-bone hover:bg-smoke"
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5" />
+          <span>B-Plane Uncertainty Lab (F3)</span>
+        </button>
 
-            {/* Simplified Continental Outlines (Abstracted for dark aesthetic) */}
-            <path
-              d="M 120 100 Q 180 80 220 110 T 260 160 T 220 240 T 160 260 T 120 180 Z"
-              fill="#111"
-              stroke="#262525"
-              strokeWidth="0.8"
-            />
-            <path
-              d="M 380 90 Q 440 70 520 80 T 600 130 T 540 220 T 420 200 Z"
-              fill="#111"
-              stroke="#262525"
-              strokeWidth="0.8"
-            />
-
-            {/* Primary Orbit Ground Track (Sinusoidal orbital projection) */}
-            <path
-              d="M 20 280 Q 180 40 360 280 T 700 40"
-              fill="none"
-              stroke="#38bdf8"
-              strokeWidth="2"
-              strokeDasharray="6 3"
-              className="opacity-80"
-            />
-
-            {/* Secondary Debris Orbit Ground Track */}
-            <path
-              d="M 20 80 Q 200 320 360 120 T 700 300"
-              fill="none"
-              stroke="#fe1e34"
-              strokeWidth="2"
-              strokeDasharray="4 2"
-              className="opacity-80"
-            />
-
-            {/* Conjunction Encounter Waypoint Intersection */}
-            <circle cx="360" cy="180" r="18" fill="rgba(254, 30, 52, 0.2)" className="animate-ping" />
-            <circle cx="360" cy="180" r="7" fill="#fe1e34" stroke="#fff" strokeWidth="2" />
-
-            {/* Satellite Live Icon */}
-            <circle cx="280" cy="230" r="5" fill="#38bdf8" stroke="#fff" strokeWidth="1.5" />
-            <text x="290" y="235" fill="#38bdf8" fontSize="10" fontFamily="monospace">
-              S2A (786 km)
-            </text>
-
-            {/* Debris Icon */}
-            <circle cx="440" cy="140" r="4" fill="#fe1e34" />
-            <text x="450" y="145" fill="#fe1e34" fontSize="10" fontFamily="monospace">
-              {active.secondaryName.split("-")[0]}-{active.noradId}
-            </text>
-          </svg>
-
-          {/* Overlay Box */}
-          <div className="absolute top-3 left-3 px-3 py-1.5 rounded-nav bg-charcoal/80 backdrop-blur-md border border-white/10 text-xs font-mono">
-            <span className="text-pebble">Encounter Lat/Lon: </span>
-            <span className="text-bone font-semibold">0.00° N, 0.00° E (B-Plane Apex)</span>
-          </div>
-        </div>
+        <button
+          onClick={() => {
+            playAudioCue("click");
+            setActiveTab("overview");
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-nav text-xs font-mono transition-all whitespace-nowrap ${
+            activeTab === "overview"
+              ? "bg-sky-500/20 text-sky-300 border border-sky-400/50 shadow-glass font-bold"
+              : "text-ash hover:text-bone hover:bg-smoke"
+          }`}
+        >
+          <Sliders className="w-3.5 h-3.5" />
+          <span>All Mission Diagnostics</span>
+        </button>
       </div>
+
+      {/* Tab 1: 3D Orbit Digital Twin */}
+      {(activeTab === "twin" || activeTab === "overview") && (
+        <OrbitTwin3D
+          assetId="SENTINEL-2A"
+          selectedConjunctionName={active.secondaryName}
+        />
+      )}
+
+      {/* Tab 2: Maneuver What-If Simulator */}
+      {(activeTab === "simulator" || activeTab === "overview") && (
+        <ManeuverSimulator
+          conjunctionId={active.id}
+          secondaryName={active.secondaryName}
+          initialMissM={active.missDistanceM}
+          relativeVelocityKms={active.relativeVelocityKms}
+        />
+      )}
+
+      {/* Tab 3: B-Plane Uncertainty Lab */}
+      {(activeTab === "uncertainty" || activeTab === "overview") && (
+        <UncertaintyLab
+          conjunctionId={active.id}
+          secondaryName={active.secondaryName}
+          initialMissM={active.missDistanceM}
+        />
+      )}
 
       {/* Conjunction Assessment Table & Selected Diagnostics */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -196,7 +202,10 @@ export default function DebrisPage() {
               return (
                 <div
                   key={c.id}
-                  onClick={() => setSelectedConjunction(c.id)}
+                  onClick={() => {
+                    playAudioCue("click");
+                    setSelectedConjunction(c.id);
+                  }}
                   className={`p-3.5 rounded-card cursor-pointer transition-all border ${
                     isSelected
                       ? "bg-smoke border-rose-500/80 shadow-glass"
@@ -218,13 +227,19 @@ export default function DebrisPage() {
                     </div>
                     <div>
                       <div className="text-[10px] uppercase">Miss Distance</div>
-                      <div className={`font-semibold ${c.missDistanceM < 1000 ? "text-arterial" : "text-bone"}`}>
-                        {c.missDistanceM < 1000 ? `${c.missDistanceM.toFixed(1)} m` : `${(c.missDistanceM / 1000).toFixed(2)} km`}
+                      <div
+                        className={`font-semibold ${c.missDistanceM < 1000 ? "text-arterial" : "text-bone"}`}
+                      >
+                        {c.missDistanceM < 1000
+                          ? `${c.missDistanceM.toFixed(1)} m`
+                          : `${(c.missDistanceM / 1000).toFixed(2)} km`}
                       </div>
                     </div>
                     <div>
                       <div className="text-[10px] uppercase">Collision Pc</div>
-                      <div className={`font-semibold ${c.pc >= 1e-4 ? "text-arterial font-bold" : "text-bone"}`}>
+                      <div
+                        className={`font-semibold ${c.pc >= 1e-4 ? "text-arterial font-bold" : "text-bone"}`}
+                      >
                         {c.pc.toExponential(2)}
                       </div>
                     </div>
@@ -255,7 +270,9 @@ export default function DebrisPage() {
               </div>
               <div className="flex justify-between py-1 border-b border-white/5">
                 <span className="text-pebble">Foster 2-D Probability:</span>
-                <span className={`font-bold ${active.pc >= 1e-4 ? "text-arterial text-sm" : "text-bone"}`}>
+                <span
+                  className={`font-bold ${active.pc >= 1e-4 ? "text-arterial text-sm" : "text-bone"}`}
+                >
                   {active.pc.toExponential(2)}
                 </span>
               </div>
@@ -295,10 +312,12 @@ export default function DebrisPage() {
               CAM Advisory (Human Approval Required)
             </div>
             <p className="text-xs text-ash font-sans">
-              Calculated Pc ({active.pc.toExponential(2)}) breaches flight safety rules. Recommended maneuver window: T - 8.0h using radial thrust pulse (+0.12 m/s &Delta;V).
+              Calculated Pc ({active.pc.toExponential(2)}) breaches flight safety rules. Recommended
+              maneuver window: T - 8.0h using radial thrust pulse (+0.12 m/s &Delta;V).
             </p>
             <div className="p-2.5 rounded bg-void/80 border border-white/5 text-[11px] font-mono text-pebble">
-              <strong>Advisory Directive:</strong> Automated thruster firing is strictly disabled. Submit formal maneuver requisition to Flight Dynamics team.
+              <strong>Advisory Directive:</strong> Automated thruster firing is strictly disabled.
+              Submit formal maneuver requisition to Flight Dynamics team.
             </div>
           </div>
         </div>
