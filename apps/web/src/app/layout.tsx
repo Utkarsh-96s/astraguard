@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "../components/Navbar";
+import { Footer } from "../components/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,7 +19,8 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "ASTRA-GUARD | AI Space Mission Safety & Intelligence",
-  description: "AI-Powered Integrated Space Mission Safety & Intelligence Platform (Team OMEN · AITHON 2.0)",
+  description:
+    "Integrated Space Mission Safety & Intelligence Platform fusing Spacecraft Health, Debris Collision Risk, and Disaster Intelligence (Team OMEN · AITHON 2.0)",
 };
 
 export default function RootLayout({
@@ -27,8 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} bg-void text-bone antialiased min-h-screen flex flex-col`}>
-        {children}
+      <body
+        className={`${inter.variable} ${playfair.variable} bg-void text-bone antialiased min-h-screen flex flex-col font-sans selection:bg-arterial selection:text-white`}
+      >
+        <Navbar />
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
