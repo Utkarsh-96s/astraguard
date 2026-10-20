@@ -1,0 +1,78 @@
+{
+  "fusion_formulation": "Noisy-OR: R_safety = 1 - (1 - r_h)(1 - r_d); R_mission = 100 * (0.85*R_safety + 0.15*r_e)",
+  "hard_overrides": {
+    "conjunction_pc_critical_threshold": 0.0001,
+    "persistent_health_warning_threshold": 0.9,
+    "health_degraded_eo_deferral_threshold": 0.5
+  },
+  "canonical_scenarios": [
+    {
+      "scenario_id": "SCENARIO-01-NOMINAL",
+      "name": "Nominal Flight Operations",
+      "score": 6.53,
+      "level": "NOMINAL",
+      "r_safety": 0.0592,
+      "critical_override_applied": false,
+      "warning_override_applied": false,
+      "defer_eo_payloads": false,
+      "top_driver": "eps_battery_temp_c",
+      "top_driver_share": 52.3,
+      "recommendation_count": 1,
+      "primary_action": "MONITOR_NOMINAL",
+      "rationale": "NOMINAL MISSION OPERATIONS: All subsystems and orbital parameters for satellite 'SENTINEL-2A' are operating within normal flight margins (r_h=0.04, r_d=0.02, r_e=0.10). Mission Risk Score is 6.5 (NOMINAL). No flight director action required."
+    },
+    {
+      "scenario_id": "SCENARIO-02-HEALTH-ANOMALY",
+      "name": "EPS Battery Thermal Runaway Anomaly",
+      "score": 62.91,
+      "level": "WARNING",
+      "r_safety": 0.696,
+      "critical_override_applied": false,
+      "warning_override_applied": false,
+      "defer_eo_payloads": true,
+      "top_driver": "eps_battery_temp_c",
+      "top_driver_share": 69.7,
+      "recommendation_count": 2,
+      "primary_action": "TELEMETRY_DIAGNOSTIC",
+      "rationale": "SPACECRAFT HEALTH ANOMALY: Satellite 'SENTINEL-2A' telemetry anomaly detected on subsystem 'eps_battery_temp_c' with elevated health risk r_h=0.68. Total Mission Risk Score is 62.9 (WARNING). Secondary imaging payloads deferred. Flight director telemetry review recommended."
+    },
+    {
+      "scenario_id": "SCENARIO-03-CRITICAL-CONJUNCTION",
+      "name": "Critical Fengyun-1C Debris Conjunction",
+      "score": 82.46,
+      "level": "CRITICAL",
+      "r_safety": 0.9436,
+      "critical_override_applied": true,
+      "warning_override_applied": false,
+      "defer_eo_payloads": false,
+      "top_driver": "pc_collision_probability",
+      "top_driver_share": 75.4,
+      "recommendation_count": 1,
+      "primary_action": "CAM_ASSESSMENT",
+      "rationale": "CRITICAL CONJUNCTION EMERGENCY: Satellite 'SENTINEL-2A' has breached safety limits. Hard safety override triggered by close encounter with 'FENGYUN-1C-DEB-29834' (collision probability Pc=2.40e-04 exceeding threshold 1.00e-04). Miss distance is 315.4 m with TCA in 14.2 h. Immediate flight director conjunction assessment required."
+    },
+    {
+      "scenario_id": "SCENARIO-04-DISASTER-TASKING",
+      "name": "Cyclone Flood Emergency Observation Tasking",
+      "score": 32.51,
+      "level": "WATCH",
+      "r_safety": 0.2272,
+      "critical_override_applied": false,
+      "warning_override_applied": false,
+      "defer_eo_payloads": false,
+      "top_driver": "flooded_area_km2",
+      "top_driver_share": 64.7,
+      "recommendation_count": 1,
+      "primary_action": "TASK_DISASTER_IMAGERY",
+      "rationale": "HIGH-PRIORITY EARTH OBSERVATION TASKING: Active flood event detected (320.0 km\u00b2). Spacecraft subsystems and orbit are nominal (r_h=0.16, r_d=0.08). Observation urgency elevates Mission Score to 32.5 (WATCH). Target acquisition recommended."
+    }
+  ],
+  "invariant_verification": {
+    "trials_tested": 5000,
+    "monotonicity_violations": 0,
+    "override_violations": 0,
+    "deferral_violations": 0,
+    "determinism_verified": true
+  },
+  "timestamp": "2026-10-20T10:03:30.256366"
+}
