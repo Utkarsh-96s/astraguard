@@ -1,0 +1,48 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "DISASTER-FLOOD-001",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.5,
+              24.3
+            ],
+            [
+              67.5,
+              24.3
+            ],
+            [
+              67.5,
+              25.3
+            ],
+            [
+              66.5,
+              25.3
+            ],
+            [
+              66.5,
+              24.3
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "event_id": "DISASTER-FLOOD-001",
+        "type": "flood",
+        "area_km2": 145.8,
+        "priority": 0.88,
+        "bbox": {
+          "min_lon": 66.5,
+          "min_lat": 24.3,
+          "max_lon": 67.5,
+          "max_lat": 25.3
+        }
+      }
+    }
+  ]
+}

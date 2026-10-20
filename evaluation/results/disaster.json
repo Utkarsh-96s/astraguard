@@ -1,0 +1,21 @@
+{
+  "benchmark_dataset": "Sen1Floods11 / Synthetic Sentinel-1 SAR Flood Benchmark",
+  "model_architecture": "PyTorch Lightweight 2-Level U-Net with Skip Connections",
+  "segmentation_metrics": {
+    "iou": 0.9548,
+    "dice_f1": 0.9768,
+    "min_iou": 0.9363,
+    "max_iou": 0.9676,
+    "test_chips_evaluated": 15
+  },
+  "artifacts_generated": {
+    "overlay_png": "data/synthetic/masks/sample_flood_overlay.png",
+    "geojson_footprint": "data/synthetic/tiles/sample_flood_footprint.geojson"
+  },
+  "observation_priority_cross_effects": {
+    "nominal_priority": 0.691,
+    "degraded_health_priority": 0.277,
+    "deferral_triggered_at_health_threshold": 0.5
+  },
+  "timestamp": "2026-10-20T01:26:44.346155"
+}
