@@ -11,6 +11,7 @@ from app.routers.alerts import router as alerts_router
 from app.routers.assets import router as assets_router
 from app.routers.bot import router as bot_router
 from app.routers.conjunctions import router as conjunctions_router
+from app.routers.constellation import router as constellation_router
 from app.routers.demo import router as demo_router
 from app.routers.disaster import router as disaster_router
 from app.routers.features import router as features_router
@@ -65,6 +66,7 @@ def create_app() -> FastAPI:
     app.include_router(objects_router)
     app.include_router(disaster_router)
     app.include_router(conjunctions_router)
+    app.include_router(constellation_router)
     app.include_router(assets_router)
     app.include_router(risk_router)
     app.include_router(alerts_router)

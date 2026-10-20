@@ -229,3 +229,116 @@ export interface OrbitTracksResponse {
   altitude_km: number;
   synthetic: boolean;
 }
+
+export interface DisasterScenario {
+  id: string;
+  name: string;
+  location: string;
+  country: string;
+  sensor: string;
+  sensor_type: string;
+  polarization: string;
+  resolution_m: number;
+  acquisition_date: string;
+  disaster_type: string;
+  area_km2: number;
+  priority: number;
+  confidence: number;
+  mean_iou: number;
+  mean_dice: number;
+  backscatter_drop_db: number;
+  geojson_footprint: {
+    type: string;
+    geometry: {
+      type: string;
+      coordinates: number[][][];
+    };
+    properties: {
+      name: string;
+      bbox: number[];
+    };
+  };
+  infrastructure_impact: {
+    substations_affected: number;
+    bridges_critical: number;
+    hospitals_warning: number;
+    agricultural_hectares: number;
+    population_exposed: number;
+  };
+  priority_drivers: {
+    factor: string;
+    weight: number;
+    score: number;
+  }[];
+  description: string;
+}
+
+export interface DisasterDeckResponse {
+  count: number;
+  scenarios: DisasterScenario[];
+  synthetic: boolean;
+}
+
+export interface FleetSubsystems {
+  eps: { battery_temp_c: number; bus_voltage_v: number; solar_current_a: number; status: string };
+  thermal: { payload_temp_c: number; radiator_temp_c: number; status: string };
+  adcs: { wheel_rpm: number; attitude_error_deg: number; status: string };
+  obc: { cpu_load_pct: number; memory_used_pct: number; status: string };
+  payload: { active_instrument: string; duty_cycle_pct: number; status: string };
+}
+
+export interface FleetAsset {
+  id: string;
+  name: string;
+  norad_id: number;
+  type: string;
+  orbit: {
+    altitude_km: number;
+    inclination_deg: number;
+    period_min: number;
+    local_time_descending_node: string;
+  };
+  subsystems: FleetSubsystems;
+  health_score: number;
+  risk_level: string;
+}
+
+export interface CrossConjunctionItem {
+  id: string;
+  primary_asset_id: string;
+  primary_name: string;
+  secondary_name: string;
+  secondary_norad_id: number;
+  tca_hours: number;
+  miss_distance_m: number;
+  relative_velocity_kms: number;
+  pc: number;
+  risk_class: string;
+  screening_grade: boolean;
+}
+
+export interface ConstellationMatrixResponse {
+  fleet_size: number;
+  aggregate_health_score: number;
+  fleet_risk_level: string;
+  assets: FleetAsset[];
+  cross_conjunctions: CrossConjunctionItem[];
+  active_threats_count: number;
+  timestamp: string;
+}
+
+export interface LiveTelemetryPacket {
+  asset_id: string;
+  timestamp: string;
+  sequence_number: number;
+  channels: {
+    eps_battery_temp_c: number;
+    eps_bus_voltage_v: number;
+    eps_solar_array_current_a: number;
+    adcs_reaction_wheel_rpm: number;
+    adcs_attitude_jitter_deg: number;
+    obc_cpu_load_pct: number;
+  };
+  synthetic: boolean;
+}
+

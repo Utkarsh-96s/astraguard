@@ -4,7 +4,11 @@
 import {
   Alert,
   ConjunctionItem,
+  ConstellationMatrixResponse,
+  DisasterDeckResponse,
   DisasterEventItem,
+  DisasterScenario,
+  LiveTelemetryPacket,
   ManeuverRequest,
   ManeuverResponse,
   ModelRegistryEntry,
@@ -541,3 +545,385 @@ export async function fetchOrbitTracks(assetId: string = "SENTINEL-2A"): Promise
     };
   }
 }
+
+export async function fetchDisasterDeck(): Promise<DisasterDeckResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/events/disaster-deck`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    return {
+      count: 4,
+      scenarios: [
+        {
+          id: "DIS-EMILIA-FLOOD-2023",
+          name: "Emilia-Romagna Flash & River Inundation",
+          location: "Emilia-Romagna, Italy",
+          country: "Italy",
+          sensor: "Sentinel-1 C-SAR (Synthetic Aperture Radar)",
+          sensor_type: "radar",
+          polarization: "VV + VH Dual-Pol",
+          resolution_m: 10.0,
+          acquisition_date: "2023-05-18T05:32:00Z",
+          disaster_type: "flood",
+          area_km2: 480.0,
+          priority: 0.88,
+          confidence: 0.96,
+          mean_iou: 0.9548,
+          mean_dice: 0.9768,
+          backscatter_drop_db: -4.2,
+          geojson_footprint: {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [11.85, 44.3],
+                  [12.35, 44.3],
+                  [12.35, 44.65],
+                  [11.85, 44.65],
+                  [11.85, 44.3],
+                ],
+              ],
+            },
+            properties: {
+              name: "Bologna-Ravenna-Faenza Basin",
+              bbox: [11.85, 44.3, 12.35, 44.65],
+            },
+          },
+          infrastructure_impact: {
+            substations_affected: 14,
+            bridges_critical: 28,
+            hospitals_warning: 3,
+            agricultural_hectares: 12400.0,
+            population_exposed: 185000,
+          },
+          priority_drivers: [
+            {"factor": "Inundated Extent (480 km²)", "weight": 0.35, "score": 0.35},
+            {"factor": "Critical Energy & Transport Nodes", "weight": 0.25, "score": 0.23},
+            {"factor": "Agricultural Economic Risk", "weight": 0.2, "score": 0.18},
+            {"factor": "Sensor Cloud Penetration (SAR All-Weather)", "weight": 0.2, "score": 0.12},
+          ],
+          description: "Catastrophic river overflows triggered by 36 hours of extreme precipitation across 23 river basins.",
+        },
+        {
+          id: "DIS-BRAHMAPUTRA-01",
+          name: "Brahmaputra River Basin Monsoonal Surge",
+          location: "Assam, India",
+          country: "India",
+          sensor: "Sentinel-1 C-SAR",
+          sensor_type: "radar",
+          polarization: "Dual-Pol VV+VH",
+          resolution_m: 10.0,
+          acquisition_date: "2026-10-19T00:15:00Z",
+          disaster_type: "flood",
+          area_km2: 320.0,
+          priority: 0.78,
+          confidence: 0.94,
+          mean_iou: 0.942,
+          mean_dice: 0.9701,
+          backscatter_drop_db: -3.8,
+          geojson_footprint: {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [85.0, 20.0],
+                  [85.5, 20.0],
+                  [85.5, 20.5],
+                  [85.0, 20.5],
+                  [85.0, 20.0],
+                ],
+              ],
+            },
+            properties: {
+              name: "Brahmaputra Flood Plain",
+              bbox: [85.0, 20.0, 85.5, 20.5],
+            },
+          },
+          infrastructure_impact: {
+            substations_affected: 8,
+            bridges_critical: 19,
+            hospitals_warning: 2,
+            agricultural_hectares: 8900.0,
+            population_exposed: 95000,
+          },
+          priority_drivers: [
+            {"factor": "Inundated Extent (320 km²)", "weight": 0.35, "score": 0.28},
+            {"factor": "High Population Vulnerability", "weight": 0.25, "score": 0.24},
+            {"factor": "River Embankment Breaches", "weight": 0.2, "score": 0.16},
+            {"factor": "Repeat Optical Cloud Cover", "weight": 0.2, "score": 0.1},
+          ],
+          description: "Monsoonal river expansion inundating agricultural lowlands and low-lying river islands.",
+        },
+        {
+          id: "DIS-GREECE-EVROS-2023",
+          name: "Evros Megafire & Dadia Forest Burn Scar",
+          location: "Evros, Greece",
+          country: "Greece",
+          sensor: "Sentinel-2 MSI (Multi-Spectral Instrument)",
+          sensor_type: "optical",
+          polarization: "SWIR-2 / NIR / Red Normalized Burn Ratio",
+          resolution_m: 10.0,
+          acquisition_date: "2023-08-28T09:12:00Z",
+          disaster_type: "wildfire",
+          area_km2: 935.0,
+          priority: 0.94,
+          confidence: 0.98,
+          mean_iou: 0.961,
+          mean_dice: 0.9802,
+          backscatter_drop_db: 0.0,
+          geojson_footprint: {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [25.8, 40.85],
+                  [26.4, 40.85],
+                  [26.4, 41.35],
+                  [25.8, 41.35],
+                  [25.8, 40.85],
+                ],
+              ],
+            },
+            properties: {
+              name: "Evros & Dadia Biosphere Reserve",
+              bbox: [25.8, 40.85, 26.4, 41.35],
+            },
+          },
+          infrastructure_impact: {
+            substations_affected: 6,
+            bridges_critical: 8,
+            hospitals_warning: 1,
+            agricultural_hectares: 34000.0,
+            population_exposed: 42000,
+          },
+          priority_drivers: [
+            {"factor": "Massive Burn Scar Extent (935 km²)", "weight": 0.4, "score": 0.39},
+            {"factor": "Protected Biosphere Destruction", "weight": 0.25, "score": 0.25},
+            {"factor": "Border Region Transport Corridor", "weight": 0.2, "score": 0.18},
+            {"factor": "dNBR Burn Severity Index", "weight": 0.15, "score": 0.12},
+          ],
+          description: "Largest single recorded wildfire in EU history, consuming protected black vulture habitat.",
+        },
+        {
+          id: "DIS-VALENCIA-FLASH-2024",
+          name: "Valencia DANA Flash Flood & Ravine Torrent",
+          location: "Valencia, Spain",
+          country: "Spain",
+          sensor: "Sentinel-1 C-SAR + Sentinel-2 MSI Multi-Sensor Fusion",
+          sensor_type: "radar_optical_fusion",
+          polarization: "Dual-Pol + RGB/NIR",
+          resolution_m: 10.0,
+          acquisition_date: "2024-10-30T06:14:00Z",
+          disaster_type: "flood",
+          area_km2: 215.0,
+          priority: 0.84,
+          confidence: 0.95,
+          mean_iou: 0.948,
+          mean_dice: 0.9734,
+          backscatter_drop_db: -5.1,
+          geojson_footprint: {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [-0.55, 39.3],
+                  [-0.25, 39.3],
+                  [-0.25, 39.6],
+                  [-0.55, 39.6],
+                  [-0.55, 39.3],
+                ],
+              ],
+            },
+            properties: {
+              name: "Rambla del Poyo & Horta Sud",
+              bbox: [-0.55, 39.3, -0.25, 39.6],
+            },
+          },
+          infrastructure_impact: {
+            substations_affected: 22,
+            bridges_critical: 41,
+            hospitals_warning: 5,
+            agricultural_hectares: 7200.0,
+            population_exposed: 240000,
+          },
+          priority_drivers: [
+            {"factor": "High Urban Population Density", "weight": 0.35, "score": 0.33},
+            {"factor": "Critical Highway & Rail Cutoffs", "weight": 0.25, "score": 0.24},
+            {"factor": "Flash Surge Inundation", "weight": 0.25, "score": 0.17},
+            {"factor": "Rapid Cloud Clearing Multi-Sensor", "weight": 0.15, "score": 0.1},
+          ],
+          description: "Isolated high-altitude depression (DANA) causing unprecedented ravine surges across southern Valencia.",
+        },
+      ],
+      synthetic: true,
+    };
+  }
+}
+
+export async function fetchDisasterScenario(eventId: string): Promise<DisasterScenario> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/events/disaster-deck/${eventId}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const deck = await fetchDisasterDeck();
+    return deck.scenarios.find((s) => s.id === eventId) || deck.scenarios[0];
+  }
+}
+
+export async function fetchConstellationMatrix(): Promise<ConstellationMatrixResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/assets/constellation-matrix`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    return {
+      fleet_size: 3,
+      aggregate_health_score: 9.73,
+      fleet_risk_level: "NOMINAL",
+      assets: [
+        {
+          id: "SENTINEL-2A",
+          name: "Sentinel-2A (Optical MSI)",
+          norad_id: 40697,
+          type: "Optical Earth Observation",
+          orbit: {
+            altitude_km: 786.0,
+            inclination_deg: 98.62,
+            period_min: 100.5,
+            local_time_descending_node: "10:30 AM",
+          },
+          subsystems: {
+            eps: { battery_temp_c: 24.2, bus_voltage_v: 28.4, solar_current_a: 34.2, status: "NOMINAL" },
+            thermal: { payload_temp_c: 18.2, radiator_temp_c: -12.4, status: "NOMINAL" },
+            adcs: { wheel_rpm: 2450, attitude_error_deg: 0.002, status: "NOMINAL" },
+            obc: { cpu_load_pct: 28, memory_used_pct: 42, status: "NOMINAL" },
+            payload: { active_instrument: "MSI Multi-Spectral", duty_cycle_pct: 38, status: "ACTIVE" },
+          },
+          health_score: 9.8,
+          risk_level: "NOMINAL",
+        },
+        {
+          id: "SENTINEL-1A",
+          name: "Sentinel-1A (C-SAR Radar)",
+          norad_id: 39634,
+          type: "Synthetic Aperture Radar",
+          orbit: {
+            altitude_km: 693.0,
+            inclination_deg: 98.18,
+            period_min: 98.6,
+            local_time_descending_node: "06:00 PM",
+          },
+          subsystems: {
+            eps: { battery_temp_c: 26.5, bus_voltage_v: 28.1, solar_current_a: 42.0, status: "NOMINAL" },
+            thermal: { payload_temp_c: 22.0, radiator_temp_c: -8.5, status: "NOMINAL" },
+            adcs: { wheel_rpm: 3120, attitude_error_deg: 0.004, status: "NOMINAL" },
+            obc: { cpu_load_pct: 48, memory_used_pct: 56, status: "NOMINAL" },
+            payload: { active_instrument: "C-SAR Interferometric Wide", duty_cycle_pct: 65, status: "ACTIVE" },
+          },
+          health_score: 9.5,
+          risk_level: "NOMINAL",
+        },
+        {
+          id: "SENTINEL-3A",
+          name: "Sentinel-3A (OLCI & SLSTR)",
+          norad_id: 41335,
+          type: "Ocean & Land Environment",
+          orbit: {
+            altitude_km: 814.5,
+            inclination_deg: 98.65,
+            period_min: 101.2,
+            local_time_descending_node: "10:00 AM",
+          },
+          subsystems: {
+            eps: { battery_temp_c: 22.8, bus_voltage_v: 28.6, solar_current_a: 31.8, status: "NOMINAL" },
+            thermal: { payload_temp_c: -196.0, radiator_temp_c: -18.2, status: "NOMINAL" },
+            adcs: { wheel_rpm: 2100, attitude_error_deg: 0.002, status: "NOMINAL" },
+            obc: { cpu_load_pct: 24, memory_used_pct: 38, status: "NOMINAL" },
+            payload: { active_instrument: "OLCI / SLSTR Dual-Optics", duty_cycle_pct: 45, status: "ACTIVE" },
+          },
+          health_score: 9.9,
+          risk_level: "NOMINAL",
+        },
+      ],
+      cross_conjunctions: [
+        {
+          id: "CONJ-S2A-29834",
+          primary_asset_id: "SENTINEL-2A",
+          primary_name: "Sentinel-2A",
+          secondary_name: "FENGYUN-1C-DEB-29834",
+          secondary_norad_id: 29834,
+          tca_hours: 14.2,
+          miss_distance_m: 315.4,
+          relative_velocity_kms: 12.42,
+          pc: 2.4e-4,
+          risk_class: "CRITICAL",
+          screening_grade: true,
+        },
+        {
+          id: "CONJ-S1A-40112",
+          primary_asset_id: "SENTINEL-1A",
+          primary_name: "Sentinel-1A",
+          secondary_name: "COSMOS-2251-DEB-40112",
+          secondary_norad_id: 40112,
+          tca_hours: 21.4,
+          miss_distance_m: 1240.0,
+          relative_velocity_kms: 11.2,
+          pc: 1.8e-5,
+          risk_class: "WARNING",
+          screening_grade: true,
+        },
+        {
+          id: "CONJ-S3A-33441",
+          primary_asset_id: "SENTINEL-3A",
+          primary_name: "Sentinel-3A",
+          secondary_name: "IRIDIUM-33-DEB-33441",
+          secondary_norad_id: 33441,
+          tca_hours: 36.8,
+          miss_distance_m: 4850.0,
+          relative_velocity_kms: 13.85,
+          pc: 1.2e-6,
+          risk_class: "WATCH",
+          screening_grade: true,
+        },
+      ],
+      active_threats_count: 2,
+      timestamp: new Date().toISOString(),
+    };
+  }
+}
+
+export async function fetchLiveTelemetryPacket(
+  assetId: string = "SENTINEL-2A",
+  step: number = 0
+): Promise<LiveTelemetryPacket> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/assets/${assetId}/telemetry/live-stream?step=${step}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const t = step * 0.1;
+    return {
+      asset_id: assetId,
+      timestamp: new Date().toISOString(),
+      sequence_number: step,
+      channels: {
+        eps_battery_temp_c: Math.round((24.2 + 0.8 * Math.sin(t * 0.05)) * 100) / 100,
+        eps_bus_voltage_v: Math.round((28.4 + 0.2 * Math.cos(t * 0.05)) * 100) / 100,
+        eps_solar_array_current_a: Math.round((34.2 + 3.0 * Math.sin(t * 0.02)) * 100) / 100,
+        adcs_reaction_wheel_rpm: Math.round(2450 + 45 * Math.sin(t * 0.1)),
+        adcs_attitude_jitter_deg: Math.round((0.002 + 0.0005 * Math.sin(t * 0.2)) * 10000) / 10000,
+        obc_cpu_load_pct: Math.round(28 + 4 * Math.sin(t * 0.3)),
+      },
+      synthetic: true,
+    };
+  }
+}
+

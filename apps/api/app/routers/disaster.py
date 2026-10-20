@@ -1,12 +1,15 @@
 """Disaster Intelligence Events Query Router."""
 
-from fastapi import APIRouter, Depends, Query
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import DisasterEvent
 from app.db.session import get_db
 from app.schemas.disaster import DisasterEventItem, DisasterQueryResponse
+from app.services.disaster_deck_service import DisasterDeckService
 
 router = APIRouter(prefix="/api/v1/events", tags=["Disaster Intelligence"])
 
@@ -51,3 +54,33 @@ async def get_disaster_events(
         count=len(items),
         data=items,
     )
+
+
+@router.get(
+    "/disaster-deck",
+    summary="Get Earth Observation Disaster Intelligence Deck",
+    description="Retrieve catalog of multi-hazard Earth Observation scenarios with high-resolution footprints and infrastructure triage.",
+)
+async def get_disaster_deck() -> dict[str, Any]:
+    """Retrieve full disaster deck scenarios."""
+    service = DisasterDeckService()
+    scenarios = service.list_scenarios()
+    return {
+        "count": len(scenarios),
+        "scenarios": scenarios,
+        "synthetic": True,
+    }
+
+
+@router.get(
+    "/disaster-deck/{event_id}",
+    summary="Get single disaster deck scenario",
+    description="Retrieve detailed damage and layer metadata for a specific disaster scenario.",
+)
+async def get_disaster_scenario(event_id: str) -> dict[str, Any]:
+    """Retrieve specific disaster scenario by ID."""
+    service = DisasterDeckService()
+    scenario = service.get_scenario(event_id)
+    if not scenario:
+        raise HTTPException(status_code=404, detail=f"Disaster scenario '{event_id}' not found.")
+    return scenario
