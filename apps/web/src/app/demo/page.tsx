@@ -13,11 +13,14 @@ import {
   Orbit,
   Layers,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { RiskSnapshot, RiskLevel } from "../../lib/types";
 import { RiskGauge } from "../../components/RiskGauge";
 import { StatusBadge } from "../../components/StatusBadge";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
+import { PhysicsSandbox } from "../../components/PhysicsSandbox";
+import { playAudioCue } from "../../lib/audio";
 
 interface Scenario {
   id: string;
@@ -186,6 +189,7 @@ export default function DemoPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
+  const [demoTab, setDemoTab] = useState<"scenario" | "sandbox">("scenario");
 
   const activeScenario = scenarios[currentIndex];
 
@@ -215,18 +219,56 @@ export default function DemoPage() {
           </p>
         </div>
 
-        {/* Playback Controls Bar */}
-        <div className="flex items-center gap-2 p-1.5 rounded-nav bg-smoke border border-white/15 text-xs font-mono">
+        {/* Sub-Navigation Tabs */}
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded bg-arterial hover:bg-red-600 text-white font-bold transition-colors"
+            onClick={() => {
+              playAudioCue("click");
+              setDemoTab("scenario");
+            }}
+            className={`px-3 py-1.5 rounded-nav text-xs font-mono transition-all ${
+              demoTab === "scenario"
+                ? "bg-arterial/20 text-red-300 border border-arterial/50 font-bold"
+                : "bg-smoke text-ash hover:text-bone"
+            }`}
           >
-            {isPlaying ? (
-              <>
-                <PauseCircle className="w-4 h-4" /> Pause
-              </>
-            ) : (
-              <>
+            Flight Replay (PRD §9)
+          </button>
+          <button
+            onClick={() => {
+              playAudioCue("click");
+              setDemoTab("sandbox");
+            }}
+            className={`px-3 py-1.5 rounded-nav text-xs font-mono transition-all flex items-center gap-1.5 ${
+              demoTab === "sandbox"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-400/50 font-bold"
+                : "bg-smoke text-ash hover:text-bone"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Physics Sandbox (F6)</span>
+          </button>
+        </div>
+      </div>
+
+      {demoTab === "sandbox" ? (
+        <PhysicsSandbox />
+      ) : (
+        <>
+          {/* Timeline & Playback Card */}
+          <div className="flex items-center justify-between gap-4 p-4 rounded-card bg-charcoal border border-white/10">
+            <span className="text-xs font-mono uppercase text-ash">Playback Controls (PRD §9 Scenario):</span>
+            <div className="flex items-center gap-2 p-1.5 rounded-nav bg-smoke border border-white/15 text-xs font-mono">
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="flex items-center gap-1.5 px-3 py-1 rounded bg-arterial hover:bg-red-600 text-white font-bold transition-colors"
+              >
+                {isPlaying ? (
+                  <>
+                    <PauseCircle className="w-4 h-4" /> Pause
+                  </>
+                ) : (
+                  <>
                 <PlayCircle className="w-4 h-4" /> Play
               </>
             )}
@@ -353,6 +395,8 @@ export default function DemoPage() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
