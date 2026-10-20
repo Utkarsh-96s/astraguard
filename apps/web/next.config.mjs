@@ -2,6 +2,35 @@
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  async redirects() {
+    return [
+      {
+        source: "/health",
+        destination: "/dashboard/health",
+        permanent: false,
+      },
+      {
+        source: "/debris",
+        destination: "/dashboard/debris",
+        permanent: false,
+      },
+      {
+        source: "/disaster",
+        destination: "/dashboard/disaster",
+        permanent: false,
+      },
+      {
+        source: "/alerts",
+        destination: "/dashboard/alerts",
+        permanent: false,
+      },
+      {
+        source: "/models",
+        destination: "/dashboard/models",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

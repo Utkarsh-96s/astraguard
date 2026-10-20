@@ -23,6 +23,23 @@ async def get_demo_scenario() -> dict[str, Any]:
     return scenario_player.config
 
 
+@router.get("/scenarios", summary="List available demo scenarios")
+async def list_demo_scenarios() -> list[dict[str, Any]]:
+    """Retrieve catalog of demo scenarios/stages."""
+    stages = scenario_player.stages
+    return [
+        {
+            "id": f"SCENARIO-{s.get('stage_idx', idx) + 1:02d}",
+            "stage_idx": s.get("stage_idx", idx),
+            "hour": s.get("t_hour", 0),
+            "name": s.get("name", f"Scenario {idx + 1}"),
+            "description": s.get("description", ""),
+            "expected_level": s.get("expected", {}).get("level", "NOMINAL"),
+        }
+        for idx, s in enumerate(stages)
+    ]
+
+
 @router.get("/status", summary="Get current demo player status")
 async def get_demo_status() -> dict[str, Any]:
     """Retrieve current playback pointer, playing status, and latest stage evaluation."""

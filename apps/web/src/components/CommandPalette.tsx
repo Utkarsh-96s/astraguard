@@ -85,7 +85,7 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
       subtitle: "Unified Noisy-OR mission risk matrix and 3-factor radar",
       icon: Shield,
       shortcut: "G O",
-      action: () => router.push("/"),
+      action: () => router.push("/dashboard"),
     },
     {
       id: "nav-health",
@@ -94,7 +94,7 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
       subtitle: "LSTM Autoencoder telemetry reconstruction & persistence filter",
       icon: Activity,
       shortcut: "G H",
-      action: () => router.push("/health"),
+      action: () => router.push("/dashboard/health"),
     },
     {
       id: "nav-debris",
@@ -103,7 +103,7 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
       subtitle: "SGP4 orbit propagation, TCA refinement & Foster 2-D Pc",
       icon: Orbit,
       shortcut: "G D",
-      action: () => router.push("/debris"),
+      action: () => router.push("/dashboard/debris"),
     },
     {
       id: "nav-disaster",
@@ -112,7 +112,7 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
       subtitle: "SAR U-Net flood segmentation & differential damage mapping",
       icon: Layers,
       shortcut: "G E",
-      action: () => router.push("/disaster"),
+      action: () => router.push("/dashboard/disaster"),
     },
     {
       id: "nav-alerts",
@@ -121,7 +121,7 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
       subtitle: "Operator action audit trail, approval modal & bot dispatcher",
       icon: AlertTriangle,
       shortcut: "G A",
-      action: () => router.push("/alerts"),
+      action: () => router.push("/dashboard/alerts"),
     },
     {
       id: "nav-models",
@@ -130,7 +130,7 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
       subtitle: "Audited performance metrics, data hashes & references",
       icon: Radio,
       shortcut: "G M",
-      action: () => router.push("/models"),
+      action: () => router.push("/dashboard/models"),
     },
     {
       id: "nav-demo",

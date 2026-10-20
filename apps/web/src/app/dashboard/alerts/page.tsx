@@ -13,13 +13,13 @@ import {
   UserCheck,
   FileText,
 } from "lucide-react";
-import { Alert, AlertStatus, RiskLevel } from "../../lib/types";
-import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "../../lib/api";
-import { StatusBadge } from "../../components/StatusBadge";
-import { SimulatedBadge } from "../../components/SimulatedBadge";
-import { ProvenanceModal } from "../../components/ProvenanceModal";
-import { TelegramBotModal } from "../../components/TelegramBotModal";
-import { IncidentReportModal } from "../../components/IncidentReportModal";
+import { Alert, AlertStatus, RiskLevel } from "@/lib/types";
+import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "@/lib/api";
+import { StatusBadge } from "@/components/StatusBadge";
+import { SimulatedBadge } from "@/components/SimulatedBadge";
+import { ProvenanceModal } from "@/components/ProvenanceModal";
+import { TelegramBotModal } from "@/components/TelegramBotModal";
+import { IncidentReportModal } from "@/components/IncidentReportModal";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
@@ -280,7 +280,7 @@ export default function AlertsPage() {
                     Tamper-Evident Operator Audit Trail:
                   </span>
                   <div className="space-y-1">
-                    {alert.audit_actions.map((act, i) => (
+                    {alert.audit_actions.map((act: any, i: number) => (
                       <div
                         key={i}
                         className="px-2.5 py-1 rounded bg-smoke/40 text-[11px] font-mono flex items-center justify-between text-ash"

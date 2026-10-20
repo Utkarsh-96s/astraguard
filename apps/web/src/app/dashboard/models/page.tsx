@@ -12,10 +12,10 @@ import {
   ShieldCheck,
   TrendingUp,
 } from "lucide-react";
-import { ModelRegistryEntry } from "../../lib/types";
-import { fetchModelRegistry, FALLBACK_MODELS } from "../../lib/api";
-import { SimulatedBadge } from "../../components/SimulatedBadge";
-import { TrustLayerCard } from "../../components/TrustLayerCard";
+import { ModelRegistryEntry } from "@/lib/types";
+import { fetchModelRegistry, FALLBACK_MODELS } from "@/lib/api";
+import { SimulatedBadge } from "@/components/SimulatedBadge";
+import { TrustLayerCard } from "@/components/TrustLayerCard";
 
 export default function ModelsPage() {
   const [models, setModels] = useState<ModelRegistryEntry[]>(FALLBACK_MODELS);

@@ -46,12 +46,12 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
   };
 
   const navLinks = [
-    { href: "/", label: "Overview", icon: Shield },
-    { href: "/health", label: "Health", icon: Activity },
-    { href: "/debris", label: "Debris", icon: Orbit },
-    { href: "/disaster", label: "Disaster", icon: Layers },
-    { href: "/alerts", label: "Alerts", icon: AlertTriangle },
-    { href: "/models", label: "Models", icon: Radio },
+    { href: "/dashboard", label: "Overview", icon: Shield },
+    { href: "/dashboard/health", label: "Health", icon: Activity },
+    { href: "/dashboard/debris", label: "Debris", icon: Orbit },
+    { href: "/dashboard/disaster", label: "Disaster", icon: Layers },
+    { href: "/dashboard/alerts", label: "Alerts", icon: AlertTriangle },
+    { href: "/dashboard/models", label: "Models", icon: Radio },
     { href: "/demo", label: "Demo", icon: PlayCircle },
   ];
 

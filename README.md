@@ -148,6 +148,18 @@ npm run dev
 ```
 Open `http://localhost:3000` in your browser.
 
+#### Route Topology
+- `/`: Cinematic Marketing Homepage (SpaceX-style monochrome design system, full-bleed photography, live telemetry strip, scenario selector)
+- `/dashboard`: Mission Control Overview (fused risk score, drivers, recommendations, constellation matrix)
+- `/dashboard/health`: Spacecraft Health AI & Fault Injection Lab (EPS battery, reaction wheels, LSTM AE vs Isolation Forest)
+- `/dashboard/debris`: Orbit Digital Twin, CAM Maneuver Simulator & B-Plane Uncertainty Lab
+- `/dashboard/disaster`: Earth Observation Operations Deck & Multi-Hazard Scenarios
+- `/dashboard/alerts`: Mission Alerts HITL Console, Telegram Bot Simulator & Incident Report Generator
+- `/dashboard/models`: Transparent Model Registry & Calibration Metrics
+- `/demo` (or `/dashboard/demo`): Interactive Mission Scenario Player ("Day in the Life of Sentinel-2A")
+
+Legacy URLs (`/health`, `/debris`, `/disaster`, `/alerts`, `/models`) automatically 307-redirect to `/dashboard/*`.
+
 ---
 
 ## 6. Interactive Demo Mode ("Day in the Life")
@@ -171,14 +183,16 @@ See [`docs/demo_script.md`](file:///c:/Users/REO/Downloads/astraguard3/docs/demo
 Run the automated test and validation suite:
 
 ```bash
-# Run backend test suite (57 unit, integration, and E2E tests)
+# Run backend test suite (82 unit, integration, and E2E tests)
 pytest apps/api/tests
 
 # Run code linter
 ruff check apps/api ml scripts
 
+# Run SpaceX monochrome design system linter
+cd apps/web && npm run design:lint
+
 # Run TypeScript typecheck & Next.js production build
-cd apps/web
 npm run type-check
 npm run build
 ```

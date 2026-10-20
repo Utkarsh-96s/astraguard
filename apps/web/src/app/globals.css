@@ -17,6 +17,14 @@
   --color-arterial-red: #fe1e34;
   --color-crimson-pure: #ff0000;
 
+  /* Marketing SpaceX-Style Design Tokens */
+  --color-space-canvas: #000000;
+  --color-space-fg: #f0f0fa;
+  --color-space-secondary: #545457;
+  --color-space-separator: #404040;
+  --font-d-din: var(--font-barlow), sans-serif;
+  --font-d-din-bold: var(--font-barlow), sans-serif;
+
   /* Typography Scale */
   --text-caption: 10px;
   --text-body: 14px;
@@ -90,3 +98,24 @@ body {
   padding: 2px 8px;
   border-radius: 3px;
 }
+
+/* SpaceX-style marketing utilities */
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.mask-edge-fade {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

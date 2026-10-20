@@ -21,10 +21,18 @@ const config: Config = {
         iron: "#525252",
         arterial: "#fe1e34",
         crimson: "#ff0000",
+        space: {
+          canvas: "#000000",
+          fg: "#f0f0fa",
+          secondary: "#545457",
+          separator: "#404040",
+        },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
         serif: ["var(--font-playfair)", "Georgia", "serif"],
+        "d-din": ["var(--font-d-din)", "sans-serif"],
+        "d-din-bold": ["var(--font-d-din-bold)", "sans-serif"],
       },
       borderRadius: {
         nav: "3px",

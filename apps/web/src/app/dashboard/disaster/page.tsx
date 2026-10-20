@@ -11,12 +11,12 @@ import {
   Radio,
   Sliders,
 } from "lucide-react";
-import { SimulatedBadge } from "../../components/SimulatedBadge";
-import { DisasterDeck } from "../../components/DisasterDeck";
-import { ConstellationMatrix } from "../../components/ConstellationMatrix";
-import { LiveTelemetryStreamer } from "../../components/LiveTelemetryStreamer";
-import { playAudioCue } from "../../lib/audio";
-import { useAsset } from "../../lib/assetContext";
+import { SimulatedBadge } from "@/components/SimulatedBadge";
+import { DisasterDeck } from "@/components/DisasterDeck";
+import { ConstellationMatrix } from "@/components/ConstellationMatrix";
+import { LiveTelemetryStreamer } from "@/components/LiveTelemetryStreamer";
+import { playAudioCue } from "@/lib/audio";
+import { useAsset } from "@/lib/assetContext";
 
 export default function DisasterPage() {
   const { selectedAssetId, setSelectedAssetId } = useAsset();
@@ -179,7 +179,7 @@ export default function DisasterPage() {
 
       {/* Tab 2: Constellation Mode & Multi-Asset Conjunction Matrix */}
       {activeTab === "constellation" && (
-        <ConstellationMatrix onSelectAsset={(id) => setSelectedAssetId(id)} />
+        <ConstellationMatrix onSelectAsset={(id: string) => setSelectedAssetId(id)} />
       )}
 
       {/* Tab 3: Live Telemetry Streamer */}

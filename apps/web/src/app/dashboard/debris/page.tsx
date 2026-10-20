@@ -14,14 +14,14 @@ import {
   Sparkles,
   Radio,
 } from "lucide-react";
-import { SimulatedBadge } from "../../components/SimulatedBadge";
-import { StatusBadge } from "../../components/StatusBadge";
-import { ManeuverSimulator } from "../../components/ManeuverSimulator";
-import { UncertaintyLab } from "../../components/UncertaintyLab";
-import { OrbitTwin3D } from "../../components/OrbitTwin3D";
-import { ObservationTaskingModal } from "../../components/ObservationTaskingModal";
-import { playAudioCue } from "../../lib/audio";
-import { useAsset } from "../../lib/assetContext";
+import { SimulatedBadge } from "@/components/SimulatedBadge";
+import { StatusBadge } from "@/components/StatusBadge";
+import { ManeuverSimulator } from "@/components/ManeuverSimulator";
+import { UncertaintyLab } from "@/components/UncertaintyLab";
+import { OrbitTwin3D } from "@/components/OrbitTwin3D";
+import { ObservationTaskingModal } from "@/components/ObservationTaskingModal";
+import { playAudioCue } from "@/lib/audio";
+import { useAsset } from "@/lib/assetContext";
 
 export default function DebrisPage() {
   const { selectedAssetId } = useAsset();

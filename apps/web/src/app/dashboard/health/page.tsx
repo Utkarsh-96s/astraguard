@@ -11,8 +11,8 @@ import {
   AlertTriangle,
   TrendingUp,
 } from "lucide-react";
-import { SimulatedBadge } from "../../components/SimulatedBadge";
-import { FaultInjectionLab } from "../../components/FaultInjectionLab";
+import { SimulatedBadge } from "@/components/SimulatedBadge";
+import { FaultInjectionLab } from "@/components/FaultInjectionLab";
 
 interface ChannelData {
   name: string;

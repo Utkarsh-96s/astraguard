@@ -2,7 +2,7 @@
   {
     "step": 1,
     "title": "Integrated Mission Safety & Pearl Noisy-OR Fusion",
-    "route": "/",
+    "route": "/dashboard",
     "badge": "OVERVIEW & XAI",
     "description": "Welcome to ASTRA-GUARD. Rather than isolated warning indicators, ASTRA-GUARD synthesizes spacecraft bus health, orbital debris conjunction risk, and disaster intelligence into an explainable Mission Risk Score (0-100).",
     "key_innovations": [
@@ -14,7 +14,7 @@
   {
     "step": 2,
     "title": "Subsystem Health AI & False-Alarm Suppression",
-    "route": "/health",
+    "route": "/dashboard/health",
     "badge": "HEALTH AI",
     "description": "Monitors EPS battery temperatures, bus voltages, thermal loops, and ADCS reaction wheels using calibrated neural autoencoders.",
     "key_innovations": [
@@ -26,7 +26,7 @@
   {
     "step": 3,
     "title": "Orbital Debris Risk & Conjunction Screening",
-    "route": "/debris",
+    "route": "/dashboard/debris",
     "badge": "DEBRIS RISK",
     "description": "Performs multi-stage conjunction assessment between Sentinel-2A and tracked space objects using SGP4 analytical propagation and 2-D B-plane math.",
     "key_innovations": [
@@ -38,7 +38,7 @@
   {
     "step": 4,
     "title": "Ground-Segment Disaster Intelligence",
-    "route": "/disaster",
+    "route": "/dashboard/disaster",
     "badge": "DISASTER EO",
     "description": "Rapidly processes Earth Observation synthetic aperture radar (SAR) chips to identify flood extents and prioritize emergency observation downlink.",
     "key_innovations": [
@@ -50,7 +50,7 @@
   {
     "step": 5,
     "title": "Alert Lifecycle, HITL Audit & Q2 Provenance",
-    "route": "/alerts",
+    "route": "/dashboard/alerts",
     "badge": "ALERTS & HITL",
     "description": "Manages operational alert lifecycles with strict deduplication, snooze cooldowns, human operator approval modals, and cryptographic auditability.",
     "key_innovations": [
