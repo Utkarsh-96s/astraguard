@@ -1,0 +1,152 @@
+# ASTRA-GUARD Scripted Demo Scenario — "A Day in the Life of Sentinel-2A"
+# Sourced from PRD §9 and architecture.md §7
+scenario_id: "DEMO-SENTINEL-2A-DAY1"
+asset_id: "SENTINEL-2A"
+norad_id: 40697
+description: "Scripted 24-hour multi-hazard space mission flight intelligence demonstration"
+
+stages:
+  - stage_idx: 0
+    t_hour: 0
+    name: "Nominal Flight Operations"
+    description: "All spacecraft bus subsystems and orbital parameters nominal. Routine screening active."
+    telemetry:
+      channel: "eps_battery_temp_c"
+      value: 24.1
+      quality: 1.0
+    conjunction:
+      secondary_id: 40112
+      secondary_name: "COSMOS-2251-DEB"
+      miss_km: 18.5
+      rel_vel_kms: 9.8
+      pc: 1.0e-7
+    disaster:
+      type: "flood"
+      area_km2: 12.0
+      priority: 0.10
+    eval_inputs:
+      r_h: 0.04
+      r_d: 0.02
+      r_e: 0.10
+      pc: 1.0e-7
+    expected:
+      level: "NOMINAL"
+      score_range: [0.0, 25.0]
+      defer_eo_payloads: false
+      critical_override: false
+
+  - stage_idx: 1
+    t_hour: 5
+    name: "Reaction Wheel Thermal & Current Drift"
+    description: "Reaction wheel temperature and current drift detected. Health AI elevates r_h to 0.35, triggering WATCH."
+    telemetry:
+      channel: "wheel_temp"
+      value: 34.2
+      quality: 1.0
+    conjunction:
+      secondary_id: 40112
+      secondary_name: "COSMOS-2251-DEB"
+      miss_km: 15.0
+      rel_vel_kms: 9.8
+      pc: 1.0e-7
+    disaster:
+      type: "flood"
+      area_km2: 12.0
+      priority: 0.10
+    eval_inputs:
+      r_h: 0.35
+      r_d: 0.02
+      r_e: 0.10
+      pc: 1.0e-7
+    expected:
+      level: "WATCH"
+      score_range: [25.0, 50.0]
+      defer_eo_payloads: false
+      critical_override: false
+
+  - stage_idx: 2
+    t_hour: 10
+    name: "Debris Conjunction Screening Warning"
+    description: "Debris conjunction detected. Foster 2-D Pc rises to 3.5e-5, triggering WARNING status."
+    telemetry:
+      channel: "eps_battery_temp_c"
+      value: 28.5
+      quality: 1.0
+    conjunction:
+      secondary_id: 29834
+      secondary_name: "FENGYUN-1C-DEB-29834"
+      miss_km: 1.400
+      rel_vel_kms: 12.4
+      pc: 3.5e-5
+    disaster:
+      type: "flood"
+      area_km2: 15.0
+      priority: 0.10
+    eval_inputs:
+      r_h: 0.25
+      r_d: 0.55
+      r_e: 0.10
+      pc: 3.5e-5
+    expected:
+      level: "WARNING"
+      score_range: [50.0, 75.0]
+      defer_eo_payloads: false
+      critical_override: false
+
+  - stage_idx: 3
+    t_hour: 15
+    name: "Cyclone Flood Detected with Degraded Health Deferral"
+    description: "Severe flood event detected (area 320 km²). Spacecraft battery thermal anomaly elevates r_h to 0.58. Cross-system safety rule triggers: secondary Earth observation imaging deferred."
+    telemetry:
+      channel: "eps_battery_temp_c"
+      value: 38.6
+      quality: 1.0
+    conjunction:
+      secondary_id: 40112
+      secondary_name: "COSMOS-2251-DEB"
+      miss_km: 8.2
+      rel_vel_kms: 9.8
+      pc: 1.0e-6
+    disaster:
+      type: "flood"
+      area_km2: 320.0
+      priority: 0.78
+    eval_inputs:
+      r_h: 0.58
+      r_d: 0.05
+      r_e: 0.78
+      pc: 1.0e-6
+    expected:
+      level: "WARNING"
+      score_range: [50.0, 75.0]
+      defer_eo_payloads: true
+      critical_override: false
+
+  - stage_idx: 4
+    t_hour: 18
+    name: "Critical Conjunction Safety Override"
+    description: "Close encounter with Fengyun debris breaches safety threshold (miss 315 m, Pc = 2.4e-4 >= 1.0e-4). Hard override forces CRITICAL. Advisory recommends CAM review."
+    telemetry:
+      channel: "eps_battery_temp_c"
+      value: 31.0
+      quality: 1.0
+    conjunction:
+      secondary_id: 29834
+      secondary_name: "FENGYUN-1C-DEB-29834"
+      miss_km: 0.3154
+      rel_vel_kms: 12.4
+      pc: 2.4e-4
+    disaster:
+      type: "flood"
+      area_km2: 40.0
+      priority: 0.20
+    eval_inputs:
+      r_h: 0.25
+      r_d: 0.95
+      r_e: 0.20
+      pc: 2.4e-4
+    expected:
+      level: "CRITICAL"
+      score_range: [75.0, 100.0]
+      defer_eo_payloads: false
+      critical_override: true

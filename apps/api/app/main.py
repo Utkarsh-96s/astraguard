@@ -10,6 +10,7 @@ from app.core.logging import logger, setup_logging
 from app.routers.alerts import router as alerts_router
 from app.routers.assets import router as assets_router
 from app.routers.conjunctions import router as conjunctions_router
+from app.routers.demo import router as demo_router
 from app.routers.disaster import router as disaster_router
 from app.routers.health import router as health_router
 from app.routers.ingest import router as ingest_router
@@ -63,6 +64,7 @@ def create_app() -> FastAPI:
     app.include_router(alerts_router)
     app.include_router(models_router)
     app.include_router(websocket_router)
+    app.include_router(demo_router)
 
     @app.get("/", tags=["Root"])
     async def root() -> dict[str, str]:
