@@ -21,8 +21,10 @@ import { UncertaintyLab } from "../../components/UncertaintyLab";
 import { OrbitTwin3D } from "../../components/OrbitTwin3D";
 import { ObservationTaskingModal } from "../../components/ObservationTaskingModal";
 import { playAudioCue } from "../../lib/audio";
+import { useAsset } from "../../lib/assetContext";
 
 export default function DebrisPage() {
+  const { selectedAssetId } = useAsset();
   const [selectedConjunction, setSelectedConjunction] = useState<string>("CONJ-29834");
   const [activeTab, setActiveTab] = useState<"twin" | "simulator" | "uncertainty" | "tasking" | "overview">("twin");
 
@@ -188,7 +190,7 @@ export default function DebrisPage() {
       {/* Tab 1: 3D Orbit Digital Twin */}
       {(activeTab === "twin" || activeTab === "overview") && (
         <OrbitTwin3D
-          assetId="SENTINEL-2A"
+          assetId={selectedAssetId}
           selectedConjunctionName={active.secondaryName}
         />
       )}

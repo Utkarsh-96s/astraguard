@@ -27,7 +27,12 @@ export function DriversList({ drivers }: DriversListProps) {
           barColor = "bg-amber-400";
         }
 
-        const share = Math.min(100, Math.max(0, d.share_pct || d.contribution * 100));
+        const rawShare = Number(
+          d.share_pct ??
+          (d as any).percent_of_risk ??
+          (d.contribution ? d.contribution * 100 : (d as any).magnitude ? (d as any).magnitude * 100 : 0)
+        );
+        const share = Math.min(100, Math.max(0, Number.isFinite(rawShare) ? rawShare : 0));
 
         return (
           <div key={`${d.driver}-${idx}`} className="p-2.5 rounded-card bg-smoke/40 border border-white/5 space-y-1.5">

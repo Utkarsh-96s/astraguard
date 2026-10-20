@@ -300,7 +300,7 @@ export default function DemoPage() {
         </div>
 
         {/* Timeline Bar */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {scenarios.map((s, idx) => {
             const isSelected = currentIndex === idx;
             return (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   ShieldAlert,
@@ -18,22 +18,26 @@ import {
 
 import { RiskSnapshot, Alert } from "../lib/types";
 import { fetchLatestRisk, fetchAlerts, FALLBACK_RISK } from "../lib/api";
+import { useAsset } from "../lib/assetContext";
 import { RiskGauge } from "../components/RiskGauge";
 import { StatusBadge } from "../components/StatusBadge";
 import { SimulatedBadge } from "../components/SimulatedBadge";
 import { DriversList } from "../components/DriversList";
+import { ConstellationMatrix } from "../components/ConstellationMatrix";
+import { LiveTelemetryStreamer } from "../components/LiveTelemetryStreamer";
 
 export default function OverviewPage() {
+  const { selectedAssetId, selectedAsset, setSelectedAssetId } = useAsset();
   const [risk, setRisk] = useState<RiskSnapshot>(FALLBACK_RISK);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState<string>("");
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [latestRisk, alertList] = await Promise.all([
-        fetchLatestRisk("SENTINEL-2A"),
+        fetchLatestRisk(selectedAssetId),
         fetchAlerts(),
       ]);
       setRisk(latestRisk);
@@ -44,13 +48,13 @@ export default function OverviewPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedAssetId]);
 
   useEffect(() => {
     loadData();
     const interval = setInterval(loadData, 15000); // 15s polling fallback
     return () => clearInterval(interval);
-  }, []);
+  }, [loadData]);
 
   // Compute Noisy-OR Safety Hazard for display
   const rSafety = 1.0 - (1.0 - risk.r_h) * (1.0 - risk.r_d);
@@ -64,14 +68,14 @@ export default function OverviewPage() {
             <Cpu className="w-5 h-5 text-arterial" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold tracking-tight text-bone">
-                SENTINEL-2A Mission Intelligence
+                {selectedAsset.name} Mission Intelligence
               </h1>
               <SimulatedBadge />
             </div>
-            <p className="text-xs text-ash font-mono">
-              ESA Earth Observation Bus · Sun-Synchronous Orbit (786 km) · Ingestion 10Hz Nominal
+            <p className="text-xs text-ash font-mono mt-0.5">
+              NORAD {selectedAsset.norad_id} · {selectedAsset.type} · Ingestion 10Hz Nominal
             </p>
           </div>
         </div>
@@ -307,6 +311,12 @@ export default function OverviewPage() {
           </div>
         </div>
       </div>
+
+      {/* Real-Time Live Telemetry Streamer */}
+      <LiveTelemetryStreamer assetId={selectedAssetId} />
+
+      {/* Constellation Fleet Operations & Conjunction Matrix */}
+      <ConstellationMatrix onSelectAsset={(id) => setSelectedAssetId(id)} />
 
       {/* Active Alerts Strip */}
       <div className="p-4 rounded-card bg-charcoal border border-white/10 space-y-3">

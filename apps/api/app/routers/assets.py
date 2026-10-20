@@ -23,20 +23,29 @@ async def list_assets(
     res = await db.execute(stmt)
     assets = list(res.scalars().all())
 
-    # If database not yet seeded, provide Sentinel-2A default per PRD §4
-    if not assets:
-        default_asset = Asset(
-            id="SENTINEL-2A",
-            name="Sentinel-2A Earth Observation Satellite",
-            norad_id=40697,
-            type="satellite",
-            tle_epoch=datetime.now(UTC),
-            created_at=datetime.now(UTC),
-        )
-        db.add(default_asset)
+    # Seed constellation fleet if any are missing
+    existing_ids = {a.id for a in assets}
+    fleet_defaults = [
+        ("SENTINEL-2A", "Sentinel-2A Earth Observation Satellite", 40697),
+        ("SENTINEL-1A", "Sentinel-1A SAR Radar Satellite", 39634),
+        ("SENTINEL-3A", "Sentinel-3A Ocean & Land Satellite", 41335),
+    ]
+    added = False
+    for a_id, a_name, norad in fleet_defaults:
+        if a_id not in existing_ids:
+            new_asset = Asset(
+                id=a_id,
+                name=a_name,
+                norad_id=norad,
+                type="satellite",
+                tle_epoch=datetime.now(UTC),
+                created_at=datetime.now(UTC),
+            )
+            db.add(new_asset)
+            assets.append(new_asset)
+            added = True
+    if added:
         await db.commit()
-        await db.refresh(default_asset)
-        assets = [default_asset]
 
     enriched_assets = []
     for a in assets:

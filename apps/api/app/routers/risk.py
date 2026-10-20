@@ -52,7 +52,18 @@ async def get_latest_risk(
         "r_h": snapshot.r_h,
         "r_d": snapshot.r_d,
         "r_e": snapshot.r_e,
-        "drivers": snapshot.drivers.get("drivers", []),
+        "drivers": [
+            {
+                "driver": d.get("driver", "Unknown"),
+                "module": d.get("module", "health"),
+                "contribution": d.get("magnitude", d.get("contribution", 0.0)),
+                "magnitude": d.get("magnitude", d.get("contribution", 0.0)),
+                "share_pct": d.get("percent_of_risk", d.get("share_pct", 0.0)),
+                "percent_of_risk": d.get("percent_of_risk", d.get("share_pct", 0.0)),
+                "evidence": d.get("evidence", {}),
+            }
+            for d in snapshot.drivers.get("drivers", [])
+        ],
         "rationale": snapshot.drivers.get("rationale", ""),
         "recommendations": snapshot.drivers.get("recommendations", []),
         "defer_eo_payloads": snapshot.drivers.get("defer_eo_payloads", False),

@@ -132,7 +132,7 @@ export default function HealthPage() {
             <button
               key={key}
               onClick={() => setSelectedChannel(key)}
-              className={`p-3 rounded-card text-left transition-all border ${
+              className={`p-3 rounded-card text-left transition-all border h-full flex flex-col justify-between ${
                 isSelected
                   ? "bg-smoke border-sky-400/80 shadow-glass"
                   : "bg-charcoal border-white/10 hover:border-white/20"

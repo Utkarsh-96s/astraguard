@@ -131,8 +131,12 @@ async def get_orbit_tracks(asset_id: str) -> dict[str, Any]:
         # Spherical orbital coordinates
         lat = math.degrees(math.asin(math.sin(inclination_rad) * math.sin(angle)))
         lon = math.degrees(angle) % 360.0
-        if lon > 180.0:
-            lon -= 360.0
+        r_km = 6378.137 + 786.0
+        lat_rad = math.radians(lat)
+        lon_rad = math.radians(lon)
+        x_eci = r_km * math.cos(lat_rad) * math.cos(lon_rad)
+        y_eci = r_km * math.cos(lat_rad) * math.sin(lon_rad)
+        z_eci = r_km * math.sin(lat_rad)
 
         primary_points.append({
             "step": step,
@@ -140,6 +144,9 @@ async def get_orbit_tracks(asset_id: str) -> dict[str, Any]:
             "lat": round(lat, 2),
             "lon": round(lon, 2),
             "alt_km": 786.0,
+            "x_eci_km": round(x_eci, 1),
+            "y_eci_km": round(y_eci, 1),
+            "z_eci_km": round(z_eci, 1),
         })
 
         # Secondary debris orbit (Fengyun-1C polar fragment, inclination ~99.1 deg, intersecting at step 24)
@@ -149,12 +156,22 @@ async def get_orbit_tracks(asset_id: str) -> dict[str, Any]:
         if deb_lon > 180.0:
             deb_lon -= 360.0
 
+        deb_r_km = 6378.137 + 789.2
+        deb_lat_rad = math.radians(deb_lat)
+        deb_lon_rad = math.radians(deb_lon)
+        deb_x_eci = deb_r_km * math.cos(deb_lat_rad) * math.cos(deb_lon_rad)
+        deb_y_eci = deb_r_km * math.cos(deb_lat_rad) * math.sin(deb_lon_rad)
+        deb_z_eci = deb_r_km * math.sin(deb_lat_rad)
+
         debris_points.append({
             "step": step,
             "time_min": t_min,
             "lat": round(deb_lat, 2),
             "lon": round(deb_lon, 2),
             "alt_km": 789.2,
+            "x_eci_km": round(deb_x_eci, 1),
+            "y_eci_km": round(deb_y_eci, 1),
+            "z_eci_km": round(deb_z_eci, 1),
         })
 
     return {

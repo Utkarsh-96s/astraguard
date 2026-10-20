@@ -26,11 +26,12 @@ class HealthLabService:
     def _ensure_module(self) -> HealthRiskModule:
         """Lazily initialize and train HealthRiskModule on nominal telemetry."""
         if self._module is None or not self._fitted:
-            module = HealthRiskModule(active_engine="lstm", window_size=64)
-            # Generate nominal training data
+            module = HealthRiskModule(active_engine="lstm", window_size=64, window_step=8)
+            module.lstm_model.epochs = 3
+            # Generate nominal training data (45 mins, 10s step)
             df_nominal = generate_telemetry_series(
                 asset_id="SENTINEL-2A",
-                duration_minutes=90,
+                duration_minutes=45,
                 step_seconds=10,
                 fault_type=None,
                 seed=42,

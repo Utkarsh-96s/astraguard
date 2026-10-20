@@ -133,7 +133,7 @@ export default function AlertsPage() {
       {/* Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-card bg-charcoal border border-white/10">
         {/* Status Filters */}
-        <div className="flex items-center gap-1.5 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
           <span className="text-pebble mr-1 text-[11px]">STATUS:</span>
           {["ALL", "ACTIVE", "ACKNOWLEDGED", "DISMISSED", "SNOOZED"].map((st) => (
             <button
@@ -151,7 +151,7 @@ export default function AlertsPage() {
         </div>
 
         {/* Severity Filters */}
-        <div className="flex items-center gap-1.5 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
           <span className="text-pebble mr-1 text-[11px]">SEVERITY:</span>
           {["ALL", "CRITICAL", "WARNING", "WATCH"].map((lvl) => (
             <button

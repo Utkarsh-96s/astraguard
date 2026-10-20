@@ -16,6 +16,7 @@ import {
   Mic,
   MicOff,
   Command,
+  ChevronDown,
 } from "lucide-react";
 import { useAsset } from "../lib/assetContext";
 import { ObservabilityWidget } from "./ObservabilityWidget";
@@ -25,7 +26,7 @@ import { voiceAnnouncer } from "../lib/voice";
 
 export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
   const pathname = usePathname();
-  const { selectedAsset } = useAsset();
+  const { selectedAsset, selectedAssetId, setSelectedAssetId, assets } = useAsset();
   const [soundMuted, setSoundMuted] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
@@ -91,12 +92,27 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
               </div>
             </Link>
 
-            {/* Enriched Satellite Asset Tag */}
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-nav bg-smoke/80 border border-white/10 text-[11px] font-mono">
-              <span className={`w-1.5 h-1.5 rounded-full ${levelColor.split(" ")[0]} animate-pulse`} />
-              <span className="text-bone font-semibold">{selectedAsset.name}</span>
-              <span className="text-iron">|</span>
-              <span className="text-ash">NORAD {selectedAsset.norad_id}</span>
+            {/* Interactive Satellite Asset Switcher */}
+            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-nav bg-smoke/90 border border-white/15 text-[11px] font-mono hover:border-cyan-500/40 transition-colors">
+              <span className={`w-2 h-2 rounded-full ${levelColor.split(" ")[0]} animate-pulse shrink-0`} />
+              <div className="relative flex items-center">
+                <select
+                  value={selectedAssetId}
+                  onChange={(e) => {
+                    setSelectedAssetId(e.target.value);
+                    soundFx.playClickFx();
+                  }}
+                  className="bg-transparent text-bone font-semibold focus:outline-none cursor-pointer pr-5 py-0.5 appearance-none"
+                  title="Switch active monitored satellite asset"
+                >
+                  {assets.map((a) => (
+                    <option key={a.id} value={a.id} className="bg-charcoal text-bone">
+                      {a.name} (NORAD {a.norad_id})
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3 h-3 text-pebble pointer-events-none absolute right-0" />
+              </div>
               <span className="text-iron">|</span>
               <span className={levelColor.split(" ")[1]}>
                 {selectedAsset.latest_level} ({selectedAsset.latest_score.toFixed(1)})

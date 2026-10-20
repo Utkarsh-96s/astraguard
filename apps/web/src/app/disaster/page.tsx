@@ -16,8 +16,10 @@ import { DisasterDeck } from "../../components/DisasterDeck";
 import { ConstellationMatrix } from "../../components/ConstellationMatrix";
 import { LiveTelemetryStreamer } from "../../components/LiveTelemetryStreamer";
 import { playAudioCue } from "../../lib/audio";
+import { useAsset } from "../../lib/assetContext";
 
 export default function DisasterPage() {
+  const { selectedAssetId, setSelectedAssetId } = useAsset();
   const [simulateDegradedHealth, setSimulateDegradedHealth] = useState(false);
   const [activeTab, setActiveTab] = useState<"deck" | "constellation" | "stream" | "metrics">("deck");
 
@@ -177,14 +179,13 @@ export default function DisasterPage() {
 
       {/* Tab 2: Constellation Mode & Multi-Asset Conjunction Matrix */}
       {activeTab === "constellation" && (
-        <ConstellationMatrix />
+        <ConstellationMatrix onSelectAsset={(id) => setSelectedAssetId(id)} />
       )}
 
       {/* Tab 3: Live Telemetry Streamer */}
       {activeTab === "stream" && (
         <div className="space-y-4">
-          <LiveTelemetryStreamer assetId="SENTINEL-2A" />
-          <LiveTelemetryStreamer assetId="SENTINEL-1A" />
+          <LiveTelemetryStreamer assetId={selectedAssetId} />
         </div>
       )}
 

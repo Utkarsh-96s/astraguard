@@ -222,6 +222,26 @@ export function OrbitTwin3D({
       ctx.stroke();
     });
 
+    const getECI = (pt: any) => {
+      if (pt && typeof pt.x_eci_km === "number" && typeof pt.y_eci_km === "number" && typeof pt.z_eci_km === "number") {
+        return { x: pt.x_eci_km, y: pt.y_eci_km, z: pt.z_eci_km, alt: pt.alt_km || 786.0, lat: pt.lat || 0, lon: pt.lon || 0 };
+      }
+      const alt = pt?.alt_km ?? 786.0;
+      const lat = pt?.lat ?? 0;
+      const lon = pt?.lon ?? 0;
+      const r = 6378.137 + alt;
+      const latR = (lat * Math.PI) / 180;
+      const lonR = (lon * Math.PI) / 180;
+      return {
+        x: r * Math.cos(latR) * Math.cos(lonR),
+        y: r * Math.cos(latR) * Math.sin(lonR),
+        z: r * Math.sin(latR),
+        alt,
+        lat,
+        lon,
+      };
+    };
+
     // Secondary Debris Orbit Track (Red)
     if (tracks?.debris_track && tracks.debris_track.length > 0) {
       ctx.beginPath();
@@ -230,7 +250,8 @@ export function OrbitTwin3D({
       ctx.setLineDash([4, 3]);
 
       tracks.debris_track.forEach((pt, idx) => {
-        const p = project3D(pt.x_eci_km, pt.y_eci_km, pt.z_eci_km, width, height, yaw, pitch, zoom);
+        const coords = getECI(pt);
+        const p = project3D(coords.x, coords.y, coords.z, width, height, yaw, pitch, zoom);
         if (idx === 0) ctx.moveTo(p.sx, p.sy);
         else ctx.lineTo(p.sx, p.sy);
       });
@@ -239,7 +260,8 @@ export function OrbitTwin3D({
 
       // Debris Live Position
       const debPt = tracks.debris_track[(timeStepIndex + 6) % tracks.debris_track.length];
-      const pDeb = project3D(debPt.x_eci_km, debPt.y_eci_km, debPt.z_eci_km, width, height, yaw, pitch, zoom);
+      const debCoords = getECI(debPt);
+      const pDeb = project3D(debCoords.x, debCoords.y, debCoords.z, width, height, yaw, pitch, zoom);
       ctx.fillStyle = "#fe1e34";
       ctx.beginPath();
       ctx.arc(pDeb.sx, pDeb.sy, 4, 0, Math.PI * 2);
@@ -252,7 +274,8 @@ export function OrbitTwin3D({
       ctx.strokeStyle = "rgba(56, 189, 248, 0.9)";
       ctx.lineWidth = 2.0;
       tracks.primary_track.forEach((pt, idx) => {
-        const p = project3D(pt.x_eci_km, pt.y_eci_km, pt.z_eci_km, width, height, yaw, pitch, zoom);
+        const coords = getECI(pt);
+        const p = project3D(coords.x, coords.y, coords.z, width, height, yaw, pitch, zoom);
         if (idx === 0) ctx.moveTo(p.sx, p.sy);
         else ctx.lineTo(p.sx, p.sy);
       });
@@ -260,7 +283,8 @@ export function OrbitTwin3D({
 
       // Sentinel-2A Satellite Icon / Glow
       const s2Pt = tracks.primary_track[timeStepIndex % tracks.primary_track.length];
-      const pSat = project3D(s2Pt.x_eci_km, s2Pt.y_eci_km, s2Pt.z_eci_km, width, height, yaw, pitch, zoom);
+      const s2Coords = getECI(s2Pt);
+      const pSat = project3D(s2Coords.x, s2Coords.y, s2Coords.z, width, height, yaw, pitch, zoom);
 
       // Pulse ring
       ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
@@ -390,33 +414,39 @@ export function OrbitTwin3D({
         />
 
         {/* Telemetry HUD (Top-Left) */}
-        <div className="absolute top-3 left-3 p-3 rounded-card bg-charcoal/85 backdrop-blur-md border border-white/10 text-xs font-mono space-y-1 shadow-glass max-w-[260px]">
+        <div className="absolute top-3 left-3 p-2.5 sm:p-3 rounded-card bg-charcoal/85 backdrop-blur-md border border-white/10 text-xs font-mono space-y-1 shadow-glass max-w-[220px] sm:max-w-[260px] z-10">
           <div className="text-[10px] uppercase font-bold text-sky-400 flex items-center gap-1.5 border-b border-white/10 pb-1">
             <Radio className="w-3 h-3 text-sky-400 animate-pulse" />
             <span>Telemetry Coordinates (ECI)</span>
           </div>
           {currentPt && (
-            <div className="space-y-0.5 text-pebble text-[11px]">
+            <div className="space-y-0.5 text-pebble text-[10px] sm:text-[11px]">
               <div className="flex justify-between">
                 <span>X_eci:</span>
-                <span className="text-bone font-semibold">{currentPt.x_eci_km.toFixed(1)} km</span>
+                <span className="text-bone font-semibold">
+                  {(currentPt.x_eci_km ?? ((6378.137 + (currentPt.alt_km || 786.0)) * Math.cos(((currentPt.lat || 0) * Math.PI) / 180) * Math.cos(((currentPt.lon || 0) * Math.PI) / 180))).toFixed(1)} km
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Y_eci:</span>
-                <span className="text-bone font-semibold">{currentPt.y_eci_km.toFixed(1)} km</span>
+                <span className="text-bone font-semibold">
+                  {(currentPt.y_eci_km ?? ((6378.137 + (currentPt.alt_km || 786.0)) * Math.cos(((currentPt.lat || 0) * Math.PI) / 180) * Math.sin(((currentPt.lon || 0) * Math.PI) / 180))).toFixed(1)} km
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Z_eci:</span>
-                <span className="text-bone font-semibold">{currentPt.z_eci_km.toFixed(1)} km</span>
+                <span className="text-bone font-semibold">
+                  {(currentPt.z_eci_km ?? ((6378.137 + (currentPt.alt_km || 786.0)) * Math.sin(((currentPt.lat || 0) * Math.PI) / 180))).toFixed(1)} km
+                </span>
               </div>
               <div className="flex justify-between border-t border-white/5 pt-1">
                 <span>Altitude:</span>
-                <span className="text-emerald-400 font-semibold">{currentPt.alt_km} km</span>
+                <span className="text-emerald-400 font-semibold">{currentPt.alt_km || 786.0} km</span>
               </div>
               <div className="flex justify-between">
                 <span>Sub-Sat:</span>
                 <span className="text-bone">
-                  {currentPt.lat.toFixed(1)}°N, {currentPt.lon.toFixed(1)}°E
+                  {(currentPt.lat ?? 0).toFixed(1)}°N, {(currentPt.lon ?? 0).toFixed(1)}°E
                 </span>
               </div>
             </div>
@@ -424,7 +454,7 @@ export function OrbitTwin3D({
         </div>
 
         {/* Encounter Beacon HUD (Top-Right) */}
-        <div className="absolute top-3 right-3 p-3 rounded-card bg-charcoal/85 backdrop-blur-md border border-arterial/40 text-xs font-mono space-y-1 shadow-glass">
+        <div className="hidden sm:block absolute top-3 right-3 p-2.5 sm:p-3 rounded-card bg-charcoal/85 backdrop-blur-md border border-arterial/40 text-xs font-mono space-y-1 shadow-glass z-10">
           <div className="text-[10px] uppercase font-bold text-arterial flex items-center gap-1.5 border-b border-white/10 pb-1">
             <Eye className="w-3 h-3 text-arterial" />
             <span>Target Conjunction</span>
@@ -437,9 +467,9 @@ export function OrbitTwin3D({
         </div>
 
         {/* Legend (Bottom-Left) */}
-        <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-nav bg-charcoal/85 backdrop-blur-md border border-white/10 text-[11px] font-mono flex items-center gap-4">
+        <div className="absolute bottom-3 left-3 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-nav bg-charcoal/85 backdrop-blur-md border border-white/10 text-[10px] sm:text-[11px] font-mono flex items-center gap-3 sm:gap-4 z-10">
           <span className="flex items-center gap-1.5 text-sky-400">
-            <span className="w-2.5 h-1 rounded bg-sky-400 inline-block" /> Sentinel-2A
+            <span className="w-2.5 h-1 rounded bg-sky-400 inline-block" /> {tracks?.asset_id || assetId}
           </span>
           <span className="flex items-center gap-1.5 text-arterial">
             <span className="w-2.5 h-1 rounded bg-arterial inline-block" /> Debris Track
@@ -450,7 +480,7 @@ export function OrbitTwin3D({
         </div>
 
         {/* Drag Hint (Bottom-Right) */}
-        <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-nav bg-charcoal/70 text-[10px] font-mono text-pebble">
+        <div className="hidden sm:block absolute bottom-3 right-3 px-2.5 py-1 rounded-nav bg-charcoal/70 text-[10px] font-mono text-pebble z-10">
           Drag to orbit camera | Pitch: {pitch.toFixed(0)}° Yaw: {yaw.toFixed(0)}°
         </div>
       </div>
