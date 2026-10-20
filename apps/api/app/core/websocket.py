@@ -14,6 +14,11 @@ class ConnectionManager:
         self.alerts_connections: set[WebSocket] = set()
         self.risk_connections: dict[str, set[WebSocket]] = {}
 
+    def get_active_connections_count(self) -> int:
+        """Return total active connections across alerts and risk feeds."""
+        risk_count = sum(len(conns) for conns in self.risk_connections.values())
+        return len(self.alerts_connections) + risk_count
+
     async def connect_alerts(self, websocket: WebSocket) -> None:
         """Accept and register connection to the /ws/alerts feed."""
         await websocket.accept()

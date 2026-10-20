@@ -32,6 +32,13 @@ def anyio_backend() -> str:
     return "asyncio"
 
 
+@pytest.fixture(scope="session", autouse=True)
+async def cleanup_engine() -> AsyncGenerator[None, None]:
+    """Dispose test engine upon session completion to close background threads."""
+    yield
+    await test_engine.dispose()
+
+
 @pytest.fixture(autouse=True)
 async def setup_test_db() -> AsyncGenerator[None, None]:
     """Create tables before each test and drop them after."""

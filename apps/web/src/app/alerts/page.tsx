@@ -16,10 +16,12 @@ import { Alert, AlertStatus, RiskLevel } from "../../lib/types";
 import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "../../lib/api";
 import { StatusBadge } from "../../components/StatusBadge";
 import { SimulatedBadge } from "../../components/SimulatedBadge";
+import { ProvenanceModal } from "../../components/ProvenanceModal";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [provenanceAlertId, setProvenanceAlertId] = useState<string | null>(null);
   const [actionType, setActionType] = useState<"approve" | "dismiss" | "snooze">("approve");
   const [operatorUser, setOperatorUser] = useState("FlightDirector_Sarah");
   const [operatorNote, setOperatorNote] = useState("");
@@ -217,13 +219,24 @@ export default function AlertsPage() {
                   )}
                 </div>
 
-                <button
-                  onClick={() => setSelectedAlert(alert)}
-                  className="px-3.5 py-1.5 rounded-nav bg-smoke hover:bg-white/10 border border-white/20 text-xs font-mono font-semibold text-bone flex items-center gap-1.5 transition-colors"
-                >
-                  <UserCheck className="w-3.5 h-3.5 text-arterial" />
-                  <span>Take Operator Action</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setProvenanceAlertId(alert.id)}
+                    className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-cyan-500/30 hover:border-cyan-500/60 text-xs font-mono font-semibold text-cyan-300 flex items-center gap-1.5 transition-colors"
+                    title="View cryptographic provenance and verify mathematical reproducibility"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Provenance & Reproduce (Q2)</span>
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedAlert(alert)}
+                    className="px-3.5 py-1.5 rounded-nav bg-smoke hover:bg-white/10 border border-white/20 text-xs font-mono font-semibold text-bone flex items-center gap-1.5 transition-colors"
+                  >
+                    <UserCheck className="w-3.5 h-3.5 text-arterial" />
+                    <span>Take Operator Action</span>
+                  </button>
+                </div>
               </div>
 
               {/* Chronological Audit Log Trail if present */}

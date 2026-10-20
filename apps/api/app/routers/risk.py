@@ -21,7 +21,7 @@ class RiskEvaluateRequest(BaseModel):
     r_d: float | None = Field(None, ge=0.0, le=1.0, description="Optional override for debris collision risk")
     r_e: float | None = Field(None, ge=0.0, le=1.0, description="Optional override for disaster observation priority")
     pc: float | None = Field(None, ge=0.0, le=1.0, description="Optional collision probability override")
-    evidence: dict[str, Any] | None = Field(default_factory=dict, description="Operational diagnostic details")
+    evidence: dict[str, Any] | None = Field(default=None, description="Operational diagnostic details")
 
 
 @router.get("/{asset_id}/latest", summary="Get latest fused risk snapshot")

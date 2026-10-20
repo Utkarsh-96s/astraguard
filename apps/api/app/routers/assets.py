@@ -3,10 +3,10 @@ from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Asset, TelemetryWindow
+from app.db.models import Alert, Asset, RiskSnapshot, TelemetryWindow
 from app.db.session import get_db
 
 router = APIRouter(prefix="/api/v1/assets", tags=["Assets"])
@@ -18,7 +18,7 @@ async def list_assets(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
 ) -> list[dict[str, Any]]:
-    """Retrieve all monitored primary assets (e.g., SENTINEL-2A)."""
+    """Retrieve all monitored primary assets with live risk summary."""
     stmt = select(Asset).offset(skip).limit(limit)
     res = await db.execute(stmt)
     assets = list(res.scalars().all())
@@ -38,17 +38,36 @@ async def list_assets(
         await db.refresh(default_asset)
         assets = [default_asset]
 
-    return [
-        {
+    enriched_assets = []
+    for a in assets:
+        # Latest snapshot
+        snap_stmt = select(RiskSnapshot).where(RiskSnapshot.asset_id == a.id).order_by(RiskSnapshot.ts.desc()).limit(1)
+        snap_res = await db.execute(snap_stmt)
+        latest_snap = snap_res.scalar_one_or_none()
+
+        # Count active alerts
+        alert_stmt = (
+            select(func.count(Alert.id))
+            .join(RiskSnapshot, Alert.snapshot_id == RiskSnapshot.id)
+            .where(RiskSnapshot.asset_id == a.id, Alert.status == "ACTIVE")
+        )
+        alert_res = await db.execute(alert_stmt)
+        active_alerts_count = alert_res.scalar() or 0
+
+        enriched_assets.append({
             "id": a.id,
             "name": a.name,
             "norad_id": a.norad_id,
             "type": a.type,
             "tle_epoch": a.tle_epoch.isoformat() if a.tle_epoch else None,
             "created_at": a.created_at.isoformat(),
-        }
-        for a in assets
-    ]
+            "latest_score": round(latest_snap.score, 2) if latest_snap else 10.0,
+            "latest_level": latest_snap.level if latest_snap else "NOMINAL",
+            "active_alerts_count": active_alerts_count,
+            "last_updated": latest_snap.ts.isoformat() if latest_snap else a.created_at.isoformat(),
+        })
+
+    return enriched_assets
 
 
 @router.get("/{asset_id}", summary="Get asset details by ID")
@@ -56,7 +75,7 @@ async def get_asset(
     asset_id: str,
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
-    """Retrieve details for a specific spacecraft asset."""
+    """Retrieve details for a specific spacecraft asset with live risk summary."""
     asset = await db.get(Asset, asset_id)
     if not asset:
         # Check fallback
@@ -75,6 +94,18 @@ async def get_asset(
         else:
             raise HTTPException(status_code=404, detail=f"Asset '{asset_id}' not found.")
 
+    snap_stmt = select(RiskSnapshot).where(RiskSnapshot.asset_id == asset.id).order_by(RiskSnapshot.ts.desc()).limit(1)
+    snap_res = await db.execute(snap_stmt)
+    latest_snap = snap_res.scalar_one_or_none()
+
+    alert_stmt = (
+        select(func.count(Alert.id))
+        .join(RiskSnapshot, Alert.snapshot_id == RiskSnapshot.id)
+        .where(RiskSnapshot.asset_id == asset.id, Alert.status == "ACTIVE")
+    )
+    alert_res = await db.execute(alert_stmt)
+    active_alerts_count = alert_res.scalar() or 0
+
     return {
         "id": asset.id,
         "name": asset.name,
@@ -82,6 +113,10 @@ async def get_asset(
         "type": asset.type,
         "tle_epoch": asset.tle_epoch.isoformat() if asset.tle_epoch else None,
         "created_at": asset.created_at.isoformat(),
+        "latest_score": round(latest_snap.score, 2) if latest_snap else 10.0,
+        "latest_level": latest_snap.level if latest_snap else "NOMINAL",
+        "active_alerts_count": active_alerts_count,
+        "last_updated": latest_snap.ts.isoformat() if latest_snap else asset.created_at.isoformat(),
     }
 
 

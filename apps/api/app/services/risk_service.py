@@ -61,7 +61,7 @@ class RiskService:
             top_conj = c_res.scalars().first()
             if top_conj:
                 pc = top_conj.pc
-                r_d = 0.95 if pc >= 1.0e-4 else min(1.0, max(0.0, float(top_conj.pc * 1000.0)))
+                r_d = 0.95 if (pc is not None and pc >= 1.0e-4) else min(1.0, max(0.0, float(top_conj.pc * 1000.0)))
             else:
                 pc = 1.0e-7
                 r_d = 0.02

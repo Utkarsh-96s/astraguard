@@ -1,0 +1,33 @@
+# ASTRA-GUARD Feature Flags Configuration
+# Every advanced feature and quick win sits behind a flag.
+# Defaults are enabled (true) for demonstration mode.
+# Environment variable override format: ASTRA_FEATURE_<FLAG_NAME>=false
+
+features:
+  # Stage 1: Interactive Core
+  fault_injection_lab: true        # F5: Fault Injection Lab + Detector Arena
+  phone_alert_bot: true            # F10: Phone Alert Bot (Telegram)
+  counterfactual_explainer: true   # F4: Counterfactual + Time-Attribution Explainer
+
+  # Stage 2: Orbit
+  orbit_twin_3d: true              # F1: Live 3D Orbit Digital Twin
+  maneuver_simulator: true         # F2: Maneuver What-If Simulator
+  conjunction_uncertainty: true    # F3: Conjunction Uncertainty Lab (B-plane + Monte Carlo)
+
+  # Stage 3: Evidence & Trust
+  real_event_replay: true          # F6: Real-Event Replay
+  trust_layer: true                # F9: Trust Layer (Calibration, Drift, OOD, Staleness)
+  incident_report: true            # F7: One-Click Incident Report + Share Link (PDF)
+
+  # Stage 4: Scale & Stretch
+  fleet_command_center: true       # F8: Fleet Command Center
+  operator_copilot: true           # F11: Operator Copilot (grounded, read-only)
+  observation_optimizer: true      # F12: Observation Tasking Optimizer
+
+quick_wins:
+  guided_judge_tour: true          # Q1: Guided Judge Tour overlay
+  provenance_reproduce: true       # Q2: Provenance + Reproduce drawer
+  pipeline_observability: true     # Q3: Pipeline observability widget in navbar
+  command_palette: true            # Q4: Command palette (Ctrl+K)
+  voice_announcer: true            # Q5: Voice announcer
+  night_ops_theme: true            # Q6: Night-ops theme + sound toggle

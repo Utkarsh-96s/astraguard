@@ -24,23 +24,32 @@ class OperatorActionRequest(BaseModel):
 @router.get("", summary="List mission alerts")
 async def list_alerts(
     db: AsyncSession = Depends(get_db),
+    asset_id: str | None = Query(None, description="Filter by spacecraft asset ID"),
     status: str | None = Query(None, description="Filter by status (ACTIVE, ACKNOWLEDGED, DISMISSED, SNOOZED)"),
     level: str | None = Query(None, description="Filter by severity level (WATCH, WARNING, CRITICAL)"),
     limit: int = Query(50, ge=1, le=100),
 ) -> list[dict[str, Any]]:
     """Retrieve filtered mission alerts."""
-    stmt = select(Alert).order_by(Alert.created_at.desc()).limit(limit)
+    stmt = (
+        select(Alert, RiskSnapshot.asset_id)
+        .join(RiskSnapshot, Alert.snapshot_id == RiskSnapshot.id, isouter=True)
+        .order_by(Alert.created_at.desc())
+        .limit(limit)
+    )
+    if asset_id:
+        stmt = stmt.where(RiskSnapshot.asset_id == asset_id)
     if status:
         stmt = stmt.where(Alert.status == status.upper())
     if level:
         stmt = stmt.where(Alert.level == level.upper())
 
     res = await db.execute(stmt)
-    alerts = list(res.scalars().all())
+    rows = list(res.all())
     return [
         {
             "id": a.id,
             "snapshot_id": a.snapshot_id,
+            "asset_id": a_asset_id or "SENTINEL-2A",
             "level": a.level,
             "title": a.title,
             "rationale": a.rationale,
@@ -50,7 +59,7 @@ async def list_alerts(
             "synthetic": a.synthetic,
             "created_at": a.created_at.isoformat(),
         }
-        for a in alerts
+        for a, a_asset_id in rows
     ]
 
 
