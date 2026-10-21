@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "last_updated": "2026-10-21T18:38:46.210586+00:00",
+  "last_updated": "2026-10-21T18:48:06.832426+00:00",
   "figures": {
     "FIG-MOD-FOUNDATION-DUMMY-001-LOSS": {
       "figure_id": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS",
@@ -13,8 +13,8 @@
       "model_version": "0.1.0",
       "dataset": "synthetic_sine_waves",
       "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
-      "commit": "e93d67f",
-      "timestamp": "2026-10-21T18:38:46.210586+00:00",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:48:06.832426+00:00",
       "tags": [
         "loss_curve",
         "convergence",
@@ -33,8 +33,8 @@
       "model_version": "1.0.0",
       "dataset": "test_synth",
       "data_hash": "abc123hash",
-      "commit": "e93d67f",
-      "timestamp": "2026-10-21T18:38:43.033246+00:00",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:48:03.695358+00:00",
       "tags": [
         "unit_test"
       ],
@@ -405,6 +405,132 @@
         "integrated_gradients",
         "heatmap",
         "debris"
+      ],
+      "metadata": {}
+    },
+    "FIG-DISASTER-TRAIN-LOSS": {
+      "figure_id": "FIG-DISASTER-TRAIN-LOSS",
+      "title": "Disaster Segmentation Loss Convergence",
+      "description": "Epoch-wise BCE + Dice loss convergence curves for single-date U-Net and dual-temporal Siamese change U-Net.",
+      "filename_png": "FIG-DISASTER-TRAIN-LOSS.png",
+      "filename_svg": "FIG-DISASTER-TRAIN-LOSS.svg",
+      "url_png": "/figures/FIG-DISASTER-TRAIN-LOSS.png",
+      "url_svg": "/figures/FIG-DISASTER-TRAIN-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "sen1floods11_synthetic_sar",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:47:07.968025+00:00",
+      "tags": [
+        "loss_curve",
+        "disaster",
+        "segmentation",
+        "convergence"
+      ],
+      "metadata": {}
+    },
+    "FIG-DISASTER-UNET-SEGMENTATION": {
+      "figure_id": "FIG-DISASTER-UNET-SEGMENTATION",
+      "title": "U-Net Flood Inundation Segmentation",
+      "description": "4-panel satellite radar segmentation chip comparison: Pre-disaster SAR, Post-disaster SAR, Ground Truth, and U-Net Prediction.",
+      "filename_png": "FIG-DISASTER-UNET-SEGMENTATION.png",
+      "filename_svg": "FIG-DISASTER-UNET-SEGMENTATION.svg",
+      "url_png": "/figures/FIG-DISASTER-UNET-SEGMENTATION.png",
+      "url_svg": "/figures/FIG-DISASTER-UNET-SEGMENTATION.svg",
+      "model_version": "1.0.0",
+      "dataset": "sen1floods11_synthetic_sar",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:47:08.506782+00:00",
+      "tags": [
+        "chip",
+        "segmentation",
+        "radar",
+        "disaster"
+      ],
+      "metadata": {}
+    },
+    "FIG-DISASTER-GRAD-CAM": {
+      "figure_id": "FIG-DISASTER-GRAD-CAM",
+      "title": "SAR Grad-CAM Inundation Explainability",
+      "description": "Grad-CAM convolutional activation map demonstrating neural focus on specular reflection waterlines.",
+      "filename_png": "FIG-DISASTER-GRAD-CAM.png",
+      "filename_svg": "FIG-DISASTER-GRAD-CAM.svg",
+      "url_png": "/figures/FIG-DISASTER-GRAD-CAM.png",
+      "url_svg": "/figures/FIG-DISASTER-GRAD-CAM.svg",
+      "model_version": "1.0.0",
+      "dataset": "sen1floods11_synthetic_sar",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:47:09.154206+00:00",
+      "tags": [
+        "gradcam",
+        "xai",
+        "explainability",
+        "disaster"
+      ],
+      "metadata": {}
+    },
+    "FIG-DISASTER-CHANGE-DETECTION": {
+      "figure_id": "FIG-DISASTER-CHANGE-DETECTION",
+      "title": "Multi-Temporal Disaster Change Detection Map",
+      "description": "3-class multi-temporal radar change map isolating newly flooded terrain from pre-existing water bodies.",
+      "filename_png": "FIG-DISASTER-CHANGE-DETECTION.png",
+      "filename_svg": "FIG-DISASTER-CHANGE-DETECTION.svg",
+      "url_png": "/figures/FIG-DISASTER-CHANGE-DETECTION.png",
+      "url_svg": "/figures/FIG-DISASTER-CHANGE-DETECTION.svg",
+      "model_version": "1.0.0",
+      "dataset": "sen1floods11_synthetic_sar",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:47:09.447187+00:00",
+      "tags": [
+        "change_detection",
+        "multitemporal",
+        "disaster"
+      ],
+      "metadata": {}
+    },
+    "FIG-DISASTER-MODEL-COMPARISON": {
+      "figure_id": "FIG-DISASTER-MODEL-COMPARISON",
+      "title": "Disaster Model Benchmark Comparison",
+      "description": "Comparative evaluation of Otsu thresholding, backscatter differencing, and U-Net architectures on IoU and Dice score.",
+      "filename_png": "FIG-DISASTER-MODEL-COMPARISON.png",
+      "filename_svg": "FIG-DISASTER-MODEL-COMPARISON.svg",
+      "url_png": "/figures/FIG-DISASTER-MODEL-COMPARISON.png",
+      "url_svg": "/figures/FIG-DISASTER-MODEL-COMPARISON.svg",
+      "model_version": "1.0.0",
+      "dataset": "sen1floods11_synthetic_sar",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:47:09.713671+00:00",
+      "tags": [
+        "benchmark",
+        "comparison",
+        "iou",
+        "dice",
+        "disaster"
+      ],
+      "metadata": {}
+    },
+    "FIG-DISASTER-FAILURE-CASES": {
+      "figure_id": "FIG-DISASTER-FAILURE-CASES",
+      "title": "SAR Inundation Failure Modes Analysis",
+      "description": "Visual analysis and residual error masks for radar edge cases: specular asphalt false alarms and dense vegetation canopy flood masking.",
+      "filename_png": "FIG-DISASTER-FAILURE-CASES.png",
+      "filename_svg": "FIG-DISASTER-FAILURE-CASES.svg",
+      "url_png": "/figures/FIG-DISASTER-FAILURE-CASES.png",
+      "url_svg": "/figures/FIG-DISASTER-FAILURE-CASES.svg",
+      "model_version": "1.0.0",
+      "dataset": "sen1floods11_synthetic_sar",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "commit": "a2c04ed",
+      "timestamp": "2026-10-21T18:47:10.250936+00:00",
+      "tags": [
+        "failure_cases",
+        "error_analysis",
+        "radar_physics",
+        "disaster"
       ],
       "metadata": {}
     }

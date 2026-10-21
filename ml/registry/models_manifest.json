@@ -1,6 +1,6 @@
 {
   "registry_version": "1.0.0",
-  "last_updated": "2026-10-21T18:38:46.214596+00:00",
+  "last_updated": "2026-10-21T18:48:06.836443+00:00",
   "models": {
     "MOD-FOUNDATION-DUMMY-001": {
       "model_id": "MOD-FOUNDATION-DUMMY-001",
@@ -53,12 +53,12 @@
         "best_val_loss": 0.505839
       },
       "latency_ms": {
-        "p50": 0.048,
-        "p95": 0.058,
-        "p99": 0.236,
-        "mean": 0.049,
-        "min": 0.032,
-        "max": 0.238
+        "p50": 0.041,
+        "p95": 0.049,
+        "p99": 0.076,
+        "mean": 0.043,
+        "min": 0.04,
+        "max": 0.134
       },
       "onnx_path": "ml/artifacts/dummy_stage_a/MOD-FOUNDATION-DUMMY-001.onnx",
       "checkpoint_path": "ml/artifacts/dummy_stage_a/best_model.pt",
@@ -67,7 +67,7 @@
         "Demonstration dummy model only.",
         "Trained on synthetic harmonic telemetry for pipeline foundation verification."
       ],
-      "created_at": "2026-10-21T18:38:46.213762+00:00"
+      "created_at": "2026-10-21T18:48:06.835634+00:00"
     },
     "MOD-TEST-REGISTRY-001": {
       "model_id": "MOD-TEST-REGISTRY-001",
@@ -94,7 +94,7 @@
       "checkpoint_path": null,
       "training_log_path": null,
       "limitations": [],
-      "created_at": "2026-10-21T18:38:43.060323+00:00"
+      "created_at": "2026-10-21T18:48:03.714709+00:00"
     },
     "MOD-HEALTH-LSTM-001": {
       "model_id": "MOD-HEALTH-LSTM-001",

@@ -1,0 +1,36 @@
+model_id: "MOD-DISASTER-SIAMESE-001"
+name: "Dual-Temporal Pre/Post Flood Change Detection U-Net"
+version: "1.0.0"
+architecture: "SiameseChangeUNet"
+subsystem: "disaster"
+task: "segmentation"
+seed: 42
+
+dataset:
+  name: "sen1floods11_synthetic_sar"
+  in_channels: 2
+  size: 128
+  num_samples: 30
+  num_samples_fast: 10
+
+model:
+  base_filters: 16
+  in_channels: 2
+  out_channels: 1
+
+training:
+  batch_size: 4
+  epochs: 15
+  epochs_fast: 3
+  lr: 0.003
+  weight_decay: 0.0001
+  patience: 4
+  use_amp: true
+
+export:
+  onnx: true
+  output_dir: "ml/artifacts/disaster_siamese"
+
+limitations:
+  - "Ingests paired pre-disaster and post-disaster Sentinel-1 SAR chips."
+  - "Eliminates permanent water bodies to isolate newly inundated flood expansion."

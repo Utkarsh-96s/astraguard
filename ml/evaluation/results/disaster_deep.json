@@ -1,0 +1,92 @@
+{
+  "benchmark_dataset": "Sen1Floods11 / Synthetic Multi-Temporal SAR Flood Benchmark",
+  "chip_dimensions": "128x128",
+  "total_evaluated_chips": 30,
+  "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+  "baselines": {
+    "otsu_thresholding": {
+      "name": "Otsu Automatic Backscatter Thresholding",
+      "fitted_threshold": 0.328,
+      "metrics": {
+        "iou": 0.6744,
+        "dice_f1": 0.8055,
+        "precision": 0.6978,
+        "recall": 0.9526,
+        "accuracy": 0.8857
+      }
+    },
+    "backscatter_differencing": {
+      "name": "Normalized Multi-Temporal Backscatter Differencing",
+      "threshold": 0.2,
+      "metrics": {
+        "iou": 0.9418,
+        "dice_f1": 0.97,
+        "precision": 0.9803,
+        "recall": 0.96,
+        "accuracy": 0.9853
+      }
+    }
+  },
+  "deep_models": {
+    "MOD-DISASTER-UNET-001": {
+      "model_id": "MOD-DISASTER-UNET-001",
+      "architecture": "UNet",
+      "total_params": 117393,
+      "metrics": {
+        "iou": 0.7256,
+        "dice_f1": 0.841,
+        "precision": 0.9836,
+        "recall": 0.7345,
+        "accuracy": 0.931
+      },
+      "latency_ms": {
+        "p50": 4.292,
+        "p95": 6.991,
+        "p99": 7.526,
+        "mean": 4.537,
+        "min": 3.897,
+        "max": 7.587
+      }
+    },
+    "MOD-DISASTER-SIAMESE-001": {
+      "model_id": "MOD-DISASTER-SIAMESE-001",
+      "architecture": "SiameseChangeUNet",
+      "total_params": 117537,
+      "metrics": {
+        "iou": 0.991,
+        "dice_f1": 0.9955,
+        "precision": 0.9914,
+        "recall": 0.9997,
+        "accuracy": 0.9977
+      },
+      "latency_ms": {
+        "p50": 4.207,
+        "p95": 5.373,
+        "p99": 5.592,
+        "mean": 4.378,
+        "min": 3.915,
+        "max": 5.619
+      }
+    }
+  },
+  "failure_case_analysis": {
+    "runway_specular_false_positives": {
+      "description": "Dry airport runway / flat asphalt low backscatter mimicking water",
+      "otsu_false_positive_pixels": 1832,
+      "unet_false_positive_pixels": 45,
+      "siamese_false_positive_pixels": 44,
+      "reduction_with_siamese_pct": 97.6
+    },
+    "vegetation_canopy_masking": {
+      "description": "Inundation concealed beneath dense forest canopy producing volume double-bounce",
+      "canopy_iou_otsu": 0.5725,
+      "canopy_iou_siamese": 0.9906
+    }
+  },
+  "honest_comparison": {
+    "best_iou_model": "MOD-DISASTER-SIAMESE-001",
+    "fastest_baseline": "otsu_thresholding",
+    "tradeoff_statement": "Dual-Temporal Siamese U-Net achieves superior IoU (0.9910) and Dice score (0.9955) by leveraging multi-temporal context, eliminating 97.6% of specular asphalt runway false alarms observed in single-date Otsu thresholding. However, Otsu thresholding incurs near-zero latency (<0.1 ms) compared to U-Net inference (4.21 ms p50 on CPU)."
+  },
+  "timestamp": "2026-10-21T18:47:10.252690+00:00"
+}

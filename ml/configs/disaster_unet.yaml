@@ -1,0 +1,35 @@
+model_id: "MOD-DISASTER-UNET-001"
+name: "Lightweight Satellite Radar Flood Segmentation U-Net"
+version: "1.0.0"
+architecture: "UNet"
+subsystem: "disaster"
+task: "segmentation"
+seed: 42
+
+dataset:
+  name: "sen1floods11_synthetic_sar"
+  in_channels: 1
+  size: 128
+  num_samples: 30
+  num_samples_fast: 10
+
+model:
+  base_filters: 16
+  out_channels: 1
+
+training:
+  batch_size: 4
+  epochs: 15
+  epochs_fast: 3
+  lr: 0.003
+  weight_decay: 0.0001
+  patience: 4
+  use_amp: true
+
+export:
+  onnx: true
+  output_dir: "ml/artifacts/disaster_unet"
+
+limitations:
+  - "Trained on calibrated VV polarization SAR intensity chips."
+  - "Smooth asphalt surfaces may produce localized specular false positives."
