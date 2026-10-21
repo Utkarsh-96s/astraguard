@@ -37,6 +37,9 @@ from ml.common.registry import (
     extract_param_counts,
     register_model,
 )
+from ml.debris.cnn_classifier import Debris1DCNNClassifierNet
+from ml.debris.dataset import generate_kelvins_cdm_dataset
+from ml.debris.gru_classifier import DebrisGRUClassifierNet, DebrisLSTMClassifierNet
 from ml.health.lstm_ae import LSTMAutoencoderNet
 from ml.health.tcn_ae import TCNAutoencoderNet
 from ml.health.transformer_ae import TransformerAutoencoderNet
@@ -110,24 +113,25 @@ def plot_loss_curve(
     model_version: str,
     dataset_name: str,
     data_hash: str,
+    loss_name: str = "MSE",
 ) -> dict[str, Any]:
     """Plot SpaceX-style monochrome training curve and save to figures/manifest."""
     apply_style()
     fig, ax = plt.subplots(figsize=(8, 4.5))
 
     epochs = list(range(1, len(train_losses) + 1))
-    ax.plot(epochs, train_losses, linestyle="-", marker="o", label="Training Loss (MSE)", color="#f0f0fa")
-    ax.plot(epochs, val_losses, linestyle="--", marker="s", label="Validation Loss (MSE)", color="#c4c4cf")
+    ax.plot(epochs, train_losses, linestyle="-", marker="o", label=f"Training Loss ({loss_name})", color="#f0f0fa")
+    ax.plot(epochs, val_losses, linestyle="--", marker="s", label=f"Validation Loss ({loss_name})", color="#c4c4cf")
 
     ax.set_title(f"{model_id} // LOSS CONVERGENCE PROFILE", pad=12)
     ax.set_xlabel("EPOCH")
-    ax.set_ylabel("MEAN SQUARED ERROR (MSE)")
+    ax.set_ylabel(f"LOSS ({loss_name})")
     ax.legend(loc="upper right")
     ax.grid(True)
 
     figure_id = f"FIG-{model_id}-LOSS"
     title = f"{model_id} Loss Convergence"
-    desc = f"Epoch-wise MSE convergence profile for {model_id} v{model_version} on {dataset_name}."
+    desc = f"Epoch-wise {loss_name} convergence profile for {model_id} v{model_version} on {dataset_name}."
 
     entry = save_figure(
         fig=fig,
@@ -169,27 +173,52 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
     seq_len = ds_cfg.get("seq_len", 32)
     dataset_name = ds_cfg.get("name", "synthetic_dataset")
 
-    # Generate or load data
-    raw_tensor, data_hash = generate_synthetic_dataset(
-        num_samples=num_samples,
-        seq_len=seq_len,
-        in_channels=in_channels,
-        seed=seed,
-    )
-
-    # Train / Val Split (80 / 20)
-    split_idx = int(0.8 * num_samples)
-    train_x = raw_tensor[:split_idx]
-    val_x = raw_tensor[split_idx:]
-
-    train_loader = DataLoader(TensorDataset(train_x), batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(TensorDataset(val_x), batch_size=batch_size, shuffle=False)
-
-    # Model instantiation
+    # Model architecture identification
     arch_name = cfg.get("architecture", "DummySequenceModel")
     m_cfg = cfg.get("model", {})
     hidden_dim = m_cfg.get("hidden_dim", 32)
     latent_dim = m_cfg.get("latent_dim", 16)
+    is_classification = (
+        cfg.get("task") == "classification"
+        or "debris" in cfg.get("subsystem", "").lower()
+        or arch_name in (
+            "DebrisGRUClassifierNet",
+            "DebrisLSTMClassifierNet",
+            "Debris1DCNNClassifierNet",
+            "DebrisGRU",
+            "DebrisLSTM",
+            "Debris1DCNN",
+        )
+    )
+
+    # Generate or load data
+    if is_classification:
+        X_raw, y_raw, _, data_hash = generate_kelvins_cdm_dataset(
+            num_events=num_samples,
+            seq_len=seq_len,
+            seed=seed,
+        )
+        raw_tensor = torch.tensor(X_raw, dtype=torch.float32)
+        labels_tensor = torch.tensor(y_raw, dtype=torch.float32).unsqueeze(1)
+        split_idx = int(0.8 * num_samples)
+        train_x, train_y = raw_tensor[:split_idx], labels_tensor[:split_idx]
+        val_x, val_y = raw_tensor[split_idx:], labels_tensor[split_idx:]
+
+        train_loader = DataLoader(TensorDataset(train_x, train_y), batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(TensorDataset(val_x, val_y), batch_size=batch_size, shuffle=False)
+    else:
+        raw_tensor, data_hash = generate_synthetic_dataset(
+            num_samples=num_samples,
+            seq_len=seq_len,
+            in_channels=in_channels,
+            seed=seed,
+        )
+        split_idx = int(0.8 * num_samples)
+        train_x = raw_tensor[:split_idx]
+        val_x = raw_tensor[split_idx:]
+
+        train_loader = DataLoader(TensorDataset(train_x), batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(TensorDataset(val_x), batch_size=batch_size, shuffle=False)
 
     if arch_name == "DummySequenceModel":
         model = DummySequenceModel(in_channels=in_channels, seq_len=seq_len).to(device)
@@ -215,10 +244,16 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
             latent_dim=latent_dim,
             max_len=max(256, seq_len * 2),
         ).to(device)
+    elif arch_name in ("DebrisGRUClassifierNet", "DebrisGRU"):
+        model = DebrisGRUClassifierNet(input_dim=in_channels, hidden_dim=hidden_dim).to(device)
+    elif arch_name in ("DebrisLSTMClassifierNet", "DebrisLSTM"):
+        model = DebrisLSTMClassifierNet(input_dim=in_channels, hidden_dim=hidden_dim).to(device)
+    elif arch_name in ("Debris1DCNNClassifierNet", "Debris1DCNN"):
+        model = Debris1DCNNClassifierNet(input_dim=in_channels, hidden_dim=hidden_dim).to(device)
     else:
         raise ValueError(f"Unknown architecture: {arch_name}")
 
-    criterion = nn.MSELoss()
+    criterion = nn.BCEWithLogitsLoss() if is_classification else nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     early_stopping = EarlyStopping(patience=patience)
     scaler = torch.cuda.amp.GradScaler() if use_amp else None
@@ -241,20 +276,26 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
         model.train()
         running_train_loss = 0.0
 
-        for (batch_x,) in train_loader:
-            batch_x = batch_x.to(device)
+        for batch in train_loader:
+            if is_classification:
+                batch_x = batch[0].to(device)
+                target = batch[1].to(device)
+            else:
+                batch_x = batch[0].to(device)
+                target = batch_x
+
             optimizer.zero_grad()
 
             if use_amp and scaler is not None:
                 with torch.cuda.amp.autocast():
                     pred = model(batch_x)
-                    loss = criterion(pred, batch_x)
+                    loss = criterion(pred, target)
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
                 scaler.update()
             else:
                 pred = model(batch_x)
-                loss = criterion(pred, batch_x)
+                loss = criterion(pred, target)
                 loss.backward()
                 optimizer.step()
 
@@ -266,10 +307,16 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
         model.eval()
         running_val_loss = 0.0
         with torch.no_grad():
-            for (batch_x,) in val_loader:
-                batch_x = batch_x.to(device)
+            for batch in val_loader:
+                if is_classification:
+                    batch_x = batch[0].to(device)
+                    target = batch[1].to(device)
+                else:
+                    batch_x = batch[0].to(device)
+                    target = batch_x
+
                 pred = model(batch_x)
-                loss = criterion(pred, batch_x)
+                loss = criterion(pred, target)
                 running_val_loss += loss.item() * len(batch_x)
 
         epoch_val_loss = running_val_loss / len(val_x)
@@ -319,15 +366,17 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
     latency_stats: dict[str, float] = {}
     if cfg.get("export", {}).get("onnx", True):
         onnx_file = out_dir / f"{cfg['model_id']}.onnx"
+        in_name = "cdm_sequence" if is_classification else "telemetry_sequence"
+        out_name = "critical_risk_logits" if is_classification else "reconstructed_sequence"
         export_to_onnx(
             model=model,
             dummy_input=dummy_input,
             output_path=onnx_file,
-            input_names=["telemetry_sequence"],
-            output_names=["reconstructed_sequence"],
+            input_names=[in_name],
+            output_names=[out_name],
             dynamic_axes={
-                "telemetry_sequence": {0: "batch_size"},
-                "reconstructed_sequence": {0: "batch_size"},
+                in_name: {0: "batch_size"},
+                out_name: {0: "batch_size"},
             },
         )
         onnx_path = str(onnx_file.resolve().relative_to(Path.cwd().resolve())).replace("\\", "/")
@@ -348,6 +397,7 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
         model_version=cfg["version"],
         dataset_name=dataset_name,
         data_hash=data_hash,
+        loss_name="BCE" if is_classification else "MSE",
     )
 
     # Register in Model Registry

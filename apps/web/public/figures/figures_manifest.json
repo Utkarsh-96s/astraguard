@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "last_updated": "2026-10-21T18:26:26.442889+00:00",
+  "last_updated": "2026-10-21T18:38:46.210586+00:00",
   "figures": {
     "FIG-MOD-FOUNDATION-DUMMY-001-LOSS": {
       "figure_id": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS",
@@ -13,8 +13,8 @@
       "model_version": "0.1.0",
       "dataset": "synthetic_sine_waves",
       "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
-      "commit": "e992d14",
-      "timestamp": "2026-10-21T18:26:26.442889+00:00",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:38:46.210586+00:00",
       "tags": [
         "loss_curve",
         "convergence",
@@ -33,8 +33,8 @@
       "model_version": "1.0.0",
       "dataset": "test_synth",
       "data_hash": "abc123hash",
-      "commit": "e992d14",
-      "timestamp": "2026-10-21T18:26:23.177973+00:00",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:38:43.033246+00:00",
       "tags": [
         "unit_test"
       ],
@@ -217,6 +217,194 @@
         "roc",
         "precision_recall",
         "evaluation"
+      ],
+      "metadata": {}
+    },
+    "FIG-MOD-DEBRIS-GRU-001-LOSS": {
+      "figure_id": "FIG-MOD-DEBRIS-GRU-001-LOSS",
+      "title": "MOD-DEBRIS-GRU-001 Loss Convergence",
+      "description": "Epoch-wise BCE convergence profile for MOD-DEBRIS-GRU-001 v1.0.0 on kelvins_cdm_sequences.",
+      "filename_png": "FIG-MOD-DEBRIS-GRU-001-LOSS.png",
+      "filename_svg": "FIG-MOD-DEBRIS-GRU-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-DEBRIS-GRU-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-DEBRIS-GRU-001-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:25.947537+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-MOD-DEBRIS-CNN-001-LOSS": {
+      "figure_id": "FIG-MOD-DEBRIS-CNN-001-LOSS",
+      "title": "MOD-DEBRIS-CNN-001 Loss Convergence",
+      "description": "Epoch-wise BCE convergence profile for MOD-DEBRIS-CNN-001 v1.0.0 on kelvins_cdm_sequences.",
+      "filename_png": "FIG-MOD-DEBRIS-CNN-001-LOSS.png",
+      "filename_svg": "FIG-MOD-DEBRIS-CNN-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-DEBRIS-CNN-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-DEBRIS-CNN-001-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:27.258587+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-MOD-DEBRIS-LSTM-001-LOSS": {
+      "figure_id": "FIG-MOD-DEBRIS-LSTM-001-LOSS",
+      "title": "MOD-DEBRIS-LSTM-001 Loss Convergence",
+      "description": "Epoch-wise BCE convergence profile for MOD-DEBRIS-LSTM-001 v1.0.0 on kelvins_cdm_sequences.",
+      "filename_png": "FIG-MOD-DEBRIS-LSTM-001-LOSS.png",
+      "filename_svg": "FIG-MOD-DEBRIS-LSTM-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-DEBRIS-LSTM-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-DEBRIS-LSTM-001-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:28.900362+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-DEBRIS-TRAIN-LOSS": {
+      "figure_id": "FIG-DEBRIS-TRAIN-LOSS",
+      "title": "Debris Sequential Models Loss Convergence",
+      "description": "BCE validation loss convergence curves for Bidirectional GRU, 1D-CNN, and LSTM on Kelvins CDM sequences.",
+      "filename_png": "FIG-DEBRIS-TRAIN-LOSS.png",
+      "filename_svg": "FIG-DEBRIS-TRAIN-LOSS.svg",
+      "url_png": "/figures/FIG-DEBRIS-TRAIN-LOSS.png",
+      "url_svg": "/figures/FIG-DEBRIS-TRAIN-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:30.266087+00:00",
+      "tags": [
+        "loss_curve",
+        "debris",
+        "training",
+        "convergence"
+      ],
+      "metadata": {}
+    },
+    "FIG-DEBRIS-CDM-SEQUENCE-EVOLUTION": {
+      "figure_id": "FIG-DEBRIS-CDM-SEQUENCE-EVOLUTION",
+      "title": "Multi-Day CDM Sequence Evolution",
+      "description": "Temporal evolution of miss distance and collision probability leading up to TCA for an escalating conjunction.",
+      "filename_png": "FIG-DEBRIS-CDM-SEQUENCE-EVOLUTION.png",
+      "filename_svg": "FIG-DEBRIS-CDM-SEQUENCE-EVOLUTION.svg",
+      "url_png": "/figures/FIG-DEBRIS-CDM-SEQUENCE-EVOLUTION.png",
+      "url_svg": "/figures/FIG-DEBRIS-CDM-SEQUENCE-EVOLUTION.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:30.896048+00:00",
+      "tags": [
+        "cdm",
+        "sequence",
+        "trajectory",
+        "debris"
+      ],
+      "metadata": {}
+    },
+    "FIG-DEBRIS-CALIBRATION-CURVE": {
+      "figure_id": "FIG-DEBRIS-CALIBRATION-CURVE",
+      "title": "Debris Risk Calibration Reliability Diagram",
+      "description": "Reliability curves demonstrating Platt scaling calibration on Bidirectional GRU predictions.",
+      "filename_png": "FIG-DEBRIS-CALIBRATION-CURVE.png",
+      "filename_svg": "FIG-DEBRIS-CALIBRATION-CURVE.svg",
+      "url_png": "/figures/FIG-DEBRIS-CALIBRATION-CURVE.png",
+      "url_svg": "/figures/FIG-DEBRIS-CALIBRATION-CURVE.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:31.173888+00:00",
+      "tags": [
+        "calibration",
+        "reliability",
+        "ece",
+        "debris"
+      ],
+      "metadata": {}
+    },
+    "FIG-DEBRIS-MODEL-COMPARISON": {
+      "figure_id": "FIG-DEBRIS-MODEL-COMPARISON",
+      "title": "Debris Model Benchmark & Tradeoff Comparison",
+      "description": "Comparative evaluation of physical thresholding, XGBoost, GRU, 1D-CNN, and LSTM on ROC-AUC and Brier score.",
+      "filename_png": "FIG-DEBRIS-MODEL-COMPARISON.png",
+      "filename_svg": "FIG-DEBRIS-MODEL-COMPARISON.svg",
+      "url_png": "/figures/FIG-DEBRIS-MODEL-COMPARISON.png",
+      "url_svg": "/figures/FIG-DEBRIS-MODEL-COMPARISON.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:31.430918+00:00",
+      "tags": [
+        "benchmark",
+        "comparison",
+        "debris",
+        "roc_auc",
+        "brier"
+      ],
+      "metadata": {}
+    },
+    "FIG-DEBRIS-ROC-PR": {
+      "figure_id": "FIG-DEBRIS-ROC-PR",
+      "title": "Debris ROC and Precision-Recall Curves",
+      "description": "Receiver Operating Characteristic and Precision-Recall curves comparing baselines against deep sequential models.",
+      "filename_png": "FIG-DEBRIS-ROC-PR.png",
+      "filename_svg": "FIG-DEBRIS-ROC-PR.svg",
+      "url_png": "/figures/FIG-DEBRIS-ROC-PR.png",
+      "url_svg": "/figures/FIG-DEBRIS-ROC-PR.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:31.896558+00:00",
+      "tags": [
+        "roc",
+        "precision_recall",
+        "curves",
+        "debris"
+      ],
+      "metadata": {}
+    },
+    "FIG-DEBRIS-TEMPORAL-ATTRIBUTION": {
+      "figure_id": "FIG-DEBRIS-TEMPORAL-ATTRIBUTION",
+      "title": "Debris Temporal Feature Attribution Heatmap",
+      "description": "Captum Integrated Gradients heatmap across CDM update sequence and orbital features for critical encounter.",
+      "filename_png": "FIG-DEBRIS-TEMPORAL-ATTRIBUTION.png",
+      "filename_svg": "FIG-DEBRIS-TEMPORAL-ATTRIBUTION.svg",
+      "url_png": "/figures/FIG-DEBRIS-TEMPORAL-ATTRIBUTION.png",
+      "url_svg": "/figures/FIG-DEBRIS-TEMPORAL-ATTRIBUTION.svg",
+      "model_version": "1.0.0",
+      "dataset": "kelvins_cdm_sequences",
+      "data_hash": "69abaff47b6e378be753bb37aa5a8467e8af1baf11d5f931f8492bc064a4cc90",
+      "commit": "e93d67f",
+      "timestamp": "2026-10-21T18:37:32.391306+00:00",
+      "tags": [
+        "explainability",
+        "captum",
+        "integrated_gradients",
+        "heatmap",
+        "debris"
       ],
       "metadata": {}
     }

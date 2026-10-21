@@ -1,0 +1,70 @@
+{
+  "model_id": "MOD-DEBRIS-CNN-001",
+  "epochs": [
+    {
+      "epoch": 1,
+      "train_loss": 0.474035,
+      "val_loss": 0.41944
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.197481,
+      "val_loss": 0.119352
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.090599,
+      "val_loss": 0.059053
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.034622,
+      "val_loss": 0.08494
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.041357,
+      "val_loss": 0.075754
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.026674,
+      "val_loss": 0.133384
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.102181,
+      "val_loss": 0.032999
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.073473,
+      "val_loss": 0.006858
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.075371,
+      "val_loss": 0.055031
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.030772,
+      "val_loss": 0.040974
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.017542,
+      "val_loss": 0.068129
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.019693,
+      "val_loss": 0.014599
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.007526,
+      "val_loss": 0.010075
+    }
+  ]
+}

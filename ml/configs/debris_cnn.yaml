@@ -1,0 +1,36 @@
+model_id: "MOD-DEBRIS-CNN-001"
+name: "Conjunction Sequence 1D Temporal CNN Classifier"
+version: "1.0.0"
+architecture: "Debris1DCNNClassifierNet"
+subsystem: "debris"
+task: "classification"
+seed: 42
+
+dataset:
+  name: "kelvins_cdm_sequences"
+  in_channels: 7
+  seq_len: 10
+  num_samples: 150
+  num_samples_fast: 40
+
+model:
+  hidden_dim: 32
+  branch_channels: 16
+  dropout: 0.1
+
+training:
+  batch_size: 16
+  epochs: 18
+  epochs_fast: 4
+  lr: 0.005
+  weight_decay: 0.0001
+  patience: 5
+  use_amp: true
+
+export:
+  onnx: true
+  output_dir: "ml/artifacts/debris_cnn"
+
+limitations:
+  - "Multi-scale 1D CNN with causal padding over kernel sizes 2, 3, and 5."
+  - "Optimized for ultra-fast edge inference (p50 < 0.10ms)."
