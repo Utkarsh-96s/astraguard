@@ -1,0 +1,100 @@
+{
+  "registry_version": "1.0.0",
+  "last_updated": "2026-10-21T18:04:39.662245+00:00",
+  "models": {
+    "MOD-FOUNDATION-DUMMY-001": {
+      "model_id": "MOD-FOUNDATION-DUMMY-001",
+      "name": "Stage A Dummy Foundation Autoencoder",
+      "version": "0.1.0",
+      "architecture": "DummySequenceModel",
+      "subsystem": "foundation",
+      "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
+      "params_count": {
+        "total_params": 1260,
+        "trainable_params": 1260,
+        "non_trainable_params": 0,
+        "model_size_bytes": 5040
+      },
+      "config": {
+        "model_id": "MOD-FOUNDATION-DUMMY-001",
+        "name": "Stage A Dummy Foundation Autoencoder",
+        "version": "0.1.0",
+        "architecture": "DummySequenceModel",
+        "subsystem": "foundation",
+        "seed": 42,
+        "dataset": {
+          "name": "synthetic_sine_waves",
+          "in_channels": 4,
+          "seq_len": 32,
+          "num_samples": 200,
+          "num_samples_fast": 40
+        },
+        "training": {
+          "batch_size": 16,
+          "epochs": 10,
+          "epochs_fast": 3,
+          "lr": 0.005,
+          "weight_decay": 0.0001,
+          "patience": 4,
+          "use_amp": true
+        },
+        "export": {
+          "onnx": true,
+          "output_dir": "ml/artifacts/dummy_stage_a"
+        },
+        "limitations": [
+          "Demonstration dummy model only.",
+          "Trained on synthetic harmonic telemetry for pipeline foundation verification."
+        ]
+      },
+      "metrics": {
+        "final_train_loss": 0.378773,
+        "final_val_loss": 0.505839,
+        "best_val_loss": 0.505839
+      },
+      "latency_ms": {
+        "p50": 0.041,
+        "p95": 0.043,
+        "p99": 0.048,
+        "mean": 0.041,
+        "min": 0.04,
+        "max": 0.08
+      },
+      "onnx_path": "ml/artifacts/dummy_stage_a/MOD-FOUNDATION-DUMMY-001.onnx",
+      "checkpoint_path": "ml/artifacts/dummy_stage_a/best_model.pt",
+      "training_log_path": "ml/artifacts/dummy_stage_a/training_log.json",
+      "limitations": [
+        "Demonstration dummy model only.",
+        "Trained on synthetic harmonic telemetry for pipeline foundation verification."
+      ],
+      "created_at": "2026-10-21T18:04:39.660634+00:00"
+    },
+    "MOD-TEST-REGISTRY-001": {
+      "model_id": "MOD-TEST-REGISTRY-001",
+      "name": "Unit Test Model",
+      "version": "0.0.1",
+      "architecture": "DummySequenceModel",
+      "subsystem": "foundation",
+      "data_hash": "98d4bf03ff6717d9ae66a3722cdee5baf398b472ed367ee70158cacbf77720b8",
+      "params_count": {
+        "total_params": 1260,
+        "trainable_params": 1260,
+        "non_trainable_params": 0,
+        "model_size_bytes": 5040
+      },
+      "config": {},
+      "metrics": {
+        "f1": 0.95
+      },
+      "latency_ms": {
+        "p50": 0.05,
+        "p95": 0.08
+      },
+      "onnx_path": null,
+      "checkpoint_path": null,
+      "training_log_path": null,
+      "limitations": [],
+      "created_at": "2026-10-21T18:04:36.497716+00:00"
+    }
+  }
+}

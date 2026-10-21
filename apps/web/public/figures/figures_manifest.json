@@ -1,0 +1,44 @@
+{
+  "manifest_version": "1.0.0",
+  "last_updated": "2026-10-21T18:04:39.658335+00:00",
+  "figures": {
+    "FIG-MOD-FOUNDATION-DUMMY-001-LOSS": {
+      "figure_id": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS",
+      "title": "MOD-FOUNDATION-DUMMY-001 Loss Convergence",
+      "description": "Epoch-wise MSE convergence profile for MOD-FOUNDATION-DUMMY-001 v0.1.0 on synthetic_sine_waves.",
+      "filename_png": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS.png",
+      "filename_svg": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-FOUNDATION-DUMMY-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-FOUNDATION-DUMMY-001-LOSS.svg",
+      "model_version": "0.1.0",
+      "dataset": "synthetic_sine_waves",
+      "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
+      "commit": "c74e5c3",
+      "timestamp": "2026-10-21T18:04:39.658335+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-TEST-STAGE-A-001": {
+      "figure_id": "FIG-TEST-STAGE-A-001",
+      "title": "Test Figure Title",
+      "description": "Test figure description for Stage A validation.",
+      "filename_png": "FIG-TEST-STAGE-A-001.png",
+      "filename_svg": "FIG-TEST-STAGE-A-001.svg",
+      "url_png": "/figures/FIG-TEST-STAGE-A-001.png",
+      "url_svg": "/figures/FIG-TEST-STAGE-A-001.svg",
+      "model_version": "1.0.0",
+      "dataset": "test_synth",
+      "data_hash": "abc123hash",
+      "commit": "c74e5c3",
+      "timestamp": "2026-10-21T18:04:36.396825+00:00",
+      "tags": [
+        "unit_test"
+      ],
+      "metadata": {}
+    }
+  }
+}

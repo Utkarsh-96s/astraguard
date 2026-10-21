@@ -1,0 +1,61 @@
+# ASTRA-GUARD SpaceX-Inspired Monochrome Matplotlib Style
+# High-aerospace styling: black canvas, #f0f0fa lines, #545457 grid, zero color accents
+
+# Figure aesthetics
+figure.facecolor: 000000
+figure.edgecolor: 000000
+figure.titlesize: 14
+figure.titleweight: bold
+figure.dpi: 100
+
+# Axes aesthetics
+axes.facecolor: 000000
+axes.edgecolor: 33333d
+axes.linewidth: 1.0
+axes.grid: True
+axes.titlesize: 12
+axes.titleweight: bold
+axes.titlecolor: f0f0fa
+axes.labelsize: 10
+axes.labelcolor: f0f0fa
+axes.labelweight: normal
+axes.axisbelow: True
+
+# Grid settings
+grid.color: 545457
+grid.linestyle: --
+grid.linewidth: 0.6
+grid.alpha: 0.5
+
+# Tick styling
+xtick.color: f0f0fa
+ytick.color: f0f0fa
+xtick.labelsize: 9
+ytick.labelsize: 9
+xtick.direction: out
+ytick.direction: out
+xtick.major.size: 4
+ytick.major.size: 4
+
+# Line styling
+lines.linewidth: 1.5
+lines.markersize: 5
+lines.color: f0f0fa
+
+# Text and Font
+text.color: f0f0fa
+font.family: sans-serif
+font.sans-serif: Barlow, Inter, DejaVu Sans, Arial, Helvetica, sans-serif
+
+# Legend
+legend.facecolor: 000000
+legend.edgecolor: 33333d
+legend.labelcolor: f0f0fa
+legend.fontsize: 9
+legend.framealpha: 0.85
+
+# Saving figures
+savefig.facecolor: 000000
+savefig.edgecolor: 000000
+savefig.bbox: tight
+savefig.pad_inches: 0.1

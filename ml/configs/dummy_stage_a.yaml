@@ -1,0 +1,30 @@
+model_id: "MOD-FOUNDATION-DUMMY-001"
+name: "Stage A Dummy Foundation Autoencoder"
+version: "0.1.0"
+architecture: "DummySequenceModel"
+subsystem: "foundation"
+seed: 42
+
+dataset:
+  name: "synthetic_sine_waves"
+  in_channels: 4
+  seq_len: 32
+  num_samples: 200
+  num_samples_fast: 40
+
+training:
+  batch_size: 16
+  epochs: 10
+  epochs_fast: 3
+  lr: 0.005
+  weight_decay: 0.0001
+  patience: 4
+  use_amp: true
+
+export:
+  onnx: true
+  output_dir: "ml/artifacts/dummy_stage_a"
+
+limitations:
+  - "Demonstration dummy model only."
+  - "Trained on synthetic harmonic telemetry for pipeline foundation verification."

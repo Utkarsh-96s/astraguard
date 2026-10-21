@@ -1,0 +1,20 @@
+{
+  "model_id": "MOD-FOUNDATION-DUMMY-001",
+  "epochs": [
+    {
+      "epoch": 1,
+      "train_loss": 0.905334,
+      "val_loss": 0.53937
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.541533,
+      "val_loss": 0.525092
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.378773,
+      "val_loss": 0.505839
+    }
+  ]
+}
