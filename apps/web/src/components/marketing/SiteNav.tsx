@@ -10,13 +10,14 @@ import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../../lib/themeContext";
 
 const NAV_LINKS = [
-  { label: "MISSION", href: "#mission" },
-  { label: "HEALTH", href: "#health" },
-  { label: "DEBRIS", href: "#debris" },
-  { label: "EARTH", href: "#earth" },
-  { label: "ENGINE", href: "#engine" },
-  { label: "DEMO", href: "#demo" },
-  { label: "TEAM", href: "#team" },
+  { label: "MISSION", href: "/#mission" },
+  { label: "HEALTH", href: "/#health" },
+  { label: "DEBRIS", href: "/#debris" },
+  { label: "EARTH", href: "/#earth" },
+  { label: "TECH", href: "/technology" },
+  { label: "ENGINE", href: "/#engine" },
+  { label: "DEMO", href: "/#demo" },
+  { label: "TEAM", href: "/#team" },
 ];
 
 export function SiteNav() {
@@ -55,13 +56,13 @@ export function SiteNav() {
             aria-label="Primary Navigation"
           >
             {NAV_LINKS.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 className="text-space-fg text-[11px] font-bold tracking-[0.10em] uppercase transition-colors hover:opacity-75 focus-visible:outline focus-visible:outline-1 focus-visible:outline-space-fg focus-visible:outline-offset-[3px]"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 

@@ -62,7 +62,7 @@ export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
       {/* Nav Links */}
       <nav className="flex flex-col gap-6 py-12" aria-label="Mobile Navigation Links">
         {links.map((link) => (
-          <a
+          <Link
             key={link.label}
             href={link.href}
             onClick={onClose}
@@ -70,7 +70,7 @@ export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
             style={{ fontFamily: "var(--font-d-din-bold, var(--font-barlow, sans-serif))" }}
           >
             {link.label}
-          </a>
+          </Link>
         ))}
       </nav>
 

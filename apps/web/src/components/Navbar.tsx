@@ -17,6 +17,7 @@ import {
   MicOff,
   Command,
   ChevronDown,
+  Cpu,
 } from "lucide-react";
 import { useAsset } from "../lib/assetContext";
 import { ObservabilityWidget } from "./ObservabilityWidget";
@@ -52,6 +53,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
     { href: "/dashboard/disaster", label: "Disaster", icon: Layers },
     { href: "/dashboard/alerts", label: "Alerts", icon: AlertTriangle },
     { href: "/dashboard/models", label: "Models", icon: Radio },
+    { href: "/dashboard/explore", label: "Explorer", icon: Cpu },
     { href: "/demo", label: "Demo", icon: PlayCircle },
   ];
 

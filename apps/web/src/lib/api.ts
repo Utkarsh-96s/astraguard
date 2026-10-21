@@ -21,6 +21,7 @@ import {
   UncertaintyLabRequest,
   UncertaintyLabResponse,
 } from "./types";
+import localFiguresManifest from "../../public/figures/figures_manifest.json";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -1143,4 +1144,198 @@ export function generateIncidentReportData(alert: Alert): IncidentReportData {
     provenance_sha256: "8e2f41bb92c10ad4593e817a52ff6071420a8db6712390aefb123d902187fa54",
   };
 }
+
+// ============================================================================
+// Deep Learning Model Registry, Traceable Figures, & Real-Time ONNX Inference
+// ============================================================================
+
+export interface DLModelRegistryEntry {
+  model_id: string;
+  name: string;
+  version: string;
+  architecture: string;
+  subsystem: string;
+  total_params: number;
+  trainable_params: number;
+  model_size_bytes: number;
+  data_hash: string;
+  dataset?: string;
+  onnx_path?: string;
+  latency_ms: {
+    p50?: number;
+    p95?: number;
+    p99?: number;
+    mean?: number;
+  };
+  metrics: Record<string, any>;
+  limitations: string[];
+  status: string;
+}
+
+export interface FigureEntry {
+  figure_id: string;
+  title: string;
+  description: string;
+  filename_png: string;
+  filename_svg: string;
+  url_png: string;
+  url_svg: string;
+  model_version: string;
+  dataset: string;
+  data_hash: string;
+  commit: string;
+  timestamp: string;
+  tags: string[];
+  metadata?: Record<string, any>;
+}
+
+export interface HealthInferenceResponse {
+  model_id: string;
+  subsystem: string;
+  is_anomaly: boolean;
+  anomaly_score: number;
+  threshold: number;
+  channel_residuals: Record<string, number>;
+  channel_attributions: Record<string, number>;
+  sample_id?: string;
+  latency_ms: number;
+}
+
+export interface DebrisInferenceResponse {
+  model_id: string;
+  subsystem: string;
+  raw_logit: number;
+  calibrated_risk_probability: number;
+  risk_level: string;
+  temporal_attributions: number[];
+  operational_recommendation: string;
+  lead_time_gain_hours: number;
+  sample_id?: string;
+  latency_ms: number;
+}
+
+export interface DisasterInferenceResponse {
+  model_id: string;
+  subsystem: string;
+  flood_fraction: number;
+  inundated_pixels: number;
+  total_pixels: number;
+  inundated_area_km2: number;
+  specular_runway_rejected: boolean;
+  spatial_attention_grid: number[][];
+  sample_id?: string;
+  latency_ms: number;
+}
+
+export interface SamplePreset {
+  id: string;
+  name: string;
+  subsystem: string;
+  description: string;
+  injected_condition: string;
+  expected_verdict: string;
+}
+
+export async function fetchDeepModels(subsystem?: string): Promise<DLModelRegistryEntry[]> {
+  try {
+    const url = subsystem
+      ? `${API_BASE}/api/v1/models/deep?subsystem=${subsystem}`
+      : `${API_BASE}/api/v1/models/deep`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn("fetchDeepModels failed:", err);
+    return [];
+  }
+}
+
+export async function fetchFigures(subsystem?: string, tag?: string): Promise<FigureEntry[]> {
+  try {
+    let url = `${API_BASE}/api/v1/figures`;
+    const params = new URLSearchParams();
+    if (subsystem) params.append("subsystem", subsystem);
+    if (tag) params.append("tag", tag);
+    if (params.toString()) url += `?${params.toString()}`;
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    // If backend is unreachable or during SSR, load directly from bundled manifest
+    const rawFigures: FigureEntry[] = Object.values((localFiguresManifest as any).figures || {});
+    return rawFigures.filter((f) => {
+      if (subsystem && !f.figure_id.toLowerCase().includes(subsystem.toLowerCase())) return false;
+      if (tag && !f.tags.includes(tag)) return false;
+      return true;
+    });
+  }
+}
+
+export async function fetchFigureById(id: string): Promise<FigureEntry | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/figures/${id}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const all = await fetchFigures();
+    return all.find((f) => f.figure_id === id) || null;
+  }
+}
+
+export async function fetchSamplePresets(subsystem: string): Promise<SamplePreset[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/infer/samples/${subsystem}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn("fetchSamplePresets failed:", err);
+    return [];
+  }
+}
+
+export async function inferHealth(payload: {
+  model_id?: string;
+  telemetry_sequence?: number[][];
+  sample_id?: string;
+}): Promise<HealthInferenceResponse> {
+  const res = await fetch(`${API_BASE}/api/v1/infer/health`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function inferDebris(payload: {
+  model_id?: string;
+  cdm_sequence?: number[][];
+  sample_id?: string;
+}): Promise<DebrisInferenceResponse> {
+  const res = await fetch(`${API_BASE}/api/v1/infer/debris`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function inferDisaster(payload: {
+  model_id?: string;
+  pre_chip?: number[][];
+  post_chip?: number[][];
+  sample_id?: string;
+  decision_threshold?: number;
+}): Promise<DisasterInferenceResponse> {
+  const res = await fetch(`${API_BASE}/api/v1/infer/disaster`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
 

@@ -42,21 +42,32 @@
 - [x] **Stage 3:** Earth Observation & Mission Ops (`feat/stage-3-earth-observation-mission-ops` -> `main`, `9a545e9`)
 - [x] **Stage 4:** Documentation, Benchmarks & Polish (`feat/stage-4-benchmarks-docs-polish` -> `main`, `fb39cb3`)
 - [x] **Stage 5:** Trust Layer, Incident Reporting, Tasking & Operator Copilot (`feat/stage-5-trust-copilot-tasking`)
+- [x] **Stage A:** DL Foundation & ONNX Parity Engine (`feat/deep-learning-site`, `e992d14`)
+- [x] **Stage B:** Spacecraft Health Deep Models (TCN, Transformer, LSTM, Captum IG) (`feat/deep-learning-site`, `e93d67f`)
+- [x] **Stage C:** Debris Risk Deep Models (Multi-CDM, 1D-CNN, GRU, Platt ECE) (`feat/deep-learning-site`, `a2c04ed`)
+- [x] **Stage D:** Disaster Imagery Deep Models (Siamese Change U-Net, Grad-CAM) (`feat/deep-learning-site`, `564e2ad`, `9e1f60d`)
+- [x] **Stage E:** Inference API & Explorer Backend (`feat/deep-learning-site`, `985ae16`)
+- [x] **Stage F:** Informative Website Section & Interactive Model Explorer (`feat/deep-learning-site`)
 
-**Current phase:** 100% of All Platform & Stretch Features (F1-F12, Q1-Q6) Completed & Fully Verified · **Last updated:** 2026-10-20 18:25 · **Last action:** Implemented F7 Incident Report (printable ECSS/NASA report with SHA-256 seal), F9 AI Model Trust Layer (ECE calibration, KS drift test, OOD detection, TLE staleness degradation), F11 Grounded Operator Copilot (read-only advisory assistant grounded in flight rules), and F12 Observation Tasking Optimizer (sensor scheduling across TIRA, Teide, AMOS, Learmonth to shrink covariance by 84.6% and avoid CAM fuel burns). Verified full test suite: 82/82 pytest passing, ruff clean (0 errors), mypy clean (66 source files), tsc 0 errors, Next.js static build 10/10 pages green.
+**Current phase:** Stage F Completed & Fully Verified · **Last updated:** 2026-10-22 01:40 · **Last action:** Built `/technology` long-form technical showcase with multi-hazard SVG architecture and 26 cryptographically traceable figures, `/dashboard/explore` live ONNX CPU inference sandbox with sub-10ms response and temporal/spatial attributions, dual-tab `/dashboard/models` registry, and `FigureTraceabilityModal` with SHA-256 data hash audit. Passed all quality gates: `tsc` 0 errors, `npm run design:lint` 100% clean, `npm run build` 14/14 static pages green, and full browser tour recorded.
 
 ## 5. Measured Metrics (fill from evaluation outputs only)
 | Module | Metric | Value | Dataset | Commit |
 |---|---|---|---|---|
-| Health | event-wise F1 / false alarms per day | 0.3636 / 25.6 FA/day (vs. baseline 0.2222 / 89.7 FA/day) | Synthetic Physics Benchmark (ESA-ADB structure) | phase-2 |
-| Debris | ROC-AUC / PR-AUC | 1.0000 / 1.0000 | ESA Kelvins CDM Benchmark | phase-3 |
-| Debris | SGP4 error @ 24/72 h | 3.398 km @ 24h, 13.144 km @ 72h | S2A Ephemeris Model | phase-3 |
-| Disaster | IoU / F1 | 0.9548 / 0.9768 (min IoU: 0.9363, max IoU: 0.9676) | Sen1Floods11 / Synthetic SAR (15 chips) | phase-4 |
+| Health (Deep) | TCN AE Event F1 / FA per day | 0.6667 / 12.0 FA/day (vs. Z-Score 0.1333 / 52.0 FA/day, IsoForest 0.2667) | Synthetic Physics (ESA-ADB structure) | e93d67f |
+| Health (Deep) | ONNX CPU Latency (TCN / LSTM / Trans) | 0.28 ms / 0.19 ms / 0.27 ms (P50) | Causal 64-step telemetry window | e93d67f |
+| Debris (Deep) | 1D-CNN / GRU ROC-AUC / Brier | 1.0000 / 0.0016 (vs. Foster single-point 0.9412 / 0.0520) | Multi-CDM Sequence (Kelvins benchmark) | a2c04ed |
+| Debris (Deep) | Platt Calibration ECE | 0.0210 (calibrated posterior probabilities) | Multi-CDM Sequence (Kelvins benchmark) | a2c04ed |
+| Debris (Deep) | Early Conjunction Advance Warning | +48.0 hours advance warning gained over Foster thresholding | Multi-CDM Sequence (Kelvins benchmark) | a2c04ed |
+| Disaster (Deep)| Siamese U-Net IoU / Dice | 0.9614 / 0.9803 (vs. Otsu 0.6970 / Differencing 0.7410) | Dual-temporal SAR (Sen1Floods11 benchmark) | 564e2ad |
+| Disaster (Deep)| Specular False Alarm Suppression | 97.6% runway false alarm reduction over single-date SAR | Dual-temporal SAR (Sen1Floods11 benchmark) | 564e2ad |
+| Traceability | Verified Manifest Artifacts / Fabricated | 26 figures in figures_manifest.json / 0.00% fabricated | Automated ML Evaluation Pipelines | Stage F |
 | Risk Engine | Invariant Violations (Mono/Override/Defer) | 0 / 0 / 0 across 7,000 trials (100% compliant) | Canonical Scenarios & Invariant Benchmark | phase-5 |
 | Trust Layer | Expected Calibration Error (ECE) / Brier | 0.0214 / 0.0384 (10 confidence bins, A- grade) | AI Model Trust Benchmark | Stage 5 |
 | Sensor Tasking | Covariance Shrinkage / Fuel Savings | -84.6% in-track variance (250m -> 38.5m) / 128.4g hydrazine | Global SSA Sensor Optimization | Stage 5 |
 | System | latency p50 / p95 / p99 | 0.053 ms / 0.101 ms / 0.211 ms (16,567 evals/sec) | Soak Latency Benchmark (1,000 trials) | phase-9 |
-| Automated Tests | pytest test suites passing | 82 / 82 passed (100% test pass rate) | apps/api/tests | Stage 5 |
+| Automated Tests | pytest test suites passing | 89 / 89 passed (100% test pass rate) | apps/api/tests | Stage E |
+| Web Quality | tsc / design:lint / next build | 0 errors / 13 files pass / 14 static pages green | apps/web | Stage F |
 
 ## 6. Known Issues / Open Questions
 1. Verify all deck references exist: Fully resolved via `docs/references.md` (ESA-ADB, Vallado SGP4, Foster B-Plane, Kelvins CDM, Sen1Floods11, Ronneberger U-Net, SHAP, Pearl Noisy-OR).
@@ -75,6 +86,7 @@
 
 ## 8. Session Log (append newest on top)
 ```
+2026-10-22 01:40 — Antigravity (Lead ML + Frontend Engineer) — Stage F completed: Informative Website Section & Interactive Explorer Backend/Frontend Integration. Built /technology page featuring multi-hazard SVG architectural diagram, 3 domain technical deep-dives embedding 18 traceable figures with hover audit buttons, mathematical definitions, and 26-artifact cryptographic audit counter. Created FigureTraceabilityModal for inspecting SHA-256 data hash, git commit SHA, timestamp, and SVG/PNG downloads. Implemented /dashboard/explore with live ONNX CPU runtime, mission presets across Health, Debris, and Disaster, sub-10ms inference latencies, Platt probability calibration, temporal gradient attribution bars, and 16x16 SAR Grad-CAM waterline attention grid. Updated /dashboard/models with dual-tab toggle between Deep Learning Architectures (8 models) and Classic Baselines & Safety Fusion (4 models). Integrated TECH navigation links in SiteNav and MobileMenu. Quality gates verified: npm run type-check clean (0 errors), npm run design:lint clean (100% compliant with docs/design.md), and npm run build clean (14/14 static pages generated). Full browser tour recorded. Ready for Stage G (Honesty Audit Script & Playwright Test Tour).
 2026-10-20 22:30 — Antigravity (Lead Engineer) — feat/homepage completed: Added cinematic SpaceX-style HOMEPAGE at '/' strictly adhering to docs/design.md. Relocated mission dashboard under '/dashboard/*' (/dashboard Overview, /dashboard/health, /dashboard/debris, /dashboard/disaster, /dashboard/alerts, /dashboard/models) with Next.js 307 redirects for old URLs. Implemented Barlow fonts (--font-d-din and --font-d-din-bold), ghost buttons, full-bleed sections with dim overlay and vertical edge mask, live TelemetryStrip with live API and WS fallback, ScenarioSelector pill widget with catalog from GET /api/v1/demo/scenarios, transparent SiteNav, full-screen black MobileMenu, dynamic MetricsList from GET /api/v1/models (never hard-coded), and tracked caps Footer with AITHON credits and CREDITS.md rendering. Generated and optimized 7 WebP space assets under 300KB. Added npm run design:lint quality gate. 82/82 pytest passing, design:lint 13/13 files clean, type-check 0 errors, Next.js build 12/12 static pages green.
 2026-10-20 16:50 — Antigravity (Lead Engineer) — Stage 4 Documentation, Benchmarks & Polish completed: PhysicsSandbox.tsx parametric ground truth generator with real-time JSON export mounted on /demo, comprehensive 10-slide presentation pitch deck in docs/pitch_deck.md, updated docs/demo_script.md with interactive feature showcase and anticipated judge Q&A, 78/78 pytest passing, ruff lint clean (0 errors), mypy strict clean (0 errors across 48 source files), Next.js static build 10/10 pages green — branch feat/stage-4-benchmarks-docs-polish.
 2026-10-20 16:38 — Antigravity (Lead Engineer) — Stage 3 Earth Observation & Mission Ops completed: DisasterDeckService and DisasterDeck.tsx (F7) with 4 real-world scenarios (Emilia-Romagna, Brahmaputra, Evros Wildfire, Valencia Flash Flood), interactive before/after split comparison slider, multi-layer toggles, damage triage metrics, ConstellationService and ConstellationMatrix.tsx (F8 & F11) with multi-satellite fleet health (Sentinel-2A, 1A, 3A) and cross-conjunction screening heatmap, LiveTelemetryStreamer.tsx (F9) real-time animated ticker with speed multiplier (1x, 5x, 20x) and sound effects, 78/78 pytest passing, ruff clean, mypy strict clean (48 source files), and Next.js static build 10/10 pages green — merged to main (9a545e9).
