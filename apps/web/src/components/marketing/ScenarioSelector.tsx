@@ -109,11 +109,11 @@ export function ScenarioSelector() {
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label="Select demo scenario"
-        className="inline-flex items-center gap-1.5 border border-[#f0f0fa] bg-transparent text-[#f0f0fa] rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] leading-none transition-colors duration-200 hover:bg-[rgba(240,240,250,0.08)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#f0f0fa] focus-visible:outline-offset-[3px] select-none"
+        className="inline-flex items-center gap-1.5 border border-space-fg bg-transparent text-space-fg rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] leading-none transition-colors duration-200 hover:bg-space-fg/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-space-fg focus-visible:outline-offset-[3px] select-none"
         style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
       >
         <span>{currentLabel}</span>
-        <span className="text-[#545457] text-[9px] select-none" aria-hidden="true">
+        <span className="text-space-secondary text-[9px] select-none" aria-hidden="true">
           {isOpen ? "▲" : "▼"}
         </span>
       </button>
@@ -122,9 +122,9 @@ export function ScenarioSelector() {
         <div
           role="menu"
           aria-orientation="vertical"
-          className="absolute right-0 mt-2 w-72 bg-[#000000] border border-[#404040] rounded p-1.5 z-50 flex flex-col gap-1 focus:outline-none"
+          className="absolute right-0 mt-2 w-72 bg-space-canvas border border-space-separator rounded p-1.5 z-50 flex flex-col gap-1 focus:outline-none"
         >
-          <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-[#545457] tracking-[0.10em] border-b border-[#404040]">
+          <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-space-secondary tracking-[0.10em] border-b border-space-separator">
             SELECT MISSION SCENARIO
           </div>
           {scenarios.map((s) => (
@@ -133,15 +133,15 @@ export function ScenarioSelector() {
               role="menuitem"
               type="button"
               onClick={() => handleSelect(s)}
-              className="w-full text-left px-3 py-2 text-[11px] font-bold uppercase tracking-[0.09em] transition-colors rounded hover:bg-[rgba(240,240,250,0.08)] flex flex-col gap-0.5"
+              className="w-full text-left px-3 py-2 text-[11px] font-bold uppercase tracking-[0.09em] transition-colors rounded hover:bg-space-fg/10 flex flex-col gap-0.5"
             >
               <div className="flex items-center justify-between w-full">
-                <span className="text-[#f0f0fa]">{s.id}</span>
+                <span className="text-space-fg">{s.id}</span>
                 {s.expected_level && (
-                  <span className="text-[10px] text-[#545457] font-normal">{s.expected_level}</span>
+                  <span className="text-[10px] text-space-secondary font-medium">{s.expected_level}</span>
                 )}
               </div>
-              <span className="text-[10px] font-normal text-[#545457] normal-case truncate max-w-full">
+              <span className="text-[10px] font-normal text-space-secondary normal-case truncate max-w-full">
                 {s.name}
               </span>
             </button>

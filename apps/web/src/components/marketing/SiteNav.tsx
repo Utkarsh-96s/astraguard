@@ -6,6 +6,9 @@ import { Button } from "./Button";
 import { ScenarioSelector } from "./ScenarioSelector";
 import { MobileMenu } from "./MobileMenu";
 
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "../../lib/themeContext";
+
 const NAV_LINKS = [
   { label: "MISSION", href: "#mission" },
   { label: "HEALTH", href: "#health" },
@@ -18,13 +21,14 @@ const NAV_LINKS = [
 
 export function SiteNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, isNight, toggleTheme } = useTheme();
 
   return (
     <>
       {/* Skip to Content for a11y */}
       <a
         href="#mission"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-[#000000] border border-[#f0f0fa] text-[#f0f0fa] px-4 py-2 rounded text-[11px] font-bold uppercase tracking-[0.10em] outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-space-canvas border border-space-fg text-space-fg px-4 py-2 rounded text-[11px] font-bold uppercase tracking-[0.10em] outline-none"
       >
         SKIP TO CONTENT
       </a>
@@ -32,14 +36,14 @@ export function SiteNav() {
       {/* Transparent Fixed Header */}
       <header
         role="banner"
-        className="fixed top-0 left-0 right-0 z-40 w-full bg-transparent border-b border-transparent transition-none select-none pointer-events-none"
+        className="fixed top-0 left-0 right-0 z-40 w-full bg-space-canvas/70 backdrop-blur-md border-b border-space-separator/30 transition-colors select-none pointer-events-none"
         style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 h-20 flex items-center justify-between pointer-events-auto">
           {/* Left: Wordmark */}
           <Link
             href="/"
-            className="text-[#f0f0fa] text-[13px] sm:text-[14px] font-bold tracking-[0.10em] uppercase transition-colors hover:text-[#545457]"
+            className="text-space-fg text-[13px] sm:text-[14px] font-bold tracking-[0.10em] uppercase transition-colors hover:opacity-75"
             style={{ fontFamily: "var(--font-d-din-bold, var(--font-barlow, sans-serif))" }}
           >
             ASTRA-GUARD
@@ -54,29 +58,59 @@ export function SiteNav() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[#f0f0fa] text-[11px] font-bold tracking-[0.10em] uppercase transition-colors hover:text-[#545457] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#f0f0fa] focus-visible:outline-offset-[3px]"
+                className="text-space-fg text-[11px] font-bold tracking-[0.10em] uppercase transition-colors hover:opacity-75 focus-visible:outline focus-visible:outline-1 focus-visible:outline-space-fg focus-visible:outline-offset-[3px]"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* Right: Scenario Selector + Launch Dashboard CTA */}
-          <div className="hidden sm:flex items-center gap-4">
+          {/* Right: Day/Night Mode Toggle + Scenario Selector + Launch Dashboard CTA */}
+          <div className="hidden sm:flex items-center gap-3">
+            {/* Day / Night Mode Switcher */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
+              title={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
+              className="inline-flex items-center gap-1.5 border border-space-fg/50 hover:border-space-fg bg-transparent text-space-fg rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] leading-none transition-all duration-200 hover:bg-space-fg/10 select-none cursor-pointer"
+            >
+              {isNight ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-space-fg shrink-0" aria-hidden="true" />
+                  <span>DAY</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-space-fg shrink-0" aria-hidden="true" />
+                  <span>NIGHT</span>
+                </>
+              )}
+            </button>
+
             <ScenarioSelector />
             <Button variant="ghost" href="/dashboard">
               LAUNCH DASHBOARD
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex sm:hidden items-center gap-3">
+          {/* Mobile Menu Button + Quick Day/Night Toggle */}
+          <div className="flex sm:hidden items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
+              className="p-1.5 border border-space-fg/50 rounded-full text-space-fg hover:bg-space-fg/10"
+            >
+              {isNight ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open Navigation Menu"
               aria-expanded={mobileMenuOpen}
-              className="border border-[#f0f0fa] bg-transparent text-[#f0f0fa] rounded px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] hover:bg-[rgba(240,240,250,0.08)]"
+              className="border border-space-fg bg-transparent text-space-fg rounded px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] hover:bg-space-fg/10"
             >
               MENU
             </button>

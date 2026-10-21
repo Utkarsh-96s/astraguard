@@ -20,6 +20,7 @@
 | D7 | "On-board disaster mapping" reframed as ground-segment processing | Realism |
 | D8 | Deck metrics (92%, 85%, <1 km, <30 min, >99%) are *targets*, replaced by measured values | Honesty |
 | D9 | Data: ESA-ADB, CelesTrak, Kelvins CDM, Sen1Floods11/xBD + synthetic fallback | Public & real |
+| D10 | Cinematic marketing homepage at /; dashboard under /dashboard/*; Day & Night modes with WCAG AAA contrast | SpaceX-style design reference, public presentation and accessibility |
 
 ## 3. Glossary
 - **TCA** time of closest approach · **Pc** probability of collision · **CDM** Conjunction Data Message · **TLE/GP** orbital element sets · **SGP4** analytic propagator · **SHAP** Shapley additive explanations · **XAI** explainable AI · **EO** Earth observation · **HITL** human-in-the-loop.
@@ -35,8 +36,9 @@
 - [x] P7 Dashboard
 - [x] P8 Demo Mode
 - [x] P9 Evaluation / Hardening / Docs
+- [x] Homepage & Theme System (SpaceX-style, Day/Night Modes, Contrast AA/AAA)
 
-**Current phase:** All Phases (P0 through P9) Completed & Verified · **Last updated:** 2026-10-20 12:12 · **Last action:** Phase 9 Evaluation, Hardening, Docs, and Pitch completed: soak latency benchmark executed (p50=0.05ms, p95=0.10ms, p99=0.21ms, 16,567 evals/sec), verified academic references in docs/references.md, metrics mapping in docs/metrics_mapping.md, 3-minute presentation pitch script in docs/demo_script.md, comprehensive root README.md, full test suite green (57/57 pytest passed), ruff lint clean (0 errors), Next.js static build 10/10 pages green, and git committed on phase-9/eval-hardening-docs.
+**Current phase:** All Phases (P0 through P9 + Homepage) Completed & Verified · **Last updated:** 2026-10-21 23:14 · **Last action:** Cinematic SpaceX-style marketing homepage completed at `/` with day/night mode switcher, WCAG AAA contrast ratios, theme persistence, 13 marketing components passing design linter, Next.js production build 12/12 static pages green, and 82/82 pytest passing.
 
 ## 5. Measured Metrics (fill from evaluation outputs only)
 | Module | Metric | Value | Dataset | Commit |
@@ -64,6 +66,7 @@
 
 ## 8. Session Log (append newest on top)
 ```
+2026-10-21 23:14 — Antigravity (Lead Engineer) — Homepage Contrast & Day/Night Mode: Replaced low-contrast gray (#545457) with high-contrast silver (#c4c4cf, >9:1 contrast in Night mode) and slate (#3b3b47, >10:1 contrast in Day mode). Added ThemeProvider and anti-flicker SSR script, Day/Night toggle button in SiteNav and MobileMenu, updated FullBleedSection photo wash overlay, MetricsList, TelemetryStrip, Button, and ScenarioSelector. Next.js production build 12/12 static pages green, node scripts/design-lint.mjs passing across all 13 marketing components, tsc and ESLint clean (0 errors), 82/82 pytest backend tests passing.
 2026-10-20 15:40 — Antigravity (Lead Engineer) — Stage 1 Interactive Core & Quick Wins completed: Fault Injection Lab & Detector Arena (F5) with real-time telemetry simulation (drift, spike, stuck), side-by-side Isolation Forest vs PyTorch LSTM Autoencoder benchmarking and explainable verdict, Counterfactual What-If Explainer (F4) with minimal perturbation calculation and 8-bin temporal attribution heatmap, Phone Alert Bot (F10) with rich Telegram markdown dispatch, mobile phone chat simulator with interactive inline action buttons (Approve / Dismiss / Snooze) and immutable audit logging, Command Palette (Q4) with global Ctrl+K search and shortcut actions, Voice Announcer (Q5) using Web Speech API, and Web Audio API space mission sound synthesizer (Q6), 68/68 pytest passing, ruff lint clean (0 errors), mypy strict clean (0 errors across 42 source files), and Next.js static build 10/10 pages green — branch feat/stage-1-interactive-core.
 2026-10-20 14:30 — Antigravity (Lead Engineer) — Stage 0 Foundations & Quick Wins completed: declarative feature flag infrastructure (config/features.yaml, FeatureService, /api/v1/features), in-memory pipeline observability metrics (/metrics/pipeline, /api/v1/metrics/pipeline) with navbar latency/connection status widget (ObservabilityWidget.tsx), cryptographic alert provenance and bit-for-bit mathematical reproducibility engine (ProvenanceService, /alerts/{id}/provenance, /alerts/{id}/reproduce, ProvenanceModal.tsx), enriched asset endpoints with live risk summary/alerts count, 6-step interactive Guided Judge Tour overlay (JudgeTourOverlay.tsx), pytest database engine disposal teardown in conftest.py, 62/62 pytest passing, ruff lint clean (0 errors), mypy strict clean (0 errors across 38 source files), and Next.js 14 static build 10/10 pages green — branch feat/stage-0-foundations.
 2026-10-20 12:12 — Antigravity (Lead Engineer) — Phase 9 completed: Evaluation, Hardening, Docs, and Pitch completed: soak latency benchmark executed (p50=0.05ms, p95=0.10ms, p99=0.21ms, 16,567 evals/sec), verified academic references in docs/references.md, metrics mapping in docs/metrics_mapping.md, 3-minute presentation pitch script in docs/demo_script.md, comprehensive root README.md, full test suite green (57/57 pytest passed), ruff lint clean (0 errors), Next.js static build 10/10 pages green, and git committed on phase-9/eval-hardening-docs.

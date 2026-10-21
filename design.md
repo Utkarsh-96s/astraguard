@@ -17,15 +17,24 @@ The homepage operates in the visual register of high-aerospace engineering (Spac
 
 ## 2. Color Tokens
 
+### Night Mode (Default)
 | Name | Hex Value | CSS Variable | Role |
 |---|---|---|---|
 | Canvas Black | `#000000` | `--color-space-canvas` | Base page background across all sections |
 | Foreground White | `#f0f0fa` | `--color-space-fg` | Primary display headlines, active links, primary ghost button outlines/text |
-| Secondary Gray | `#545457` | `--color-space-secondary` | Body paragraphs, secondary button outlines/text, muted metadata |
-| Separator Iron | `#404040` | `--color-space-separator` | Hairline dividers, subtle borders, telemetry delimiters |
+| Secondary Silver | `#c4c4cf` | `--color-space-secondary` | Body paragraphs, secondary button text, metadata (>9:1 contrast) |
+| Separator Charcoal | `#33333d` | `--color-space-separator` | Hairline dividers, subtle borders, telemetry delimiters |
+
+### Day Mode
+| Name | Hex Value | CSS Variable | Role |
+|---|---|---|---|
+| Canvas Light | `#f8f9fc` | `--color-space-canvas` | Crisp aerospace daylight background canvas |
+| Foreground Black | `#0a0a0f` | `--color-space-fg` | Deep display headlines, active links, wordmark (>18:1 contrast) |
+| Secondary Slate | `#3b3b47` | `--color-space-secondary` | High-contrast body paragraphs, secondary buttons (>10:1 contrast) |
+| Separator Mist | `#d8d8e2` | `--color-space-separator` | Hairline dividers and telemetry borders |
 
 > [!IMPORTANT]
-> **Zero Chromatic Color Rule:** No red, green, blue, amber, cyan, or purple is permitted on the homepage. Risk levels appear as plain uppercase text strings (`NOMINAL`, `WATCH`, `WARNING`, `CRITICAL`), never colored badges.
+> **Zero Chromatic Color Rule:** No red, green, blue, amber, cyan, or purple is permitted on the homepage. Risk levels appear as plain uppercase text strings (`NOMINAL`, `WATCH`, `WARNING`, `CRITICAL`), never colored badges. All typography adheres to strict WCAG AAA contrast standards in both Day and Night modes.
 
 ---
 

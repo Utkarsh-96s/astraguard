@@ -34,7 +34,7 @@ export function FullBleedSection({
   return (
     <section
       id={id}
-      className={`min-h-screen relative w-full overflow-hidden flex items-center bg-[#000000] ${className}`.trim()}
+      className={`min-h-screen relative w-full overflow-hidden flex items-center bg-space-canvas transition-colors duration-300 ${className}`.trim()}
     >
       {/* Background Layer */}
       {shouldRenderImage ? (
@@ -49,10 +49,10 @@ export function FullBleedSection({
             onError={() => setHasImageError(true)}
             className="object-cover object-center"
           />
-          {/* Uniform subtle dim overlay (max rgba(0,0,0,0.40)) */}
+          {/* Theme-aware overlay: dim scrim in night mode, clean ethereal wash in day mode */}
           <div
-            className="absolute inset-0"
-            style={{ backgroundColor: "rgba(0, 0, 0, 0.40)" }}
+            className="absolute inset-0 transition-colors duration-300"
+            style={{ backgroundColor: "var(--color-space-overlay)" }}
             aria-hidden="true"
           />
         </div>
@@ -69,7 +69,11 @@ export function FullBleedSection({
         }`}
       >
         <div
-          className={`w-full max-w-[500px] flex flex-col gap-[18px] transition-opacity duration-300 ${
+          className={`w-full max-w-[520px] flex flex-col gap-[18px] transition-all duration-300 ${
+            shouldRenderImage
+              ? "backdrop-blur-[3px] bg-space-canvas/30 rounded p-4 sm:p-6 -ml-4 sm:-ml-6 border border-space-separator/25"
+              : ""
+          } ${
             align === "center" ? "mx-auto text-center items-center" : "self-end sm:self-auto pb-12 sm:pb-0"
           }`}
         >

@@ -42,17 +42,45 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from "../lib/themeContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('astraguard_theme');
+                  var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+                  var theme = saved === 'day' || saved === 'night' ? saved : (prefersLight ? 'day' : 'night');
+                  if (theme === 'day') {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    document.documentElement.style.colorScheme = 'light';
+                  } else {
+                    document.documentElement.classList.remove('light');
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${inter.variable} ${playfair.variable} ${barlow.variable} bg-black text-[#f0f0fa] antialiased min-h-screen flex flex-col font-sans selection:bg-[#404040] selection:text-[#f0f0fa]`}
+        className={`${inter.variable} ${playfair.variable} ${barlow.variable} bg-space-canvas text-space-fg antialiased min-h-screen flex flex-col font-sans selection:bg-space-secondary/20 selection:text-space-fg transition-colors duration-300`}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

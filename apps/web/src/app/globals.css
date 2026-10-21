@@ -17,11 +17,17 @@
   --color-arterial-red: #fe1e34;
   --color-crimson-pure: #ff0000;
 
-  /* Marketing SpaceX-Style Design Tokens */
+  /* Marketing SpaceX-Style Design Tokens (Night Mode / Default) */
   --color-space-canvas: #000000;
+  --color-space-canvas-subtle: #09090b;
   --color-space-fg: #f0f0fa;
-  --color-space-secondary: #545457;
-  --color-space-separator: #404040;
+  --color-space-secondary: #c4c4cf; /* Replaced dark unreadable #545457 with high-contrast, crystal clear #c4c4cf (>9:1 contrast) */
+  --color-space-muted: #8e8e99;
+  --color-space-separator: #33333d;
+  --color-space-border: #40404a;
+  --color-space-overlay: rgba(0, 0, 0, 0.55);
+  --color-space-card: #0d0d12;
+  --color-space-hover: rgba(240, 240, 250, 0.08);
   --font-d-din: var(--font-barlow), sans-serif;
   --font-d-din-bold: var(--font-barlow), sans-serif;
 
@@ -44,6 +50,22 @@
   --spacing-64: 64px;
 }
 
+/* Day Mode / Light Mode Specification */
+html.light,
+[data-theme="light"] {
+  --color-space-canvas: #f8f9fc;
+  --color-space-canvas-subtle: #eff1f5;
+  --color-space-fg: #0a0a0f;
+  --color-space-secondary: #3b3b47; /* Crisp, readable dark slate with >10:1 contrast on light canvas */
+  --color-space-muted: #5e5e6c;
+  --color-space-separator: #d8d8e2;
+  --color-space-border: #d0d0dc;
+  --color-space-overlay: rgba(248, 249, 252, 0.85);
+  --color-space-card: #ffffff;
+  --color-space-hover: rgba(10, 10, 15, 0.06);
+  color-scheme: light;
+}
+
 *,
 *::before,
 *::after {
@@ -57,8 +79,8 @@ html {
 
 html,
 body {
-  background-color: #000000;
-  color: var(--color-bone-white);
+  background-color: var(--color-space-canvas);
+  color: var(--color-space-fg);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
   max-width: 100vw;
@@ -67,6 +89,7 @@ body {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Custom dark aerospace scrollbars */

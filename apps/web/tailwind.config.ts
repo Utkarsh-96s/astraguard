@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -22,10 +23,13 @@ const config: Config = {
         arterial: "#fe1e34",
         crimson: "#ff0000",
         space: {
-          canvas: "#000000",
-          fg: "#f0f0fa",
-          secondary: "#545457",
-          separator: "#404040",
+          canvas: "var(--color-space-canvas)",
+          "canvas-subtle": "var(--color-space-canvas-subtle)",
+          fg: "var(--color-space-fg)",
+          secondary: "var(--color-space-secondary)",
+          muted: "var(--color-space-muted)",
+          separator: "var(--color-space-separator)",
+          border: "var(--color-space-border)",
         },
       },
       fontFamily: {

@@ -109,37 +109,37 @@ export function TelemetryStrip() {
   return (
     <div
       aria-live="polite"
-      className="w-full pt-4 border-t border-[#404040] flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase font-bold tracking-[0.10em] select-none tnum"
+      className="w-full pt-4 border-t border-space-separator flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase font-bold tracking-[0.10em] select-none tnum transition-colors duration-200"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       <div className="flex items-center gap-1.5">
-        <span className="text-[#545457]">ASSET</span>
-        <span className="text-[#404040]">/</span>
-        <span className="text-[#f0f0fa]">{assetName}</span>
+        <span className="text-space-secondary font-medium">ASSET</span>
+        <span className="text-space-separator opacity-70">/</span>
+        <span className="text-space-fg">{assetName}</span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-[#545457]">MISSION RISK</span>
-        <span className="text-[#404040]">/</span>
-        <span className="text-[#f0f0fa]">{isStandby ? "STANDBY" : scoreFormatted}</span>
+        <span className="text-space-secondary font-medium">MISSION RISK</span>
+        <span className="text-space-separator opacity-70">/</span>
+        <span className="text-space-fg">{isStandby ? "STANDBY" : scoreFormatted}</span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-[#545457]">LEVEL</span>
-        <span className="text-[#404040]">/</span>
-        <span className="text-[#f0f0fa]">{isStandby ? "STANDBY" : riskLevel}</span>
+        <span className="text-space-secondary font-medium">LEVEL</span>
+        <span className="text-space-separator opacity-70">/</span>
+        <span className="text-space-fg">{isStandby ? "STANDBY" : riskLevel}</span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-[#545457]">UTC</span>
-        <span className="text-[#404040]">/</span>
-        <span className="text-[#f0f0fa]">{utcTime}</span>
+        <span className="text-space-secondary font-medium">UTC</span>
+        <span className="text-space-separator opacity-70">/</span>
+        <span className="text-space-fg">{utcTime}</span>
       </div>
 
       {isSimulated && (
         <div className="flex items-center gap-1.5">
-          <span className="text-[#404040]">/</span>
-          <span className="text-[#f0f0fa] border border-[#404040] rounded px-1.5 py-0.5 text-[9px] leading-none">
+          <span className="text-space-separator opacity-70">/</span>
+          <span className="text-space-fg border border-space-separator rounded px-1.5 py-0.5 text-[9px] leading-none">
             SIMULATED
           </span>
         </div>

@@ -112,7 +112,7 @@ export function MetricsList() {
 
   return (
     <div
-      className="w-full flex flex-col divide-y divide-[#404040] pt-4 select-none tnum"
+      className="w-full flex flex-col divide-y divide-space-separator pt-4 select-none tnum transition-colors duration-200"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       {metrics.map((m, idx) => (
@@ -121,12 +121,12 @@ export function MetricsList() {
           className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] uppercase font-bold tracking-[0.09em]"
         >
           <div className="flex flex-col gap-0.5 max-w-sm">
-            <span className="text-[#f0f0fa]">{m.label}</span>
-            <span className="text-[10px] text-[#545457] normal-case tracking-normal truncate">
+            <span className="text-space-fg">{m.label}</span>
+            <span className="text-[11px] text-space-secondary font-normal normal-case tracking-normal truncate">
               {m.dataset}
             </span>
           </div>
-          <span className="text-[#f0f0fa] text-[13px] self-start sm:self-auto">
+          <span className="text-space-fg text-[13px] self-start sm:self-auto font-bold">
             {isLoading ? "NOT YET EVALUATED" : m.value}
           </span>
         </div>

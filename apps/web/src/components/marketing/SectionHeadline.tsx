@@ -17,7 +17,7 @@ export function SectionHeadline({
     <Component
       id={id}
       style={{ fontFamily: "var(--font-d-din-bold, var(--font-barlow, sans-serif))" }}
-      className={`text-[#f0f0fa] uppercase font-bold tracking-[0.02em] text-[28px] sm:text-[36px] md:text-[48px] leading-[1.08] md:leading-[1.15] m-0 ${className}`.trim()}
+      className={`text-space-fg uppercase font-bold tracking-[0.02em] text-[28px] sm:text-[36px] md:text-[48px] leading-[1.08] md:leading-[1.15] m-0 transition-colors duration-200 ${className}`.trim()}
     >
       {children}
     </Component>

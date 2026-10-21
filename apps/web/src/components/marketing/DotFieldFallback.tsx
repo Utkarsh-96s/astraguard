@@ -27,13 +27,13 @@ const STATIC_DOTS = [
 export function DotFieldFallback() {
   return (
     <div
-      className="absolute inset-0 w-full h-full bg-[#000000] overflow-hidden pointer-events-none select-none"
+      className="absolute inset-0 w-full h-full bg-space-canvas overflow-hidden pointer-events-none select-none transition-colors duration-300"
       aria-hidden="true"
     >
       {STATIC_DOTS.map((dot, i) => (
         <span
           key={i}
-          className="absolute bg-[#f0f0fa] rounded-full"
+          className="absolute bg-space-fg rounded-full transition-colors duration-300"
           style={{
             left: `${dot.x}%`,
             top: `${dot.y}%`,

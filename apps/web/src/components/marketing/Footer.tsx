@@ -16,17 +16,17 @@ export function Footer() {
     <footer
       id="team"
       role="contentinfo"
-      className="w-full bg-[#000000] border-t border-[#404040] py-16 px-6 sm:px-10 lg:px-16 select-none"
+      className="w-full bg-space-canvas border-t border-space-separator py-16 px-6 sm:px-10 lg:px-16 select-none transition-colors duration-300"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       <div className="max-w-7xl mx-auto flex flex-col gap-10">
         {/* Top: Team / Track / Links */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[#f0f0fa] text-[12px] font-bold uppercase tracking-[0.10em]">
+            <span className="text-space-fg text-[12px] font-bold uppercase tracking-[0.10em]">
               TEAM OMEN / AITHON 2.0 / TRACK 11 AEROSPACE, TELEMETRY AND SPACETECH
             </span>
-            <span className="text-[#545457] text-[11px] font-normal uppercase tracking-[0.09em]">
+            <span className="text-space-secondary text-[11px] font-medium uppercase tracking-[0.09em]">
               ADVISORY SYSTEM. DEMO MODE USES SIMULATED DATA.
             </span>
           </div>
@@ -34,13 +34,13 @@ export function Footer() {
           <div className="flex items-center gap-6 text-[11px] font-bold uppercase tracking-[0.10em]">
             <Link
               href="/dashboard"
-              className="text-[#f0f0fa] hover:text-[#545457] transition-colors"
+              className="text-space-fg hover:opacity-75 transition-opacity"
             >
               DASHBOARD
             </Link>
             <Link
               href="/demo"
-              className="text-[#f0f0fa] hover:text-[#545457] transition-colors"
+              className="text-space-fg hover:opacity-75 transition-opacity"
             >
               DEMO REPLAY
             </Link>
@@ -48,7 +48,7 @@ export function Footer() {
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#f0f0fa] hover:text-[#545457] transition-colors"
+              className="text-space-fg hover:opacity-75 transition-opacity"
             >
               GITHUB
             </a>
@@ -56,7 +56,7 @@ export function Footer() {
               href="/docs"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#f0f0fa] hover:text-[#545457] transition-colors"
+              className="text-space-fg hover:opacity-75 transition-opacity"
             >
               DOCS
             </a>
@@ -64,24 +64,24 @@ export function Footer() {
         </div>
 
         {/* Middle: Data Sources & Attribution */}
-        <div className="border-t border-[#404040] pt-8 flex flex-col gap-3">
-          <span className="text-[#545457] text-[11px] font-bold uppercase tracking-[0.10em]">
+        <div className="border-t border-space-separator pt-8 flex flex-col gap-3">
+          <span className="text-space-fg text-[11px] font-bold uppercase tracking-[0.10em]">
             DATA SOURCES & TELEMETRY PROTOCOLS
           </span>
-          <p className="text-[#545457] text-[11px] tracking-[0.08em] uppercase leading-relaxed m-0">
+          <p className="text-space-secondary text-[11.5px] tracking-[0.08em] uppercase leading-relaxed m-0 font-medium">
             ORBITAL PROPAGATION & CONJUNCTION DATA: CELESTRAK · ESA KELVINS SPACE DEBRIS REPOSITORY. SPACECRAFT TELEMETRY: ESA-ADB ANOMALY DATA BENCHMARK STRUCTURE. EARTH OBSERVATION: COPERNICUS SENTINEL-1/2 OPEN ACCESS HUB · NASA EARTHDATA.
           </p>
         </div>
 
         {/* Bottom: Image Credits from CREDITS.md */}
-        <div className="border-t border-[#404040] pt-6 flex flex-col gap-2">
-          <span className="text-[#545457] text-[10px] font-bold uppercase tracking-[0.10em]">
+        <div className="border-t border-space-separator pt-6 flex flex-col gap-2">
+          <span className="text-space-fg text-[10px] font-bold uppercase tracking-[0.10em]">
             IMAGE ASSET ATTRIBUTION (PUBLIC DOMAIN & OPEN LICENCE VIA CREDITS.MD)
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-[10px] text-[#545457] tracking-[0.08em] uppercase">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-[10px] text-space-secondary tracking-[0.08em] uppercase font-medium">
             {IMAGE_CREDITS.map((credit, i) => (
               <div key={i} className="truncate">
-                <span className="text-[#f0f0fa]">{credit.img}: </span>
+                <span className="text-space-fg font-bold">{credit.img}: </span>
                 <span>{credit.text}</span>
               </div>
             ))}
@@ -89,9 +89,9 @@ export function Footer() {
         </div>
 
         {/* Copyright notice */}
-        <div className="border-t border-[#404040] pt-6 flex items-center justify-between text-[10px] text-[#545457] uppercase tracking-[0.10em]">
+        <div className="border-t border-space-separator pt-6 flex items-center justify-between text-[10px] text-space-secondary uppercase tracking-[0.10em] font-medium">
           <span>© 2026 ASTRA-GUARD MISSION SAFETY</span>
-          <span>STRICTLY MONOCHROME AEROSPACE SPEC</span>
+          <span>AEROSPACE HYPERSCALE SPEC</span>
         </div>
       </div>
     </footer>
