@@ -159,3 +159,14 @@ def test_stage_d_evaluation_and_figures_manifest() -> None:
         assert svg_file.exists(), f"SVG missing for {fig_id}"
         assert png_file.stat().st_size > 0
         assert svg_file.stat().st_size > 0
+
+    # Verify models registered in models_manifest.json
+    models_manifest_path = repo_root / "ml" / "registry" / "models_manifest.json"
+    assert models_manifest_path.exists()
+    with open(models_manifest_path, "r", encoding="utf-8") as f:
+        models_manifest = json.load(f)
+    assert "MOD-DISASTER-UNET-001" in models_manifest["models"]
+    assert "MOD-DISASTER-SIAMESE-001" in models_manifest["models"]
+    assert models_manifest["models"]["MOD-DISASTER-UNET-001"]["architecture"] == "UNet"
+    assert models_manifest["models"]["MOD-DISASTER-SIAMESE-001"]["architecture"] == "SiameseChangeUNet"
+

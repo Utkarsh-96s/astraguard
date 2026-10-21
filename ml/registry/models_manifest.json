@@ -1,6 +1,6 @@
 {
   "registry_version": "1.0.0",
-  "last_updated": "2026-10-21T18:48:06.836443+00:00",
+  "last_updated": "2026-10-21T19:00:28.798177+00:00",
   "models": {
     "MOD-FOUNDATION-DUMMY-001": {
       "model_id": "MOD-FOUNDATION-DUMMY-001",
@@ -53,12 +53,12 @@
         "best_val_loss": 0.505839
       },
       "latency_ms": {
-        "p50": 0.041,
-        "p95": 0.049,
-        "p99": 0.076,
-        "mean": 0.043,
-        "min": 0.04,
-        "max": 0.134
+        "p50": 0.04,
+        "p95": 0.046,
+        "p99": 0.055,
+        "mean": 0.041,
+        "min": 0.039,
+        "max": 0.058
       },
       "onnx_path": "ml/artifacts/dummy_stage_a/MOD-FOUNDATION-DUMMY-001.onnx",
       "checkpoint_path": "ml/artifacts/dummy_stage_a/best_model.pt",
@@ -67,7 +67,7 @@
         "Demonstration dummy model only.",
         "Trained on synthetic harmonic telemetry for pipeline foundation verification."
       ],
-      "created_at": "2026-10-21T18:48:06.835634+00:00"
+      "created_at": "2026-10-21T19:00:28.797442+00:00"
     },
     "MOD-TEST-REGISTRY-001": {
       "model_id": "MOD-TEST-REGISTRY-001",
@@ -94,7 +94,7 @@
       "checkpoint_path": null,
       "training_log_path": null,
       "limitations": [],
-      "created_at": "2026-10-21T18:48:03.714709+00:00"
+      "created_at": "2026-10-21T19:00:25.847914+00:00"
     },
     "MOD-HEALTH-LSTM-001": {
       "model_id": "MOD-HEALTH-LSTM-001",
@@ -535,6 +535,155 @@
         "Captures forward and backward temporal dependencies across CDM updates."
       ],
       "created_at": "2026-10-21T18:37:28.903844+00:00"
+    },
+    "MOD-DISASTER-UNET-001": {
+      "model_id": "MOD-DISASTER-UNET-001",
+      "name": "Lightweight Satellite Radar Flood Segmentation U-Net",
+      "version": "1.0.0",
+      "architecture": "UNet",
+      "subsystem": "disaster",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "params_count": {
+        "total_params": 117393,
+        "trainable_params": 117393,
+        "non_trainable_params": 0,
+        "model_size_bytes": 469572
+      },
+      "config": {
+        "model_id": "MOD-DISASTER-UNET-001",
+        "name": "Lightweight Satellite Radar Flood Segmentation U-Net",
+        "version": "1.0.0",
+        "architecture": "UNet",
+        "subsystem": "disaster",
+        "task": "segmentation",
+        "seed": 42,
+        "dataset": {
+          "name": "sen1floods11_synthetic_sar",
+          "in_channels": 1,
+          "size": 128,
+          "num_samples": 30,
+          "num_samples_fast": 10
+        },
+        "model": {
+          "base_filters": 16,
+          "out_channels": 1
+        },
+        "training": {
+          "batch_size": 4,
+          "epochs": 15,
+          "epochs_fast": 3,
+          "lr": 0.003,
+          "weight_decay": 0.0001,
+          "patience": 4,
+          "use_amp": true
+        },
+        "export": {
+          "onnx": true,
+          "output_dir": "ml/artifacts/disaster_unet"
+        },
+        "limitations": [
+          "Trained on calibrated VV polarization SAR intensity chips.",
+          "Smooth asphalt surfaces may produce localized specular false positives."
+        ]
+      },
+      "metrics": {
+        "iou": 0.7042,
+        "dice_f1": 0.8264,
+        "precision": 0.7043,
+        "recall": 0.9998,
+        "accuracy": 0.8957
+      },
+      "latency_ms": {
+        "p50": 4.3,
+        "p95": 5.076,
+        "p99": 5.717,
+        "mean": 4.412,
+        "min": 3.88,
+        "max": 6.271
+      },
+      "onnx_path": "ml/artifacts/disaster_unet/MOD-DISASTER-UNET-001.onnx",
+      "checkpoint_path": null,
+      "training_log_path": null,
+      "limitations": [
+        "Trained on calibrated VV polarization SAR intensity chips.",
+        "Smooth asphalt surfaces may produce localized specular false positives."
+      ],
+      "created_at": "2026-10-21T18:59:25.660534+00:00"
+    },
+    "MOD-DISASTER-SIAMESE-001": {
+      "model_id": "MOD-DISASTER-SIAMESE-001",
+      "name": "Dual-Temporal Pre/Post Flood Change Detection U-Net",
+      "version": "1.0.0",
+      "architecture": "SiameseChangeUNet",
+      "subsystem": "disaster",
+      "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
+      "params_count": {
+        "total_params": 117537,
+        "trainable_params": 117537,
+        "non_trainable_params": 0,
+        "model_size_bytes": 470148
+      },
+      "config": {
+        "model_id": "MOD-DISASTER-SIAMESE-001",
+        "name": "Dual-Temporal Pre/Post Flood Change Detection U-Net",
+        "version": "1.0.0",
+        "architecture": "SiameseChangeUNet",
+        "subsystem": "disaster",
+        "task": "segmentation",
+        "seed": 42,
+        "dataset": {
+          "name": "sen1floods11_synthetic_sar",
+          "in_channels": 2,
+          "size": 128,
+          "num_samples": 30,
+          "num_samples_fast": 10
+        },
+        "model": {
+          "base_filters": 16,
+          "in_channels": 2,
+          "out_channels": 1
+        },
+        "training": {
+          "batch_size": 4,
+          "epochs": 15,
+          "epochs_fast": 3,
+          "lr": 0.003,
+          "weight_decay": 0.0001,
+          "patience": 4,
+          "use_amp": true
+        },
+        "export": {
+          "onnx": true,
+          "output_dir": "ml/artifacts/disaster_siamese"
+        },
+        "limitations": [
+          "Ingests paired pre-disaster and post-disaster Sentinel-1 SAR chips.",
+          "Eliminates permanent water bodies to isolate newly inundated flood expansion."
+        ]
+      },
+      "metrics": {
+        "iou": 0.9972,
+        "dice_f1": 0.9986,
+        "precision": 0.9977,
+        "recall": 0.9995,
+        "accuracy": 0.9993
+      },
+      "latency_ms": {
+        "p50": 4.46,
+        "p95": 7.632,
+        "p99": 7.844,
+        "mean": 4.82,
+        "min": 3.862,
+        "max": 7.992
+      },
+      "onnx_path": "ml/artifacts/disaster_siamese/MOD-DISASTER-SIAMESE-001.onnx",
+      "checkpoint_path": null,
+      "training_log_path": null,
+      "limitations": [
+        "Ingests paired pre-disaster and post-disaster Sentinel-1 SAR chips.",
+        "Eliminates permanent water bodies to isolate newly inundated flood expansion."
+      ],
+      "created_at": "2026-10-21T18:59:25.663228+00:00"
     }
   }
 }

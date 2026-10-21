@@ -17,6 +17,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 # Windows OpenMP safety & Headless Matplotlib
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import matplotlib
@@ -29,7 +31,7 @@ from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
 from ml.common.onnx_engine import InferenceEngine, export_to_onnx
-from ml.common.registry import extract_param_counts
+from ml.common.registry import ModelRegistryEntry, extract_param_counts, register_model
 from ml.disaster.baselines import (
     BackscatterDifferencingBaseline,
     OtsuThresholdBaseline,
@@ -225,6 +227,58 @@ def run_stage_d_evaluation() -> dict[str, Any]:
 
     print(f"U-Net: IoU={metrics_unet['iou']:.4f}, Dice={metrics_unet['dice_f1']:.4f}, Precision={metrics_unet['precision']:.4f}, Recall={metrics_unet['recall']:.4f}, Latency p50={unet_latency['p50']:.2f}ms")
     print(f"Siamese Change U-Net: IoU={metrics_siamese['iou']:.4f}, Dice={metrics_siamese['dice_f1']:.4f}, Precision={metrics_siamese['precision']:.4f}, Recall={metrics_siamese['recall']:.4f}, Latency p50={siamese_latency['p50']:.2f}ms")
+
+    # Register models into models_manifest.json
+    config_unet = {}
+    config_unet_path = repo_root / "ml" / "configs" / "disaster_unet.yaml"
+    if config_unet_path.exists():
+        with open(config_unet_path, "r", encoding="utf-8") as f:
+            config_unet = yaml.safe_load(f)
+
+    config_siamese = {}
+    config_siamese_path = repo_root / "ml" / "configs" / "disaster_siamese.yaml"
+    if config_siamese_path.exists():
+        with open(config_siamese_path, "r", encoding="utf-8") as f:
+            config_siamese = yaml.safe_load(f)
+
+    entry_unet = ModelRegistryEntry(
+        model_id="MOD-DISASTER-UNET-001",
+        name="Lightweight Satellite Radar Flood Segmentation U-Net",
+        version="1.0.0",
+        architecture="UNet",
+        subsystem="disaster",
+        data_hash=data_hash,
+        params_count=unet_counts,
+        config=config_unet,
+        metrics=metrics_unet,
+        latency_ms=unet_latency,
+        onnx_path="ml/artifacts/disaster_unet/MOD-DISASTER-UNET-001.onnx",
+        limitations=[
+            "Trained on calibrated VV polarization SAR intensity chips.",
+            "Smooth asphalt surfaces may produce localized specular false positives.",
+        ],
+    )
+    register_model(entry_unet)
+
+    entry_siamese = ModelRegistryEntry(
+        model_id="MOD-DISASTER-SIAMESE-001",
+        name="Dual-Temporal Pre/Post Flood Change Detection U-Net",
+        version="1.0.0",
+        architecture="SiameseChangeUNet",
+        subsystem="disaster",
+        data_hash=data_hash,
+        params_count=siamese_counts,
+        config=config_siamese,
+        metrics=metrics_siamese,
+        latency_ms=siamese_latency,
+        onnx_path="ml/artifacts/disaster_siamese/MOD-DISASTER-SIAMESE-001.onnx",
+        limitations=[
+            "Ingests paired pre-disaster and post-disaster Sentinel-1 SAR chips.",
+            "Eliminates permanent water bodies to isolate newly inundated flood expansion.",
+        ],
+    )
+    register_model(entry_siamese)
+
 
     print("\n=== 5. Failure Case Analysis (Runway False Positives vs Canopy Masking) ===")
     # Identify test chip with runway specular false positive and canopy masking

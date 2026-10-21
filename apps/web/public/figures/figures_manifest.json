@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "last_updated": "2026-10-21T18:48:06.832426+00:00",
+  "last_updated": "2026-10-21T19:00:28.795000+00:00",
   "figures": {
     "FIG-MOD-FOUNDATION-DUMMY-001-LOSS": {
       "figure_id": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS",
@@ -13,8 +13,8 @@
       "model_version": "0.1.0",
       "dataset": "synthetic_sine_waves",
       "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:48:06.832426+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T19:00:28.795000+00:00",
       "tags": [
         "loss_curve",
         "convergence",
@@ -33,8 +33,8 @@
       "model_version": "1.0.0",
       "dataset": "test_synth",
       "data_hash": "abc123hash",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:48:03.695358+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T19:00:25.826778+00:00",
       "tags": [
         "unit_test"
       ],
@@ -419,8 +419,8 @@
       "model_version": "1.0.0",
       "dataset": "sen1floods11_synthetic_sar",
       "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:47:07.968025+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T18:59:26.012812+00:00",
       "tags": [
         "loss_curve",
         "disaster",
@@ -440,8 +440,8 @@
       "model_version": "1.0.0",
       "dataset": "sen1floods11_synthetic_sar",
       "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:47:08.506782+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T18:59:26.559995+00:00",
       "tags": [
         "chip",
         "segmentation",
@@ -461,8 +461,8 @@
       "model_version": "1.0.0",
       "dataset": "sen1floods11_synthetic_sar",
       "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:47:09.154206+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T18:59:27.382764+00:00",
       "tags": [
         "gradcam",
         "xai",
@@ -482,8 +482,8 @@
       "model_version": "1.0.0",
       "dataset": "sen1floods11_synthetic_sar",
       "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:47:09.447187+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T18:59:27.692357+00:00",
       "tags": [
         "change_detection",
         "multitemporal",
@@ -502,8 +502,8 @@
       "model_version": "1.0.0",
       "dataset": "sen1floods11_synthetic_sar",
       "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:47:09.713671+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T18:59:27.983245+00:00",
       "tags": [
         "benchmark",
         "comparison",
@@ -524,8 +524,8 @@
       "model_version": "1.0.0",
       "dataset": "sen1floods11_synthetic_sar",
       "data_hash": "edb4096cdcb8984913ff048f4d8b27c2258e3bde7f78097254ba6c06a311236f",
-      "commit": "a2c04ed",
-      "timestamp": "2026-10-21T18:47:10.250936+00:00",
+      "commit": "564e2ad",
+      "timestamp": "2026-10-21T18:59:28.554231+00:00",
       "tags": [
         "failure_cases",
         "error_analysis",
