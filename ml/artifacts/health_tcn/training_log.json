@@ -1,0 +1,80 @@
+{
+  "model_id": "MOD-HEALTH-TCN-001",
+  "epochs": [
+    {
+      "epoch": 1,
+      "train_loss": 0.650815,
+      "val_loss": 0.476462
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.301779,
+      "val_loss": 0.197497
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.19979,
+      "val_loss": 0.123299
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.152324,
+      "val_loss": 0.095556
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.124316,
+      "val_loss": 0.075134
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.104782,
+      "val_loss": 0.063865
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.091309,
+      "val_loss": 0.053954
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.080571,
+      "val_loss": 0.048091
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.071843,
+      "val_loss": 0.041824
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.064444,
+      "val_loss": 0.036134
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.058215,
+      "val_loss": 0.032708
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.052691,
+      "val_loss": 0.029221
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.048784,
+      "val_loss": 0.02672
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.044843,
+      "val_loss": 0.023248
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.041632,
+      "val_loss": 0.021939
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "last_updated": "2026-10-21T18:04:39.658335+00:00",
+  "last_updated": "2026-10-21T18:26:26.442889+00:00",
   "figures": {
     "FIG-MOD-FOUNDATION-DUMMY-001-LOSS": {
       "figure_id": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS",
@@ -13,8 +13,8 @@
       "model_version": "0.1.0",
       "dataset": "synthetic_sine_waves",
       "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
-      "commit": "c74e5c3",
-      "timestamp": "2026-10-21T18:04:39.658335+00:00",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:26:26.442889+00:00",
       "tags": [
         "loss_curve",
         "convergence",
@@ -33,10 +33,190 @@
       "model_version": "1.0.0",
       "dataset": "test_synth",
       "data_hash": "abc123hash",
-      "commit": "c74e5c3",
-      "timestamp": "2026-10-21T18:04:36.396825+00:00",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:26:23.177973+00:00",
       "tags": [
         "unit_test"
+      ],
+      "metadata": {}
+    },
+    "FIG-MOD-HEALTH-LSTM-001-LOSS": {
+      "figure_id": "FIG-MOD-HEALTH-LSTM-001-LOSS",
+      "title": "MOD-HEALTH-LSTM-001 Loss Convergence",
+      "description": "Epoch-wise MSE convergence profile for MOD-HEALTH-LSTM-001 v1.1.0 on telemetry_physics_esa_structure.",
+      "filename_png": "FIG-MOD-HEALTH-LSTM-001-LOSS.png",
+      "filename_svg": "FIG-MOD-HEALTH-LSTM-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-HEALTH-LSTM-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-HEALTH-LSTM-001-LOSS.svg",
+      "model_version": "1.1.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "087f0e2a1600a2fb8b89e4225ef85e1bbd8d0c1de4990fd3b8ca4976c495da7e",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:27.529852+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-MOD-HEALTH-TCN-001-LOSS": {
+      "figure_id": "FIG-MOD-HEALTH-TCN-001-LOSS",
+      "title": "MOD-HEALTH-TCN-001 Loss Convergence",
+      "description": "Epoch-wise MSE convergence profile for MOD-HEALTH-TCN-001 v1.0.0 on telemetry_physics_esa_structure.",
+      "filename_png": "FIG-MOD-HEALTH-TCN-001-LOSS.png",
+      "filename_svg": "FIG-MOD-HEALTH-TCN-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-HEALTH-TCN-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-HEALTH-TCN-001-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "087f0e2a1600a2fb8b89e4225ef85e1bbd8d0c1de4990fd3b8ca4976c495da7e",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:36.336473+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-MOD-HEALTH-TRANSFORMER-001-LOSS": {
+      "figure_id": "FIG-MOD-HEALTH-TRANSFORMER-001-LOSS",
+      "title": "MOD-HEALTH-TRANSFORMER-001 Loss Convergence",
+      "description": "Epoch-wise MSE convergence profile for MOD-HEALTH-TRANSFORMER-001 v1.0.0 on telemetry_physics_esa_structure.",
+      "filename_png": "FIG-MOD-HEALTH-TRANSFORMER-001-LOSS.png",
+      "filename_svg": "FIG-MOD-HEALTH-TRANSFORMER-001-LOSS.svg",
+      "url_png": "/figures/FIG-MOD-HEALTH-TRANSFORMER-001-LOSS.png",
+      "url_svg": "/figures/FIG-MOD-HEALTH-TRANSFORMER-001-LOSS.svg",
+      "model_version": "1.0.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "087f0e2a1600a2fb8b89e4225ef85e1bbd8d0c1de4990fd3b8ca4976c495da7e",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:42.742214+00:00",
+      "tags": [
+        "loss_curve",
+        "convergence",
+        "training"
+      ],
+      "metadata": {}
+    },
+    "FIG-HEALTH-DEEP-TRAIN-LOSS": {
+      "figure_id": "FIG-HEALTH-DEEP-TRAIN-LOSS",
+      "title": "Health Deep Models Loss Convergence",
+      "description": "Multi-epoch validation loss convergence comparing LSTM, TCN, and Transformer autoencoders.",
+      "filename_png": "FIG-HEALTH-DEEP-TRAIN-LOSS.png",
+      "filename_svg": "FIG-HEALTH-DEEP-TRAIN-LOSS.svg",
+      "url_png": "/figures/FIG-HEALTH-DEEP-TRAIN-LOSS.png",
+      "url_svg": "/figures/FIG-HEALTH-DEEP-TRAIN-LOSS.svg",
+      "model_version": "1.1.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "63ee87658e8308967eb506e666b96e04ba48cc8089dbafb78efb20ccb962dcd6",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:47.404269+00:00",
+      "tags": [
+        "training",
+        "convergence",
+        "health"
+      ],
+      "metadata": {}
+    },
+    "FIG-HEALTH-TELEMETRY-RECON": {
+      "figure_id": "FIG-HEALTH-TELEMETRY-RECON",
+      "title": "Telemetry vs Deep Reconstruction Divergence",
+      "description": "Actual telemetry trajectory vs deep TCN reconstruction with shaded residual anomaly window.",
+      "filename_png": "FIG-HEALTH-TELEMETRY-RECON.png",
+      "filename_svg": "FIG-HEALTH-TELEMETRY-RECON.svg",
+      "url_png": "/figures/FIG-HEALTH-TELEMETRY-RECON.png",
+      "url_svg": "/figures/FIG-HEALTH-TELEMETRY-RECON.svg",
+      "model_version": "1.0.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "63ee87658e8308967eb506e666b96e04ba48cc8089dbafb78efb20ccb962dcd6",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:47.737835+00:00",
+      "tags": [
+        "reconstruction",
+        "telemetry",
+        "divergence"
+      ],
+      "metadata": {}
+    },
+    "FIG-HEALTH-RESIDUAL-HEATMAP": {
+      "figure_id": "FIG-HEALTH-RESIDUAL-HEATMAP",
+      "title": "Channel-Timestep Residual Error Heatmap",
+      "description": "2D squared error matrix across all 7 spacecraft telemetry channels during thermal runaway drift.",
+      "filename_png": "FIG-HEALTH-RESIDUAL-HEATMAP.png",
+      "filename_svg": "FIG-HEALTH-RESIDUAL-HEATMAP.svg",
+      "url_png": "/figures/FIG-HEALTH-RESIDUAL-HEATMAP.png",
+      "url_svg": "/figures/FIG-HEALTH-RESIDUAL-HEATMAP.svg",
+      "model_version": "1.0.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "63ee87658e8308967eb506e666b96e04ba48cc8089dbafb78efb20ccb962dcd6",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:48.178961+00:00",
+      "tags": [
+        "heatmap",
+        "residual",
+        "explainability"
+      ],
+      "metadata": {}
+    },
+    "FIG-HEALTH-CAPTUM-IG": {
+      "figure_id": "FIG-HEALTH-CAPTUM-IG",
+      "title": "Captum Integrated Gradients Attribution",
+      "description": "Path-integrated gradient attribution ranking identifying the largest contributor channels.",
+      "filename_png": "FIG-HEALTH-CAPTUM-IG.png",
+      "filename_svg": "FIG-HEALTH-CAPTUM-IG.svg",
+      "url_png": "/figures/FIG-HEALTH-CAPTUM-IG.png",
+      "url_svg": "/figures/FIG-HEALTH-CAPTUM-IG.svg",
+      "model_version": "1.0.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "63ee87658e8308967eb506e666b96e04ba48cc8089dbafb78efb20ccb962dcd6",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:48.477042+00:00",
+      "tags": [
+        "captum",
+        "integrated_gradients",
+        "xai"
+      ],
+      "metadata": {}
+    },
+    "FIG-HEALTH-MODEL-COMPARISON": {
+      "figure_id": "FIG-HEALTH-MODEL-COMPARISON",
+      "title": "Model Comparison Trade-Off Profile",
+      "description": "Side-by-side benchmark comparison of event-wise F1 score and false alarm reduction.",
+      "filename_png": "FIG-HEALTH-MODEL-COMPARISON.png",
+      "filename_svg": "FIG-HEALTH-MODEL-COMPARISON.svg",
+      "url_png": "/figures/FIG-HEALTH-MODEL-COMPARISON.png",
+      "url_svg": "/figures/FIG-HEALTH-MODEL-COMPARISON.svg",
+      "model_version": "1.1.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "63ee87658e8308967eb506e666b96e04ba48cc8089dbafb78efb20ccb962dcd6",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:48.807891+00:00",
+      "tags": [
+        "comparison",
+        "benchmark",
+        "tradeoff"
+      ],
+      "metadata": {}
+    },
+    "FIG-HEALTH-ROC-PR": {
+      "figure_id": "FIG-HEALTH-ROC-PR",
+      "title": "ROC and Precision-Recall Discrimination Curves",
+      "description": "Comparative ROC and Precision-Recall evaluation curves contrasting TCN Autoencoder against baseline.",
+      "filename_png": "FIG-HEALTH-ROC-PR.png",
+      "filename_svg": "FIG-HEALTH-ROC-PR.svg",
+      "url_png": "/figures/FIG-HEALTH-ROC-PR.png",
+      "url_svg": "/figures/FIG-HEALTH-ROC-PR.svg",
+      "model_version": "1.0.0",
+      "dataset": "telemetry_physics_esa_structure",
+      "data_hash": "63ee87658e8308967eb506e666b96e04ba48cc8089dbafb78efb20ccb962dcd6",
+      "commit": "e992d14",
+      "timestamp": "2026-10-21T18:21:49.244741+00:00",
+      "tags": [
+        "roc",
+        "precision_recall",
+        "evaluation"
       ],
       "metadata": {}
     }

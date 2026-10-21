@@ -1,0 +1,80 @@
+{
+  "model_id": "MOD-HEALTH-LSTM-001",
+  "epochs": [
+    {
+      "epoch": 1,
+      "train_loss": 0.497566,
+      "val_loss": 0.468319
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.418591,
+      "val_loss": 0.352909
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.294537,
+      "val_loss": 0.245498
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.22294,
+      "val_loss": 0.198963
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.169451,
+      "val_loss": 0.140558
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.116594,
+      "val_loss": 0.091595
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.077744,
+      "val_loss": 0.059123
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.037757,
+      "val_loss": 0.023507
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.01785,
+      "val_loss": 0.013377
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.011594,
+      "val_loss": 0.009704
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.008835,
+      "val_loss": 0.007704
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.00721,
+      "val_loss": 0.006558
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.00623,
+      "val_loss": 0.005589
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.005406,
+      "val_loss": 0.004837
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.004772,
+      "val_loss": 0.004566
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+model_id: "MOD-HEALTH-TRANSFORMER-001"
+name: "Spacecraft Health Transformer Autoencoder"
+version: "1.0.0"
+architecture: "TransformerAutoencoderNet"
+subsystem: "health"
+seed: 42
+
+dataset:
+  name: "telemetry_physics_esa_structure"
+  in_channels: 7
+  seq_len: 64
+  num_samples: 300
+  num_samples_fast: 50
+
+model:
+  d_model: 32
+  nhead: 4
+  num_layers: 2
+  latent_dim: 16
+
+training:
+  batch_size: 16
+  epochs: 15
+  epochs_fast: 3
+  lr: 0.003
+  weight_decay: 0.0001
+  patience: 4
+  use_amp: true
+
+export:
+  onnx: true
+  output_dir: "ml/artifacts/health_transformer"
+
+limitations:
+  - "Higher computational overhead per token than CNN/LSTM."
+  - "Best for detecting complex multi-channel cross-attention anomalies."

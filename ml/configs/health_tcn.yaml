@@ -1,0 +1,35 @@
+model_id: "MOD-HEALTH-TCN-001"
+name: "Spacecraft Health Dilated TCN Autoencoder"
+version: "1.0.0"
+architecture: "TCNAutoencoderNet"
+subsystem: "health"
+seed: 42
+
+dataset:
+  name: "telemetry_physics_esa_structure"
+  in_channels: 7
+  seq_len: 64
+  num_samples: 300
+  num_samples_fast: 50
+
+model:
+  hidden_dim: 32
+  latent_dim: 16
+  dilations: [1, 2, 4, 8]
+
+training:
+  batch_size: 16
+  epochs: 15
+  epochs_fast: 3
+  lr: 0.003
+  weight_decay: 0.0001
+  patience: 4
+  use_amp: true
+
+export:
+  onnx: true
+  output_dir: "ml/artifacts/health_tcn"
+
+limitations:
+  - "Causal receptive field covers 31 past timesteps without leakage."
+  - "Requires normalized inputs centered around nominal mean."

@@ -1,6 +1,6 @@
 {
   "registry_version": "1.0.0",
-  "last_updated": "2026-10-21T18:04:39.662245+00:00",
+  "last_updated": "2026-10-21T18:26:26.447354+00:00",
   "models": {
     "MOD-FOUNDATION-DUMMY-001": {
       "model_id": "MOD-FOUNDATION-DUMMY-001",
@@ -53,12 +53,12 @@
         "best_val_loss": 0.505839
       },
       "latency_ms": {
-        "p50": 0.041,
-        "p95": 0.043,
-        "p99": 0.048,
-        "mean": 0.041,
-        "min": 0.04,
-        "max": 0.08
+        "p50": 0.039,
+        "p95": 0.044,
+        "p99": 0.059,
+        "mean": 0.038,
+        "min": 0.031,
+        "max": 0.06
       },
       "onnx_path": "ml/artifacts/dummy_stage_a/MOD-FOUNDATION-DUMMY-001.onnx",
       "checkpoint_path": "ml/artifacts/dummy_stage_a/best_model.pt",
@@ -67,7 +67,7 @@
         "Demonstration dummy model only.",
         "Trained on synthetic harmonic telemetry for pipeline foundation verification."
       ],
-      "created_at": "2026-10-21T18:04:39.660634+00:00"
+      "created_at": "2026-10-21T18:26:26.445693+00:00"
     },
     "MOD-TEST-REGISTRY-001": {
       "model_id": "MOD-TEST-REGISTRY-001",
@@ -94,7 +94,228 @@
       "checkpoint_path": null,
       "training_log_path": null,
       "limitations": [],
-      "created_at": "2026-10-21T18:04:36.497716+00:00"
+      "created_at": "2026-10-21T18:26:23.204983+00:00"
+    },
+    "MOD-HEALTH-LSTM-001": {
+      "model_id": "MOD-HEALTH-LSTM-001",
+      "name": "Spacecraft Health LSTM Autoencoder",
+      "version": "1.1.0",
+      "architecture": "LSTMAutoencoderNet",
+      "subsystem": "health",
+      "data_hash": "087f0e2a1600a2fb8b89e4225ef85e1bbd8d0c1de4990fd3b8ca4976c495da7e",
+      "params_count": {
+        "total_params": 14999,
+        "trainable_params": 14999,
+        "non_trainable_params": 0,
+        "model_size_bytes": 59996
+      },
+      "config": {
+        "model_id": "MOD-HEALTH-LSTM-001",
+        "name": "Spacecraft Health LSTM Autoencoder",
+        "version": "1.1.0",
+        "architecture": "LSTMAutoencoderNet",
+        "subsystem": "health",
+        "seed": 42,
+        "dataset": {
+          "name": "telemetry_physics_esa_structure",
+          "in_channels": 7,
+          "seq_len": 64,
+          "num_samples": 300,
+          "num_samples_fast": 50
+        },
+        "model": {
+          "hidden_dim": 32,
+          "latent_dim": 16
+        },
+        "training": {
+          "batch_size": 16,
+          "epochs": 15,
+          "epochs_fast": 3,
+          "lr": 0.003,
+          "weight_decay": 0.0001,
+          "patience": 4,
+          "use_amp": true
+        },
+        "export": {
+          "onnx": true,
+          "output_dir": "ml/artifacts/health_lstm"
+        },
+        "limitations": [
+          "Requires minimum 64-timestep telemetry buffer for inference.",
+          "Trained on calibrated nominal ESA-ADB physics envelopes."
+        ]
+      },
+      "metrics": {
+        "final_train_loss": 0.004772,
+        "final_val_loss": 0.004566,
+        "best_val_loss": 0.004566
+      },
+      "latency_ms": {
+        "p50": 0.19,
+        "p95": 0.229,
+        "p99": 0.338,
+        "mean": 0.193,
+        "min": 0.155,
+        "max": 0.341
+      },
+      "onnx_path": "ml/artifacts/health_lstm/MOD-HEALTH-LSTM-001.onnx",
+      "checkpoint_path": "ml/artifacts/health_lstm/best_model.pt",
+      "training_log_path": "ml/artifacts/health_lstm/training_log.json",
+      "limitations": [
+        "Requires minimum 64-timestep telemetry buffer for inference.",
+        "Trained on calibrated nominal ESA-ADB physics envelopes."
+      ],
+      "created_at": "2026-10-21T18:21:27.533316+00:00"
+    },
+    "MOD-HEALTH-TCN-001": {
+      "model_id": "MOD-HEALTH-TCN-001",
+      "name": "Spacecraft Health Dilated TCN Autoencoder",
+      "version": "1.0.0",
+      "architecture": "TCNAutoencoderNet",
+      "subsystem": "health",
+      "data_hash": "087f0e2a1600a2fb8b89e4225ef85e1bbd8d0c1de4990fd3b8ca4976c495da7e",
+      "params_count": {
+        "total_params": 49847,
+        "trainable_params": 49847,
+        "non_trainable_params": 0,
+        "model_size_bytes": 199388
+      },
+      "config": {
+        "model_id": "MOD-HEALTH-TCN-001",
+        "name": "Spacecraft Health Dilated TCN Autoencoder",
+        "version": "1.0.0",
+        "architecture": "TCNAutoencoderNet",
+        "subsystem": "health",
+        "seed": 42,
+        "dataset": {
+          "name": "telemetry_physics_esa_structure",
+          "in_channels": 7,
+          "seq_len": 64,
+          "num_samples": 300,
+          "num_samples_fast": 50
+        },
+        "model": {
+          "hidden_dim": 32,
+          "latent_dim": 16,
+          "dilations": [
+            1,
+            2,
+            4,
+            8
+          ]
+        },
+        "training": {
+          "batch_size": 16,
+          "epochs": 15,
+          "epochs_fast": 3,
+          "lr": 0.003,
+          "weight_decay": 0.0001,
+          "patience": 4,
+          "use_amp": true
+        },
+        "export": {
+          "onnx": true,
+          "output_dir": "ml/artifacts/health_tcn"
+        },
+        "limitations": [
+          "Causal receptive field covers 31 past timesteps without leakage.",
+          "Requires normalized inputs centered around nominal mean."
+        ]
+      },
+      "metrics": {
+        "final_train_loss": 0.041632,
+        "final_val_loss": 0.021939,
+        "best_val_loss": 0.021939
+      },
+      "latency_ms": {
+        "p50": 0.279,
+        "p95": 0.326,
+        "p99": 0.347,
+        "mean": 0.274,
+        "min": 0.22,
+        "max": 0.356
+      },
+      "onnx_path": "ml/artifacts/health_tcn/MOD-HEALTH-TCN-001.onnx",
+      "checkpoint_path": "ml/artifacts/health_tcn/best_model.pt",
+      "training_log_path": "ml/artifacts/health_tcn/training_log.json",
+      "limitations": [
+        "Causal receptive field covers 31 past timesteps without leakage.",
+        "Requires normalized inputs centered around nominal mean."
+      ],
+      "created_at": "2026-10-21T18:21:36.338270+00:00"
+    },
+    "MOD-HEALTH-TRANSFORMER-001": {
+      "model_id": "MOD-HEALTH-TRANSFORMER-001",
+      "name": "Spacecraft Health Transformer Autoencoder",
+      "version": "1.0.0",
+      "architecture": "TransformerAutoencoderNet",
+      "subsystem": "health",
+      "data_hash": "087f0e2a1600a2fb8b89e4225ef85e1bbd8d0c1de4990fd3b8ca4976c495da7e",
+      "params_count": {
+        "total_params": 18647,
+        "trainable_params": 18647,
+        "non_trainable_params": 0,
+        "model_size_bytes": 74588
+      },
+      "config": {
+        "model_id": "MOD-HEALTH-TRANSFORMER-001",
+        "name": "Spacecraft Health Transformer Autoencoder",
+        "version": "1.0.0",
+        "architecture": "TransformerAutoencoderNet",
+        "subsystem": "health",
+        "seed": 42,
+        "dataset": {
+          "name": "telemetry_physics_esa_structure",
+          "in_channels": 7,
+          "seq_len": 64,
+          "num_samples": 300,
+          "num_samples_fast": 50
+        },
+        "model": {
+          "d_model": 32,
+          "nhead": 4,
+          "num_layers": 2,
+          "latent_dim": 16
+        },
+        "training": {
+          "batch_size": 16,
+          "epochs": 15,
+          "epochs_fast": 3,
+          "lr": 0.003,
+          "weight_decay": 0.0001,
+          "patience": 4,
+          "use_amp": true
+        },
+        "export": {
+          "onnx": true,
+          "output_dir": "ml/artifacts/health_transformer"
+        },
+        "limitations": [
+          "Higher computational overhead per token than CNN/LSTM.",
+          "Best for detecting complex multi-channel cross-attention anomalies."
+        ]
+      },
+      "metrics": {
+        "final_train_loss": 0.002181,
+        "final_val_loss": 0.001152,
+        "best_val_loss": 0.001152
+      },
+      "latency_ms": {
+        "p50": 0.268,
+        "p95": 0.329,
+        "p99": 0.741,
+        "mean": 0.333,
+        "min": 0.253,
+        "max": 5.592
+      },
+      "onnx_path": "ml/artifacts/health_transformer/MOD-HEALTH-TRANSFORMER-001.onnx",
+      "checkpoint_path": "ml/artifacts/health_transformer/best_model.pt",
+      "training_log_path": "ml/artifacts/health_transformer/training_log.json",
+      "limitations": [
+        "Higher computational overhead per token than CNN/LSTM.",
+        "Best for detecting complex multi-channel cross-attention anomalies."
+      ],
+      "created_at": "2026-10-21T18:21:42.744298+00:00"
     }
   }
 }

@@ -37,6 +37,9 @@ from ml.common.registry import (
     extract_param_counts,
     register_model,
 )
+from ml.health.lstm_ae import LSTMAutoencoderNet
+from ml.health.tcn_ae import TCNAutoencoderNet
+from ml.health.transformer_ae import TransformerAutoencoderNet
 from ml.reports.figure_helper import apply_style, save_figure
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -184,8 +187,34 @@ def train_model(config_path: str | Path, fast: bool = False) -> dict[str, Any]:
 
     # Model instantiation
     arch_name = cfg.get("architecture", "DummySequenceModel")
+    m_cfg = cfg.get("model", {})
+    hidden_dim = m_cfg.get("hidden_dim", 32)
+    latent_dim = m_cfg.get("latent_dim", 16)
+
     if arch_name == "DummySequenceModel":
         model = DummySequenceModel(in_channels=in_channels, seq_len=seq_len).to(device)
+    elif arch_name in ("LSTMAutoencoderNet", "LSTMAutoencoder"):
+        model = LSTMAutoencoderNet(input_dim=in_channels, hidden_dim=hidden_dim, latent_dim=latent_dim).to(device)
+    elif arch_name in ("TCNAutoencoderNet", "TCNAutoencoder"):
+        dilations = tuple(m_cfg.get("dilations", [1, 2, 4, 8]))
+        model = TCNAutoencoderNet(
+            input_dim=in_channels,
+            hidden_dim=hidden_dim,
+            latent_dim=latent_dim,
+            dilations=dilations,
+        ).to(device)
+    elif arch_name in ("TransformerAutoencoderNet", "TransformerAutoencoder"):
+        d_model = m_cfg.get("d_model", 32)
+        nhead = m_cfg.get("nhead", 4)
+        num_layers = m_cfg.get("num_layers", 2)
+        model = TransformerAutoencoderNet(
+            input_dim=in_channels,
+            d_model=d_model,
+            nhead=nhead,
+            num_layers=num_layers,
+            latent_dim=latent_dim,
+            max_len=max(256, seq_len * 2),
+        ).to(device)
     else:
         raise ValueError(f"Unknown architecture: {arch_name}")
 
