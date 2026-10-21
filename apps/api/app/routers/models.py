@@ -4,8 +4,10 @@ import json
 import os
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
 
+from app.schemas.dl_inference import DLModelRegistryEntry
+from app.services.dl_inference_service import dl_inference_service
 from app.services.trust_layer_service import trust_layer_service
 
 router = APIRouter(prefix="/api/v1/models", tags=["Model Registry"])
@@ -15,6 +17,23 @@ router = APIRouter(prefix="/api/v1/models", tags=["Model Registry"])
 async def get_model_trust_metrics() -> dict[str, Any]:
     """Retrieve statistical trustworthiness, ECE calibration, KS telemetry drift, and TLE staleness."""
     return trust_layer_service.get_trust_metrics()
+
+
+@router.get("/deep", summary="Get deep learning model registry catalog", response_model=list[DLModelRegistryEntry])
+async def get_deep_model_registry(
+    subsystem: str | None = Query(default=None, description="Optional domain filter: health, debris, or disaster"),
+) -> list[DLModelRegistryEntry]:
+    """Retrieve registered deep learning models (CNN, U-Net, LSTM, GRU, TCN) with real benchmark metrics."""
+    return dl_inference_service.get_deep_models(subsystem=subsystem)
+
+
+@router.get("/deep/{model_id}", summary="Get deep learning model by ID", response_model=DLModelRegistryEntry)
+async def get_deep_model_by_id(model_id: str) -> DLModelRegistryEntry:
+    """Retrieve single deep model specification, architecture, ONNX path, and latency profile."""
+    model = dl_inference_service.get_deep_model(model_id)
+    if not model:
+        raise HTTPException(status_code=404, detail=f"Deep model '{model_id}' not found in registry")
+    return model
 
 
 def _load_metric_file(filename: str) -> dict[str, Any]:
@@ -33,8 +52,14 @@ def _load_metric_file(filename: str) -> dict[str, Any]:
 
 
 @router.get("", summary="Get Model Registry and measured benchmark metrics")
-async def get_model_registry() -> list[dict[str, Any]]:
-    """Retrieve metadata and evaluated performance metrics for all deployed ML models."""
+async def get_model_registry(
+    view: str = Query(default="classic", description="Catalog view: 'classic' (production baseline), 'deep', or 'all'"),
+    subsystem: str | None = Query(default=None, description="Optional domain filter"),
+) -> list[dict[str, Any]]:
+    """Retrieve metadata and evaluated performance metrics for deployed ML/DL models."""
+    if view == "deep":
+        return [m.model_dump() for m in dl_inference_service.get_deep_models(subsystem=subsystem)]
+
     health_metrics = _load_metric_file("health.json")
     debris_metrics = _load_metric_file("debris.json")
     disaster_metrics = _load_metric_file("disaster.json")
@@ -129,4 +154,22 @@ async def get_model_registry() -> list[dict[str, Any]]:
         },
     ]
 
+    if view == "all":
+        deep_cards = [
+            {
+                "id": m.model_id,
+                "name": m.name,
+                "type": f"{m.architecture} ({m.total_params:,} params)",
+                "version": m.version,
+                "subsystem": m.subsystem,
+                "metrics": m.metrics,
+                "data_source": m.dataset or "Synthetic & Benchmark Telemetry/SAR/CDM",
+                "data_hash": m.data_hash[:16],
+                "status": m.status,
+            }
+            for m in dl_inference_service.get_deep_models(subsystem=subsystem)
+        ]
+        return registry + deep_cards
+
     return registry
+

@@ -6,6 +6,17 @@ from app.schemas.disaster import (
     DisasterQueryResponse,
     ImageryProductItem,
 )
+from app.schemas.dl_inference import (
+    DebrisInferenceRequest,
+    DebrisInferenceResponse,
+    DisasterInferenceRequest,
+    DisasterInferenceResponse,
+    DLModelRegistryEntry,
+    FigureEntry,
+    HealthInferenceRequest,
+    HealthInferenceResponse,
+    SamplePreset,
+)
 from app.schemas.health import HealthResponse
 from app.schemas.objects import (
     SpaceObjectBatchRequest,
@@ -36,4 +47,14 @@ __all__ = [
     "DisasterQueryResponse",
     "ConjunctionItem",
     "ConjunctionQueryResponse",
+    "DLModelRegistryEntry",
+    "FigureEntry",
+    "HealthInferenceRequest",
+    "HealthInferenceResponse",
+    "DebrisInferenceRequest",
+    "DebrisInferenceResponse",
+    "DisasterInferenceRequest",
+    "DisasterInferenceResponse",
+    "SamplePreset",
 ]
+
