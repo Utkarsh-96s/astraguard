@@ -89,8 +89,8 @@ ${report.operator_audit_trail.map((a) => `- [${a.timestamp}] **${a.user}** -> ${
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-charcoal border border-white/20 rounded-card shadow-2xl flex flex-col text-bone text-xs font-mono print:bg-white print:text-black print:border-none print:shadow-none print:max-h-none print:overflow-visible">
+    <div data-lenis-prevent className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+      <div data-lenis-prevent className="w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-charcoal border border-white/20 rounded-card shadow-2xl flex flex-col text-bone text-xs font-mono print:bg-white print:text-black print:border-none print:shadow-none print:max-h-none print:overflow-visible">
         {/* Modal Top Actions Bar (Hidden during print) */}
         <div className="flex items-center justify-between p-4 border-b border-white/10 bg-void/80 sticky top-0 z-10 print:hidden">
           <div className="flex items-center gap-2">

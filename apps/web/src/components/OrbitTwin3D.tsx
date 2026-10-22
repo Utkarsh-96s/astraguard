@@ -400,11 +400,16 @@ export function OrbitTwin3D({
 
       {/* Main 3D Canvas Box */}
       <div
+        data-lenis-prevent
         className="relative w-full aspect-[16/9] max-h-[460px] bg-void rounded-card border border-white/10 overflow-hidden cursor-grab active:cursor-grabbing select-none"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onWheel={(e) => {
+          // Wheel shielding: prevent canvas from capturing page scroll
+          e.stopPropagation();
+        }}
       >
         <canvas
           ref={canvasRef}

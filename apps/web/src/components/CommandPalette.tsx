@@ -256,8 +256,8 @@ export function CommandPalette({ onStartTour }: CommandPaletteProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-void/80 backdrop-blur-md animate-in fade-in duration-150">
-      <div className="relative w-full max-w-2xl rounded-card bg-charcoal border border-white/20 shadow-2xl overflow-hidden flex flex-col max-h-[75vh]">
+    <div data-lenis-prevent className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-void/80 backdrop-blur-md animate-in fade-in duration-150">
+      <div data-lenis-prevent className="relative w-full max-w-2xl rounded-card bg-charcoal border border-white/20 shadow-2xl overflow-hidden flex flex-col max-h-[75vh]">
         {/* Search Input Bar */}
         <div className="flex items-center px-4 py-3.5 border-b border-white/10 gap-3 bg-smoke/60">
           <Search className="w-5 h-5 text-ash shrink-0" />

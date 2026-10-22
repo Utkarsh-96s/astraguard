@@ -43,6 +43,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "../lib/themeContext";
+import { SmoothScrollProvider } from "../components/SmoothScrollProvider";
 
 export default function RootLayout({
   children,
@@ -80,7 +81,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${barlow.variable} bg-space-canvas text-space-fg antialiased min-h-screen min-h-[100dvh] w-full flex flex-col font-sans selection:bg-space-secondary/20 selection:text-space-fg transition-colors duration-300`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

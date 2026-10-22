@@ -124,8 +124,8 @@ export function TelegramBotModal({ alertId, onClose, onActionComplete }: Telegra
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md rounded-2xl bg-charcoal border border-cyan-500/40 shadow-2xl overflow-hidden flex flex-col">
+    <div data-lenis-prevent className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div data-lenis-prevent className="relative w-full max-w-md rounded-2xl bg-charcoal border border-cyan-500/40 shadow-2xl overflow-hidden flex flex-col">
         {/* Modal Top Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-smoke/80 border-b border-white/10">
           <div className="flex items-center gap-2">

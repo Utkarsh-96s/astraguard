@@ -105,8 +105,8 @@ export function ProvenanceModal({ alertId, isOpen, onClose }: ProvenanceModalPro
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-md">
-      <div className="relative w-full max-w-2xl bg-charcoal border border-white/20 rounded-cards shadow-2xl p-6 text-bone font-sans overflow-hidden">
+    <div data-lenis-prevent className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-md">
+      <div data-lenis-prevent className="relative w-full max-w-2xl bg-charcoal border border-white/20 rounded-cards shadow-2xl p-6 text-bone font-sans overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-white/10">
           <div>
