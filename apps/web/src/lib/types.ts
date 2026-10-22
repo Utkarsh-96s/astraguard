@@ -48,6 +48,83 @@ export interface OperatorAction {
   timestamp: string;
 }
 
+export interface EscalationInfo {
+  current_level: number;
+  countdown_seconds?: number | null;
+  halted: boolean;
+  halted_reason?: string | null;
+}
+
+export interface AlertDeliveryItem {
+  outbox_id: string;
+  channel_id: string;
+  channel_name: string;
+  channel_type: "telegram" | "webpush" | "ntfy" | "email" | "webhook" | "sms" | string;
+  masked_address: string;
+  status: "queued" | "sending" | "sent" | "delivered" | "failed" | "dead" | string;
+  escalation_level: number;
+  attempts: number;
+  max_attempts: number;
+  last_error?: string | null;
+  provider_message_id?: string | null;
+  sent_at?: string | null;
+  delivered_at?: string | null;
+  acked_at?: string | null;
+  test: boolean;
+}
+
+export interface NotificationChannelItem {
+  id: string;
+  user_id: string;
+  type: string;
+  name: string;
+  masked_address: string;
+  status: "NOT CONFIGURED" | "PENDING VERIFICATION" | "CONNECTED" | "ERROR" | "UNSUBSCRIBED" | string;
+  verified_at?: string | null;
+  last_error?: string | null;
+  prefs: Record<string, any>;
+  created_at: string;
+}
+
+export interface ProviderHealthItem {
+  type: string;
+  status: "NOT CONFIGURED" | "PENDING VERIFICATION" | "CONNECTED" | "ERROR" | string;
+  details?: string;
+  missing_env?: string[];
+}
+
+export interface NotificationHealthResponse {
+  status: string;
+  providers: ProviderHealthItem[];
+  configured_channels_count: number;
+  dead_letter_count: number;
+  timestamp: string;
+}
+
+export interface EscalationPolicyItem {
+  id: string;
+  name: string;
+  l1_channels: string[];
+  l2_delay_sec: number;
+  l2_channels: string[];
+  l3_delay_sec: number;
+  l3_channels: string[];
+}
+
+export interface DeadLetterItem {
+  outbox_id: string;
+  alert_id: string;
+  alert_title: string;
+  level: RiskLevel;
+  channel_id: string;
+  channel_name: string;
+  channel_type: string;
+  attempts: number;
+  max_attempts: number;
+  last_error?: string | null;
+  created_at: string;
+}
+
 export interface Alert {
   id: string;
   snapshot_id: string;
@@ -61,6 +138,7 @@ export interface Alert {
   synthetic: boolean;
   created_at: string;
   audit_actions?: OperatorAction[];
+  escalation?: EscalationInfo;
 }
 
 export interface ModelRegistryEntry {

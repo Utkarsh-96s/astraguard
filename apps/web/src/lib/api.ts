@@ -3,16 +3,21 @@
  */
 import {
   Alert,
+  AlertDeliveryItem,
   ConjunctionItem,
   ConstellationMatrixResponse,
+  DeadLetterItem,
   DisasterDeckResponse,
   DisasterEventItem,
   DisasterScenario,
+  EscalationPolicyItem,
   IncidentReportData,
   LiveTelemetryPacket,
   ManeuverRequest,
   ManeuverResponse,
   ModelRegistryEntry,
+  NotificationChannelItem,
+  NotificationHealthResponse,
   ObservationTaskingPlan,
   OperatorAction,
   OrbitTracksResponse,
@@ -233,14 +238,170 @@ export async function evaluateRiskOnDemand(payload: {
   return await res.json();
 }
 
-export async function fetchAlerts(): Promise<Alert[]> {
+export interface AlertFilterOptions {
+  q?: string;
+  asset_id?: string;
+  status?: string;
+  level?: string;
+  channel?: string;
+  since?: string;
+  sort_by?: string;
+  sort_order?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export async function fetchAlerts(filters?: AlertFilterOptions): Promise<Alert[]> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/alerts`, { cache: "no-store" });
+    const params = new URLSearchParams();
+    if (filters) {
+      if (filters.q) params.set("q", filters.q);
+      if (filters.asset_id && filters.asset_id !== "ALL") params.set("asset_id", filters.asset_id);
+      if (filters.status && filters.status !== "ALL") params.set("status", filters.status);
+      if (filters.level && filters.level !== "ALL") params.set("level", filters.level);
+      if (filters.channel && filters.channel !== "ALL") params.set("channel", filters.channel);
+      if (filters.since) params.set("since", filters.since);
+      if (filters.sort_by) params.set("sort_by", filters.sort_by);
+      if (filters.sort_order) params.set("sort_order", filters.sort_order);
+      if (filters.limit) params.set("limit", String(filters.limit));
+      if (filters.offset) params.set("offset", String(filters.offset));
+    }
+    const query = params.toString();
+    const url = `${API_BASE}/api/v1/alerts${query ? `?${query}` : ""}`;
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } catch {
     return FALLBACK_ALERTS;
   }
+}
+
+export async function fetchAlertDeliveries(alertId: string): Promise<AlertDeliveryItem[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/alerts/${alertId}/deliveries`, { cache: "no-store" });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function fireTestAlert(
+  level: "CRITICAL" | "WARNING" | "WATCH" = "CRITICAL",
+  assetId = "SENTINEL-2A"
+): Promise<{ status: string; alert: Alert; outbox_deliveries_queued: number; test: boolean }> {
+  const res = await fetch(`${API_BASE}/api/v1/alerts/test`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ level, asset_id: assetId }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || "Failed to trigger test alert");
+  }
+  return await res.json();
+}
+
+export async function fetchNotificationHealth(): Promise<NotificationHealthResponse> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/health`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchNotificationChannels(userId?: string): Promise<NotificationChannelItem[]> {
+  const query = userId ? `?user_id=${encodeURIComponent(userId)}` : "";
+  const res = await fetch(`${API_BASE}/api/v1/notifications/channels${query}`, { cache: "no-store" });
+  if (!res.ok) return [];
+  return await res.json();
+}
+
+export async function createNotificationChannel(payload: {
+  name: string;
+  type: string;
+  address: string;
+  user_id?: string;
+  prefs?: Record<string, any>;
+}): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/channels`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || "Failed to create channel");
+  }
+  return await res.json();
+}
+
+export async function deleteNotificationChannel(channelId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/channels/${channelId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete channel");
+  return await res.json();
+}
+
+export async function verifyNotificationChannel(channelId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/channels/${channelId}/verify`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || "Failed to verify channel");
+  }
+  return await res.json();
+}
+
+export async function testNotificationChannel(channelId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/channels/${channelId}/test`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || "Failed to test channel");
+  }
+  return await res.json();
+}
+
+export async function fetchEscalationPolicies(): Promise<EscalationPolicyItem[]> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/policies`, { cache: "no-store" });
+  if (!res.ok) return [];
+  return await res.json();
+}
+
+export async function createEscalationPolicy(payload: {
+  name: string;
+  l1_channels: string[];
+  l2_delay_sec: number;
+  l2_channels: string[];
+  l3_delay_sec: number;
+  l3_channels: string[];
+}): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/policies`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || "Failed to create escalation policy");
+  }
+  return await res.json();
+}
+
+export async function fetchDeadLetterQueue(): Promise<DeadLetterItem[]> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/outbox/dead-letter`, { cache: "no-store" });
+  if (!res.ok) return [];
+  return await res.json();
+}
+
+export async function retryDeadLetter(outboxId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/outbox/${outboxId}/retry`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error("Failed to retry dead-letter outbox delivery");
+  return await res.json();
 }
 
 export async function submitOperatorAction(
@@ -1410,16 +1571,7 @@ export async function sendTestNtfy(topic?: string, server_url?: string): Promise
   return await res.json();
 }
 
-export async function fetchNotificationHealth(): Promise<{
-  status: string;
-  providers: Array<{ type: string; status: string; details: string; missing_env?: string[] }>;
-  configured_channels_count: number;
-  dead_letter_count: number;
-}> {
-  const res = await fetch(`${API_BASE}/api/v1/notifications/health`);
-  if (!res.ok) throw new Error(`Failed to fetch notifications health: HTTP ${res.status}`);
-  return await res.json();
-}
+
 
 
 

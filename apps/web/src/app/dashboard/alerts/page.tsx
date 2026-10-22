@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useTransition } from "react";
 import {
   AlertTriangle,
   ShieldCheck,
@@ -13,15 +13,26 @@ import {
   UserCheck,
   FileText,
   Smartphone,
+  Settings,
+  Search,
+  Wifi,
+  WifiOff,
+  RefreshCw,
+  Sliders,
 } from "lucide-react";
 import { Alert, AlertStatus, RiskLevel } from "@/lib/types";
-import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "@/lib/api";
+import { fetchAlerts, submitOperatorAction, fireTestAlert, FALLBACK_ALERTS } from "@/lib/api";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SimulatedBadge } from "@/components/SimulatedBadge";
 import { ProvenanceModal } from "@/components/ProvenanceModal";
 import { TelegramBotModal } from "@/components/TelegramBotModal";
 import { IncidentReportModal } from "@/components/IncidentReportModal";
 import { PhoneAlertsModal } from "@/components/PhoneAlertsModal";
+import { NotificationSettingsModal } from "@/components/NotificationSettingsModal";
+import { DeliveryChips } from "@/components/DeliveryChips";
+import { useAlertsWebSocket, AlertWebSocketEvent } from "@/hooks/useAlertsWebSocket";
+
+const KNOWN_ASSETS = ["ALL", "SENTINEL-2A", "LANDSAT-9", "ISS", "STARLINK-4122"];
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
@@ -30,26 +41,83 @@ export default function AlertsPage() {
   const [botAlertId, setBotAlertId] = useState<string | null>(null);
   const [incidentAlert, setIncidentAlert] = useState<Alert | null>(null);
   const [phoneAlertsOpen, setPhoneAlertsOpen] = useState<boolean>(false);
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+
+  // Operator Action Form State
   const [actionType, setActionType] = useState<"approve" | "dismiss" | "snooze">("approve");
   const [operatorUser, setOperatorUser] = useState("FlightDirector_Sarah");
   const [operatorNote, setOperatorNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // Server-side Filters & Search State
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [assetFilter, setAssetFilter] = useState<string>("ALL");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [levelFilter, setLevelFilter] = useState<string>("ALL");
+  const [isPending, startTransition] = useTransition();
+  const [triggeringTest, setTriggeringTest] = useState(false);
 
-  const loadAlerts = async () => {
+  // Fetch alerts with current server-side filters
+  const loadAlerts = useCallback(async () => {
     try {
-      const data = await fetchAlerts();
+      const data = await fetchAlerts({
+        q: searchQuery || undefined,
+        asset_id: assetFilter !== "ALL" ? assetFilter : undefined,
+        status: statusFilter !== "ALL" ? statusFilter : undefined,
+        level: levelFilter !== "ALL" ? levelFilter : undefined,
+      });
       setAlerts(data);
     } catch (e) {
       console.warn("Failed to fetch alerts:", e);
     }
-  };
+  }, [searchQuery, assetFilter, statusFilter, levelFilter]);
 
+  // Initial load and filter change trigger
   useEffect(() => {
-    loadAlerts();
+    const timer = setTimeout(() => {
+      startTransition(() => {
+        loadAlerts();
+      });
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [loadAlerts]);
+
+  // Real-time WebSocket event handler
+  const handleAlertEvent = useCallback((event: AlertWebSocketEvent) => {
+    if (event.event === "CREATED") {
+      setAlerts((prev) => {
+        if (prev.some((a) => a.id === event.alert.id)) return prev;
+        return [event.alert, ...prev];
+      });
+    } else {
+      setAlerts((prev) =>
+        prev.map((a) => (a.id === event.alert.id ? { ...a, ...event.alert } : a))
+      );
+    }
   }, []);
 
+  // Catch-up query upon WebSocket reconnection
+  const handleCatchUp = useCallback(async (sinceIso: string) => {
+    try {
+      const missed = await fetchAlerts({ since: sinceIso });
+      if (missed.length > 0) {
+        setAlerts((prev) => {
+          const existingIds = new Set(prev.map((a) => a.id));
+          const newAlerts = missed.filter((m) => !existingIds.has(m.id));
+          return [...newAlerts, ...prev];
+        });
+      }
+    } catch (err) {
+      console.warn("Alerts catch-up query failed:", err);
+    }
+  }, []);
+
+  const { status: wsStatus, reconnect: reconnectWs } = useAlertsWebSocket({
+    onAlertEvent: handleAlertEvent,
+    onCatchUp: handleCatchUp,
+  });
+
+  // Action Submit Handler
   const handleActionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAlert) return;
@@ -57,7 +125,7 @@ export default function AlertsPage() {
     setSubmitting(true);
     try {
       await submitOperatorAction(selectedAlert.id, operatorUser, actionType, operatorNote);
-      // Update local alert state immediately
+      // Immediately reflect operator action in local state
       setAlerts((prev) =>
         prev.map((a) => {
           if (a.id === selectedAlert.id) {
@@ -78,7 +146,15 @@ export default function AlertsPage() {
                 timestamp: new Date().toISOString(),
               },
             ];
-            return { ...a, status: newStatus, audit_actions: newActions };
+            const updatedEscalation = a.escalation
+              ? { ...a.escalation, halted: true, halted_reason: `Operator ${operatorUser} recorded ${actionType}` }
+              : undefined;
+            return {
+              ...a,
+              status: newStatus,
+              audit_actions: newActions,
+              escalation: updatedEscalation,
+            };
           }
           return a;
         })
@@ -92,16 +168,24 @@ export default function AlertsPage() {
     }
   };
 
-  const filteredAlerts = alerts.filter((a) => {
-    if (statusFilter !== "ALL" && a.status !== statusFilter) return false;
-    if (levelFilter !== "ALL" && a.level !== levelFilter) return false;
-    return true;
-  });
+  // Trigger End-to-End Test Alert
+  const handleTriggerTestAlert = async () => {
+    setTriggeringTest(true);
+    try {
+      const targetAsset = assetFilter !== "ALL" ? assetFilter : "SENTINEL-2A";
+      await fireTestAlert("CRITICAL", targetAsset);
+      await loadAlerts();
+    } catch (err: any) {
+      alert(`Test alert dispatch failed: ${err.message}`);
+    } finally {
+      setTriggeringTest(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Title Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-card bg-charcoal border border-white/10">
+      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 p-4 rounded-card bg-charcoal border border-white/10">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold tracking-tight text-bone flex items-center gap-2">
@@ -111,84 +195,187 @@ export default function AlertsPage() {
             <SimulatedBadge />
           </div>
           <p className="text-xs text-ash font-mono mt-0.5">
-            Deduplicated Alert Lifecycle (300s Cooldown) + Immutable Operator Audit Trail
+            Deduplicated Alert Lifecycle (300s Cooldown) &bull; Multi-Tier Escalation Outbox &bull; Immutable Audit Trail
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full xl:w-auto">
+          {/* WebSocket Connection Indicator */}
+          <div
+            onClick={wsStatus === "disconnected" ? reconnectWs : undefined}
+            className={`px-3 py-1.5 rounded-nav text-xs font-mono flex items-center gap-1.5 border transition-colors ${
+              wsStatus === "connected"
+                ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300"
+                : wsStatus === "connecting"
+                ? "bg-amber-950/40 border-amber-500/40 text-amber-300"
+                : "bg-red-950/40 border-arterial/40 text-red-300 cursor-pointer hover:bg-red-900/50"
+            }`}
+            title={
+              wsStatus === "connected"
+                ? "Real-time WebSocket alerts feed active"
+                : wsStatus === "connecting"
+                ? "Connecting to alerts WebSocket stream..."
+                : "Disconnected. Click to reconnect."
+            }
+          >
+            {wsStatus === "connected" ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+                <span>WS LIVE</span>
+              </>
+            ) : wsStatus === "connecting" ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <RefreshCw className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                <span>CONNECTING</span>
+              </>
+            ) : (
+              <>
+                <span className="w-2 h-2 rounded-full bg-arterial" />
+                <WifiOff className="w-3.5 h-3.5 text-arterial" />
+                <span>WS OFFLINE (RETRY)</span>
+              </>
+            )}
+          </div>
+
+          {/* Test Alert Button */}
+          <button
+            onClick={handleTriggerTestAlert}
+            disabled={triggeringTest}
+            className="px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/60 hover:border-arterial text-xs font-mono font-semibold text-red-300 hover:text-white flex items-center gap-1.5 transition-colors disabled:opacity-50"
+            title="Dispatch a simulated end-to-end critical test alert (F9)"
+          >
+            <AlertTriangle className={`w-3.5 h-3.5 text-arterial ${triggeringTest ? "animate-spin" : ""}`} />
+            <span>{triggeringTest ? "Firing..." : "Trigger Test Alert (F9)"}</span>
+          </button>
+
+          {/* Notification Settings & Escalation Console */}
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-white/20 text-xs font-mono text-ash hover:text-bone flex items-center gap-1.5 transition-colors"
+            title="Configure notifications, honest provider health, and escalation policy"
+          >
+            <Settings className="w-3.5 h-3.5 text-sky-400" />
+            <span>Notification Settings</span>
+          </button>
+
+          {/* Phone Alerts Modal Button */}
           <button
             onClick={() => setPhoneAlertsOpen(true)}
-            className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/50 text-xs font-mono text-sky-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/50 text-xs font-mono text-sky-300 hover:text-white flex items-center gap-1.5 transition-colors"
             title="Configure Mobile Phone Push (Web Push PWA & ntfy.sh)"
           >
             <Smartphone className="w-3.5 h-3.5 text-sky-400" />
-            <span>Phone Alerts (PWA / ntfy)</span>
+            <span>Phone Push (PWA / ntfy)</span>
           </button>
 
+          {/* Incident Report Button */}
           <button
             onClick={() => setIncidentAlert(alerts[0] || FALLBACK_ALERTS[0])}
-            className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/50 text-xs font-mono text-red-300 hover:text-white flex items-center gap-1.5 transition-colors"
-            title="Generate and print formal mission safety incident report"
+            className="px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/50 text-xs font-mono text-red-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            title="Generate and print formal mission safety incident report (F7)"
           >
             <FileText className="w-3.5 h-3.5 text-arterial" />
-            <span>Generate Incident Report (F7)</span>
+            <span>Incident Report (F7)</span>
           </button>
 
           {/* Advisory Only Badge */}
-          <div className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-smoke border border-arterial/40 text-xs font-mono text-red-300 flex items-center gap-1.5">
+          <div className="px-3 py-1.5 rounded-nav bg-smoke border border-arterial/40 text-xs font-mono text-red-300 flex items-center gap-1.5">
             <UserCheck className="w-3.5 h-3.5 text-arterial" />
             <span>Human-in-the-Loop Required</span>
           </div>
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-card bg-charcoal border border-white/10">
-        {/* Status Filters */}
-        <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
-          <span className="text-pebble mr-1 text-[11px]">STATUS:</span>
-          {["ALL", "ACTIVE", "ACKNOWLEDGED", "DISMISSED", "SNOOZED"].map((st) => (
-            <button
-              key={st}
-              onClick={() => setStatusFilter(st)}
-              className={`px-2.5 py-1 rounded-nav text-[11px] transition-colors ${
-                statusFilter === st
-                  ? "bg-smoke text-bone border border-white/20 font-semibold"
-                  : "text-ash hover:text-bone"
-              }`}
+      {/* Filter and Search Toolbar */}
+      <div className="p-3 rounded-card bg-charcoal border border-white/10 space-y-3">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          {/* Text Search Input */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-pebble absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search alerts by title, rationale, or recommendation..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-8 py-1.5 rounded-nav bg-void border border-white/15 text-xs font-mono text-bone focus:outline-none focus:border-sky-500 placeholder:text-pebble"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-pebble hover:text-bone text-xs"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Spacecraft Asset Selector */}
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-pebble text-xs font-mono">ASSET:</span>
+            <select
+              value={assetFilter}
+              onChange={(e) => setAssetFilter(e.target.value)}
+              className="px-2.5 py-1.5 rounded-nav bg-void border border-white/15 text-xs font-mono text-bone focus:outline-none focus:border-sky-500"
             >
-              {st}
-            </button>
-          ))}
+              {KNOWN_ASSETS.map((asset) => (
+                <option key={asset} value={asset}>
+                  {asset === "ALL" ? "All Spacecraft" : asset}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Severity Filters */}
-        <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
-          <span className="text-pebble mr-1 text-[11px]">SEVERITY:</span>
-          {["ALL", "CRITICAL", "WARNING", "WATCH"].map((lvl) => (
-            <button
-              key={lvl}
-              onClick={() => setLevelFilter(lvl)}
-              className={`px-2.5 py-1 rounded-nav text-[11px] transition-colors ${
-                levelFilter === lvl
-                  ? "bg-smoke text-bone border border-white/20 font-semibold"
-                  : "text-ash hover:text-bone"
-              }`}
-            >
-              {lvl}
-            </button>
-          ))}
+        {/* Status & Severity Filter Tabs */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/5">
+          {/* Status Filters */}
+          <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
+            <span className="text-pebble mr-1 text-[11px]">STATUS:</span>
+            {["ALL", "ACTIVE", "ACKNOWLEDGED", "DISMISSED", "SNOOZED"].map((st) => (
+              <button
+                key={st}
+                onClick={() => setStatusFilter(st)}
+                className={`px-2.5 py-1 rounded-nav text-[11px] transition-colors ${
+                  statusFilter === st
+                    ? "bg-smoke text-bone border border-white/20 font-semibold"
+                    : "text-ash hover:text-bone"
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+
+          {/* Severity Filters */}
+          <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
+            <span className="text-pebble mr-1 text-[11px]">SEVERITY:</span>
+            {["ALL", "CRITICAL", "WARNING", "WATCH"].map((lvl) => (
+              <button
+                key={lvl}
+                onClick={() => setLevelFilter(lvl)}
+                className={`px-2.5 py-1 rounded-nav text-[11px] transition-colors ${
+                  levelFilter === lvl
+                    ? "bg-smoke text-bone border border-white/20 font-semibold"
+                    : "text-ash hover:text-bone"
+                }`}
+              >
+                {lvl}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Alerts List */}
       <div className="space-y-4">
-        {filteredAlerts.length === 0 ? (
+        {alerts.length === 0 ? (
           <div className="p-8 text-center text-xs text-pebble font-mono rounded-card bg-charcoal border border-white/10">
-            No alerts match the selected status and severity filters.
+            No alerts match the selected search query and filters.
           </div>
         ) : (
-          filteredAlerts.map((alert) => (
+          alerts.map((alert) => (
             <div
               key={alert.id}
               className={`p-5 rounded-card bg-charcoal border transition-all space-y-4 ${
@@ -203,8 +390,13 @@ export default function AlertsPage() {
                   <StatusBadge level={alert.level} size="md" />
                   <span className="text-sm font-bold font-mono text-bone">{alert.title}</span>
                 </div>
-                <div className="flex items-center gap-3 font-mono text-xs">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
                   <span className="text-pebble">ID: {alert.id}</span>
+                  {alert.asset_id && (
+                    <span className="px-2 py-0.5 rounded bg-void text-pebble text-[10px] border border-white/10">
+                      {alert.asset_id}
+                    </span>
+                  )}
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                       alert.status === "ACTIVE"
@@ -216,6 +408,36 @@ export default function AlertsPage() {
                   >
                     {alert.status}
                   </span>
+
+                  {/* Escalation Tier & Countdown Badge */}
+                  {alert.escalation && (
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono border flex items-center gap-1 ${
+                        alert.escalation.halted
+                          ? "bg-smoke/60 text-pebble border-white/10"
+                          : alert.escalation.countdown_seconds && alert.escalation.countdown_seconds > 0
+                          ? "bg-amber-950/60 text-amber-300 border-amber-500/40 animate-pulse"
+                          : "bg-void text-ash border-white/10"
+                      }`}
+                      title={
+                        alert.escalation.halted
+                          ? `Escalation halted: ${alert.escalation.halted_reason || "Operator action recorded"}`
+                          : `Tier L${alert.escalation.current_level} active`
+                      }
+                    >
+                      <Clock className="w-2.5 h-2.5" />
+                      <span>
+                        Tier L{alert.escalation.current_level}
+                        {alert.escalation.halted
+                          ? " (Halted)"
+                          : alert.escalation.countdown_seconds && alert.escalation.countdown_seconds > 0
+                          ? ` &rarr; L${alert.escalation.current_level + 1} in ${Math.floor(
+                              alert.escalation.countdown_seconds / 60
+                            )}m ${alert.escalation.countdown_seconds % 60}s`
+                          : ""}
+                      </span>
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -233,8 +455,13 @@ export default function AlertsPage() {
                 </div>
               </div>
 
+              {/* Real-time Outbox Delivery Chips */}
+              <div className="pt-1 pb-1">
+                <DeliveryChips alertId={alert.id} />
+              </div>
+
               {/* Audit Actions Log & Action Trigger */}
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 pt-2">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 pt-2 border-t border-white/5">
                 <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-pebble break-words">
                   <History className="w-3.5 h-3.5 text-ash shrink-0" />
                   <span>
@@ -242,7 +469,8 @@ export default function AlertsPage() {
                   </span>
                   {alert.audit_actions && alert.audit_actions.length > 0 && (
                     <span className="text-bone">
-                      (Last by {alert.audit_actions[alert.audit_actions.length - 1].user}: {alert.audit_actions[alert.audit_actions.length - 1].action})
+                      (Last by {alert.audit_actions[alert.audit_actions.length - 1].user}:{" "}
+                      {alert.audit_actions[alert.audit_actions.length - 1].action})
                     </span>
                   )}
                 </div>
@@ -250,7 +478,7 @@ export default function AlertsPage() {
                 <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full lg:w-auto">
                   <button
                     onClick={() => setIncidentAlert(alert)}
-                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/40 hover:border-arterial/80 text-xs font-mono font-semibold text-red-300 flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/40 hover:border-arterial/80 text-xs font-mono font-semibold text-red-300 flex items-center gap-1.5 transition-colors"
                     title="Generate formal mission safety incident report (F7)"
                   >
                     <FileText className="w-3.5 h-3.5 text-arterial" />
@@ -259,7 +487,7 @@ export default function AlertsPage() {
 
                   <button
                     onClick={() => setBotAlertId(alert.id)}
-                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
                     title="Open Mobile Telegram Alert Bot Simulator (F10)"
                   >
                     <Send className="w-3.5 h-3.5 text-sky-400" />
@@ -268,7 +496,7 @@ export default function AlertsPage() {
 
                   <button
                     onClick={() => setProvenanceAlertId(alert.id)}
-                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-cyan-500/30 hover:border-cyan-500/60 text-xs font-mono font-semibold text-cyan-300 flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-cyan-500/30 hover:border-cyan-500/60 text-xs font-mono font-semibold text-cyan-300 flex items-center gap-1.5 transition-colors"
                     title="View cryptographic provenance and verify mathematical reproducibility"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
@@ -305,7 +533,9 @@ export default function AlertsPage() {
                             <span className="text-pebble italic">&quot;{act.note}&quot;</span>
                           )}
                         </div>
-                        <span className="text-pebble text-[10px]">{new Date(act.timestamp).toLocaleTimeString()}</span>
+                        <span className="text-pebble text-[10px]">
+                          {new Date(act.timestamp).toLocaleTimeString()}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -334,8 +564,12 @@ export default function AlertsPage() {
             </div>
 
             <div className="p-3 rounded bg-void text-xs font-mono text-ash space-y-1">
-              <div>Alert ID: <span className="text-bone">{selectedAlert.id}</span></div>
-              <div>Severity: <span className="text-bone">{selectedAlert.level}</span></div>
+              <div>
+                Alert ID: <span className="text-bone">{selectedAlert.id}</span>
+              </div>
+              <div>
+                Severity: <span className="text-bone">{selectedAlert.level}</span>
+              </div>
               <div className="text-pebble line-clamp-1">{selectedAlert.title}</div>
             </div>
 
@@ -406,7 +640,8 @@ export default function AlertsPage() {
 
               {/* Advisory Warning */}
               <div className="p-2.5 rounded bg-void/90 border border-white/5 text-[10px] text-pebble leading-relaxed">
-                <strong>Advisory Safety Lock:</strong> Automated maneuver execution is disabled. Submitting this form records an immutable entry into the mission audit database.
+                <strong>Advisory Safety Lock:</strong> Automated maneuver execution is disabled.
+                Submitting this form records an immutable entry into the mission audit database and halts escalation.
               </div>
 
               {/* Modal Buttons */}
@@ -462,6 +697,13 @@ export default function AlertsPage() {
       <PhoneAlertsModal
         isOpen={phoneAlertsOpen}
         onClose={() => setPhoneAlertsOpen(false)}
+        operatorUser={operatorUser}
+      />
+
+      {/* Notification Settings & Escalation Management Console */}
+      <NotificationSettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
         operatorUser={operatorUser}
       />
     </div>
