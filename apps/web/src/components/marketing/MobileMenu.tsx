@@ -5,9 +5,6 @@ import Link from "next/link";
 import { Button } from "./Button";
 import { ScenarioSelector } from "./ScenarioSelector";
 
-import { Sun, Moon } from "lucide-react";
-import { useTheme } from "../../lib/themeContext";
-
 export interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
@@ -15,7 +12,6 @@ export interface MobileMenuProps {
 }
 
 export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
-  const { theme, isNight, toggleTheme } = useTheme();
 
   // Lock body scroll and listen for Escape key
   useEffect(() => {
@@ -76,30 +72,6 @@ export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
 
       {/* Footer Controls */}
       <div className="pt-6 flex flex-col gap-4">
-        {/* Appearance Row */}
-        <div className="flex items-center justify-between">
-          <span className="text-space-secondary text-[11px] font-bold uppercase tracking-[0.10em]">
-            APPEARANCE
-          </span>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="inline-flex items-center gap-1.5 border border-space-fg bg-transparent text-space-fg rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] hover:bg-space-fg/10 cursor-pointer"
-          >
-            {isNight ? (
-              <>
-                <Sun className="w-3.5 h-3.5 shrink-0" />
-                <span>DAY MODE</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-3.5 h-3.5 shrink-0" />
-                <span>NIGHT MODE</span>
-              </>
-            )}
-          </button>
-        </div>
-
         <div className="flex items-center justify-between">
           <span className="text-space-secondary text-[11px] font-bold uppercase tracking-[0.10em]">
             SCENARIO

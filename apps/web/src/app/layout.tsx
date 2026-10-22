@@ -58,21 +58,12 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var saved = localStorage.getItem('astraguard_theme');
-                  var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                  var theme = saved === 'day' || saved === 'night' ? saved : (prefersLight ? 'day' : 'night');
-                  if (theme === 'day') {
-                    document.documentElement.classList.remove('dark');
-                    document.documentElement.classList.add('light');
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    document.documentElement.style.colorScheme = 'light';
-                  } else {
-                    document.documentElement.classList.remove('light');
-                    document.documentElement.classList.add('dark');
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    document.documentElement.style.colorScheme = 'dark';
-                  }
+                  localStorage.removeItem('astraguard_theme');
                 } catch (e) {}
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.style.colorScheme = 'dark';
               })();
             `,
           }}

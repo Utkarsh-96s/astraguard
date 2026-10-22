@@ -6,9 +6,6 @@ import { Button } from "./Button";
 import { ScenarioSelector } from "./ScenarioSelector";
 import { MobileMenu } from "./MobileMenu";
 
-import { Sun, Moon } from "lucide-react";
-import { useTheme } from "../../lib/themeContext";
-
 const NAV_LINKS = [
   { label: "MISSION", href: "/#mission" },
   { label: "HEALTH", href: "/#health" },
@@ -22,7 +19,6 @@ const NAV_LINKS = [
 
 export function SiteNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, isNight, toggleTheme } = useTheme();
 
   return (
     <>
@@ -66,46 +62,16 @@ export function SiteNav() {
             ))}
           </nav>
 
-          {/* Right: Day/Night Mode Toggle + Scenario Selector + Launch Dashboard CTA */}
+          {/* Right: Scenario Selector + Launch Dashboard CTA */}
           <div className="hidden sm:flex items-center gap-3">
-            {/* Day / Night Mode Switcher */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
-              title={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
-              className="inline-flex items-center gap-1.5 border border-space-fg/50 hover:border-space-fg bg-transparent text-space-fg rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.10em] leading-none transition-all duration-200 hover:bg-space-fg/10 select-none cursor-pointer"
-            >
-              {isNight ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-space-fg shrink-0" aria-hidden="true" />
-                  <span>DAY</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-space-fg shrink-0" aria-hidden="true" />
-                  <span>NIGHT</span>
-                </>
-              )}
-            </button>
-
             <ScenarioSelector />
             <Button variant="ghost" href="/dashboard">
               LAUNCH DASHBOARD
             </Button>
           </div>
 
-          {/* Mobile Menu Button + Quick Day/Night Toggle */}
+          {/* Mobile Menu Button */}
           <div className="flex sm:hidden items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
-              className="p-1.5 border border-space-fg/50 rounded-full text-space-fg hover:bg-space-fg/10"
-            >
-              {isNight ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            </button>
-
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
