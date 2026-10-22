@@ -106,10 +106,13 @@ async def dispatch_alert(
         raise HTTPException(status_code=404, detail=f"Alert '{alert_id}' not found.")
 
     if not settings.TELEGRAM_BOT_TOKEN:
-        raise HTTPException(
-            status_code=400,
-            detail="TELEGRAM_BOT_TOKEN is not configured in environment variables. Live dispatch disabled.",
-        )
+        return {
+            "status": "simulated",
+            "dispatch_status": "simulated",
+            "alert_id": alert.id,
+            "recipient": "FlightDirector_Mobile",
+            "message": "[SIMULATED] Telegram bot token not configured in environment. Recorded in simulation mode.",
+        }
 
     # Find connected Telegram channels
     stmt = select(NotificationChannel).where(
@@ -119,10 +122,13 @@ async def dispatch_alert(
     channels = list((await db.execute(stmt)).scalars().all())
 
     if not channels:
-        raise HTTPException(
-            status_code=400,
-            detail="No connected Telegram channels found. Link a Telegram chat first via /start <code>.",
-        )
+        return {
+            "status": "pending_channel",
+            "dispatch_status": "pending_channel",
+            "alert_id": alert.id,
+            "recipient": "FlightDirector_Mobile",
+            "message": "Telegram bot token configured, but no connected Telegram channels found. Link a chat via /start <code>.",
+        }
 
     from app.services.adapters.telegram import TelegramBotAdapter
     adapter = TelegramBotAdapter()
@@ -139,6 +145,7 @@ async def dispatch_alert(
 
     return {
         "status": "dispatched",
+        "dispatch_status": "dispatched",
         "alert_id": alert.id,
         "deliveries": results,
     }
@@ -163,7 +170,7 @@ async def bot_action(
 
     alert = await db.get(Alert, req.alert_id)
     return {
-        "status": "success",
+        "status": alert.status if alert else "ACKNOWLEDGED",
         "action": req.action.upper(),
         "alert_id": req.alert_id,
         "new_status": alert.status if alert else "UPDATED",

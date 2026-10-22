@@ -18,13 +18,28 @@ from app.db.models import (
 )
 from app.db.session import get_db
 from app.services.adapters.registry import adapter_registry
+from app.services.adapters.webpush import generate_vapid_keypair
 from app.services.outbox_worker import mask_contact_info
-from app.services.tokens import generate_linking_token
+from app.services.tokens import generate_action_token, generate_linking_token
 
 router = APIRouter(prefix="/api/v1/notifications", tags=["Notifications"])
 
 
 # Schemas
+class PushSubscribeRequest(BaseModel):
+    endpoint: str = Field(..., description="Browser PushSubscription endpoint URL")
+    keys: dict[str, str] = Field(..., description="P256dh and auth keys dict")
+    user_id: str = Field("FlightDirector", description="Operator user identifier")
+    user_agent: str | None = Field(None, description="User Agent or device description")
+
+
+class PushUnsubscribeRequest(BaseModel):
+    endpoint: str = Field(..., description="Browser PushSubscription endpoint URL to unsubscribe")
+
+
+class NtfyTestRequest(BaseModel):
+    topic: str | None = Field(None, description="Custom ntfy topic (defaults to config)")
+    server_url: str | None = Field(None, description="Custom ntfy server URL")
 class CreateChannelRequest(BaseModel):
     name: str = Field("Default Channel", description="Human-readable channel name")
     type: str = Field(..., description="Channel type: telegram, webpush, ntfy, email, webhook, sms, fake")
@@ -236,8 +251,13 @@ async def test_send_channel(
         created_at=datetime.now(UTC),
     )
 
+    # Generate action tokens for test alert
+    _, approve_url = await generate_action_token(db, dummy_alert.id, channel.id, "approve", expiry_seconds=3600)
+    _, snooze_url = await generate_action_token(db, dummy_alert.id, channel.id, "snooze", expiry_seconds=3600)
+    action_tokens = {"approve_url": approve_url, "snooze_url": snooze_url}
+
     adapter = adapter_registry.get(channel.type)
-    res = await adapter.send(dummy_alert, channel, test=True)
+    res = await adapter.send(dummy_alert, channel, test=True, action_tokens=action_tokens)
 
     if res.success:
         channel.status = "CONNECTED"
@@ -257,6 +277,225 @@ async def test_send_channel(
             "channel_id": channel.id,
             "error": res.error,
         }
+
+
+# Push & Phone Alerts Endpoints
+@router.get("/push/vapid-public-key", summary="Get VAPID public key for browser push subscription")
+async def get_vapid_public_key() -> dict[str, Any]:
+    """Return configured VAPID public key used by browser PushManager."""
+    if not settings.VAPID_PUBLIC_KEY:
+        return {
+            "status": "NOT CONFIGURED",
+            "public_key": None,
+            "error": "VAPID_PUBLIC_KEY is not configured in environment.",
+        }
+    return {
+        "status": "READY",
+        "public_key": settings.VAPID_PUBLIC_KEY,
+    }
+
+
+@router.post("/push/generate-vapid-keys", summary="Generate a fresh VAPID keypair")
+async def generate_vapid_keys() -> dict[str, str]:
+    """Generate a standard P-256 EC VAPID keypair for environment configuration."""
+    pub, priv = generate_vapid_keypair()
+    return {
+        "VAPID_PUBLIC_KEY": pub,
+        "VAPID_PRIVATE_KEY": priv,
+        "instructions": "Add these variables to your .env file to enable Web Push.",
+    }
+
+
+@router.post("/push/subscribe", summary="Register or update browser Web Push subscription")
+async def register_push_subscription(
+    req: PushSubscribeRequest,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Store browser push subscription and activate webpush notification channel."""
+    stmt = select(NotificationChannel).where(
+        NotificationChannel.type == "webpush",
+        NotificationChannel.encrypted_address == req.endpoint,
+    )
+    existing = (await db.execute(stmt)).scalar_one_or_none()
+    now = datetime.now(UTC)
+
+    if existing:
+        existing.status = "CONNECTED"
+        existing.verified_at = now
+        existing.prefs = {
+            "endpoint": req.endpoint,
+            "keys": req.keys,
+            "user_agent": req.user_agent,
+        }
+        existing.last_error = None
+        channel_id = existing.id
+    else:
+        channel_id = f"chan_push_{uuid.uuid4().hex[:8]}"
+        channel = NotificationChannel(
+            id=channel_id,
+            user_id=req.user_id,
+            type="webpush",
+            name=f"Web Push ({req.user_id})",
+            encrypted_address=req.endpoint,
+            prefs={
+                "endpoint": req.endpoint,
+                "keys": req.keys,
+                "user_agent": req.user_agent,
+            },
+            status="CONNECTED",
+            verified_at=now,
+            created_at=now,
+        )
+        db.add(channel)
+
+        # Attach default subscription
+        sub = Subscription(
+            id=f"sub_{uuid.uuid4().hex[:8]}",
+            channel_id=channel_id,
+            min_level="WATCH",
+            asset_filter=None,
+            quiet_hours={},
+            enabled=True,
+            created_at=now,
+        )
+        db.add(sub)
+
+    await db.commit()
+    return {
+        "status": "subscribed",
+        "channel_id": channel_id,
+        "user_id": req.user_id,
+    }
+
+
+@router.post("/push/unsubscribe", summary="Deactivate browser Web Push subscription")
+async def unregister_push_subscription(
+    req: PushUnsubscribeRequest,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Mark push channel inactive upon user unsubscription."""
+    stmt = select(NotificationChannel).where(
+        NotificationChannel.type == "webpush",
+        NotificationChannel.encrypted_address == req.endpoint,
+    )
+    channels = list((await db.execute(stmt)).scalars().all())
+    for ch in channels:
+        ch.status = "UNSUBSCRIBED"
+        ch.last_error = "Operator disabled browser push notifications."
+    await db.commit()
+    return {"status": "unsubscribed", "count": len(channels)}
+
+
+@router.post("/push/test", summary="Send a test Web Push alert")
+async def test_push_alert(
+    channel_id: str | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Send a test push alert to a specific or all active Web Push channels."""
+    stmt = select(NotificationChannel).where(
+        NotificationChannel.type == "webpush",
+        NotificationChannel.status == "CONNECTED",
+    )
+    if channel_id:
+        stmt = stmt.where(NotificationChannel.id == channel_id)
+
+    channels = list((await db.execute(stmt)).scalars().all())
+    if not channels:
+        raise HTTPException(
+            status_code=400,
+            detail="No active Web Push channels found. Subscribe a browser first.",
+        )
+
+    dummy_alert = Alert(
+        id=f"ALT-PUSH-{uuid.uuid4().hex[:8].upper()}",
+        snapshot_id="RSN-PUSH-TEST",
+        level="CRITICAL",
+        title="[TEST] Web Push Alert Delivery",
+        rationale="[SIMULATED] Verified end-to-end browser push delivery with interactive action buttons.",
+        recommendation="Confirm reception in browser notification drawer.",
+        status="ACTIVE",
+        dedup_key="test_push_alert",
+        synthetic=True,
+        created_at=datetime.now(UTC),
+    )
+    db.add(dummy_alert)
+    await db.flush()
+
+    adapter = adapter_registry.get("webpush")
+    delivered = 0
+    errors = []
+
+    for ch in channels:
+        _, approve_url = await generate_action_token(db, dummy_alert.id, ch.id, "approve", expiry_seconds=3600)
+        _, snooze_url = await generate_action_token(db, dummy_alert.id, ch.id, "snooze", expiry_seconds=3600)
+        tokens = {"approve_url": approve_url, "snooze_url": snooze_url}
+        res = await adapter.send(dummy_alert, ch, test=True, action_tokens=tokens)
+        if res.success:
+            delivered += 1
+        else:
+            errors.append(f"{ch.id}: {res.error}")
+
+    await db.commit()
+    return {
+        "status": "completed",
+        "delivered_count": delivered,
+        "failed_count": len(errors),
+        "errors": errors,
+    }
+
+
+@router.post("/ntfy/test", summary="Send a test ntfy push alert")
+async def test_ntfy_alert(
+    req: NtfyTestRequest | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Publish a real test alert with action buttons to ntfy.sh."""
+    topic = (req and req.topic) or getattr(settings, "NTFY_TOPIC", "astraguard_alerts") or "astraguard_alerts"
+    server_url = (req and req.server_url) or getattr(settings, "NTFY_BASE_URL", "https://ntfy.sh") or "https://ntfy.sh"
+
+    # Create temporary channel representation
+    dummy_channel = NotificationChannel(
+        id=f"chan_ntfy_test_{uuid.uuid4().hex[:6]}",
+        user_id="Operator",
+        type="ntfy",
+        name="ntfy Test Channel",
+        encrypted_address=f"{server_url}/{topic}",
+        prefs={"topic": topic, "server_url": server_url},
+        status="CONNECTED",
+    )
+
+    dummy_alert = Alert(
+        id=f"ALT-NTFY-{uuid.uuid4().hex[:8].upper()}",
+        snapshot_id="RSN-NTFY-TEST",
+        level="CRITICAL",
+        title="[TEST] ntfy Mobile Push Alert",
+        rationale="[SIMULATED] High-priority conjunction warning dispatch with direct lock-screen approval.",
+        recommendation="Verify reception on ntfy mobile app and tap Approve or Snooze.",
+        status="ACTIVE",
+        dedup_key="test_ntfy_alert",
+        synthetic=True,
+        created_at=datetime.now(UTC),
+    )
+    db.add(dummy_alert)
+    await db.flush()
+
+    _, approve_url = await generate_action_token(db, dummy_alert.id, dummy_channel.id, "approve", expiry_seconds=3600)
+    _, snooze_url = await generate_action_token(db, dummy_alert.id, dummy_channel.id, "snooze", expiry_seconds=3600)
+    tokens = {"approve_url": approve_url, "snooze_url": snooze_url}
+
+    adapter = adapter_registry.get("ntfy")
+    res = await adapter.send(dummy_alert, dummy_channel, test=True, action_tokens=tokens)
+    await db.commit()
+
+    if res.success:
+        return {
+            "status": "delivered",
+            "topic": topic,
+            "server_url": server_url,
+            "provider_message_id": res.provider_message_id,
+            "view_topic_url": f"{server_url}/{topic}",
+        }
+    raise HTTPException(status_code=502, detail=f"Failed to publish to ntfy: {res.error}")
 
 
 @router.get("/subscriptions", summary="List subscriptions")

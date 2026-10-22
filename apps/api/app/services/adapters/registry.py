@@ -5,7 +5,9 @@ from app.core.config import settings
 from app.db.models import Alert, NotificationChannel
 from app.services.adapters.base import BaseProviderAdapter, ProviderResult
 from app.services.adapters.fake import FakeProviderAdapter
+from app.services.adapters.ntfy import NtfyAdapter
 from app.services.adapters.telegram import TelegramBotAdapter
+from app.services.adapters.webpush import WebPushAdapter
 
 
 class StubProviderAdapter(BaseProviderAdapter):
@@ -70,8 +72,8 @@ class AdapterRegistry:
         self._adapters: dict[str, BaseProviderAdapter] = {
             "fake": FakeProviderAdapter("fake"),
             "telegram": TelegramBotAdapter(),
-            "webpush": StubProviderAdapter("webpush", ["VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY"]),
-            "ntfy": StubProviderAdapter("ntfy", ["NTFY_BASE_URL"]),
+            "webpush": WebPushAdapter(),
+            "ntfy": NtfyAdapter(),
             "email": StubProviderAdapter("email", ["SMTP_HOST", "SMTP_FROM"]),
             "webhook": StubProviderAdapter("webhook", ["SECRET_KEY"]),
             "sms": StubProviderAdapter("sms", ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_NUMBER"]),

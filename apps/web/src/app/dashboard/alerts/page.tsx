@@ -12,6 +12,7 @@ import {
   Send,
   UserCheck,
   FileText,
+  Smartphone,
 } from "lucide-react";
 import { Alert, AlertStatus, RiskLevel } from "@/lib/types";
 import { fetchAlerts, submitOperatorAction, FALLBACK_ALERTS } from "@/lib/api";
@@ -20,6 +21,7 @@ import { SimulatedBadge } from "@/components/SimulatedBadge";
 import { ProvenanceModal } from "@/components/ProvenanceModal";
 import { TelegramBotModal } from "@/components/TelegramBotModal";
 import { IncidentReportModal } from "@/components/IncidentReportModal";
+import { PhoneAlertsModal } from "@/components/PhoneAlertsModal";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
@@ -27,6 +29,7 @@ export default function AlertsPage() {
   const [provenanceAlertId, setProvenanceAlertId] = useState<string | null>(null);
   const [botAlertId, setBotAlertId] = useState<string | null>(null);
   const [incidentAlert, setIncidentAlert] = useState<Alert | null>(null);
+  const [phoneAlertsOpen, setPhoneAlertsOpen] = useState<boolean>(false);
   const [actionType, setActionType] = useState<"approve" | "dismiss" | "snooze">("approve");
   const [operatorUser, setOperatorUser] = useState("FlightDirector_Sarah");
   const [operatorNote, setOperatorNote] = useState("");
@@ -113,6 +116,15 @@ export default function AlertsPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => setPhoneAlertsOpen(true)}
+            className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/50 text-xs font-mono text-sky-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            title="Configure Mobile Phone Push (Web Push PWA & ntfy.sh)"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+            <span>Phone Alerts (PWA / ntfy)</span>
+          </button>
+
           <button
             onClick={() => setIncidentAlert(alerts[0] || FALLBACK_ALERTS[0])}
             className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/50 text-xs font-mono text-red-300 hover:text-white flex items-center gap-1.5 transition-colors"
@@ -445,6 +457,13 @@ export default function AlertsPage() {
           onClose={() => setIncidentAlert(null)}
         />
       )}
+
+      {/* Mobile & Phone Alerts (Web Push & ntfy) Modal */}
+      <PhoneAlertsModal
+        isOpen={phoneAlertsOpen}
+        onClose={() => setPhoneAlertsOpen(false)}
+        operatorUser={operatorUser}
+      />
     </div>
   );
 }

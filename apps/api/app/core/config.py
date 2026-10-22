@@ -55,6 +55,8 @@ class Settings(BaseSettings):
 
     # ntfy Push Alerts
     NTFY_BASE_URL: str = "https://ntfy.sh"
+    NTFY_TOPIC: str = "astraguard_alerts"
+    NTFY_AUTH_TOKEN: str = ""
 
     # SMTP Email
     SMTP_HOST: str = ""

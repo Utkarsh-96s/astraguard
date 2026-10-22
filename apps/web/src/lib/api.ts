@@ -1338,4 +1338,88 @@ export async function inferDisaster(payload: {
   return await res.json();
 }
 
+// ==========================================
+// Notifications & Phone Alerts (Stage 3)
+// ==========================================
+
+export async function fetchVapidPublicKey(): Promise<{ status: string; public_key: string | null; error?: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/push/vapid-public-key`);
+  if (!res.ok) throw new Error(`Failed to fetch VAPID key: HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function generateVapidKeys(): Promise<{ VAPID_PUBLIC_KEY: string; VAPID_PRIVATE_KEY: string; instructions: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/push/generate-vapid-keys`, { method: "POST" });
+  if (!res.ok) throw new Error(`Failed to generate VAPID keys: HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function subscribeWebPush(payload: {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+  user_id?: string;
+  user_agent?: string;
+}): Promise<{ status: string; channel_id: string; user_id: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/push/subscribe`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Web Push subscription failed: HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function unsubscribeWebPush(endpoint: string): Promise<{ status: string; count: number }> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/push/unsubscribe`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ endpoint }),
+  });
+  if (!res.ok) throw new Error(`Web Push unsubscription failed: HTTP ${res.status}`);
+  return await res.json();
+}
+
+export async function sendTestWebPush(channel_id?: string): Promise<{ status: string; delivered_count: number; failed_count: number; errors: string[] }> {
+  const url = channel_id
+    ? `${API_BASE}/api/v1/notifications/push/test?channel_id=${encodeURIComponent(channel_id)}`
+    : `${API_BASE}/api/v1/notifications/push/test`;
+  const res = await fetch(url, { method: "POST" });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }));
+    throw new Error(err.detail || `HTTP ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function sendTestNtfy(topic?: string, server_url?: string): Promise<{
+  status: string;
+  topic: string;
+  server_url: string;
+  provider_message_id: string;
+  view_topic_url: string;
+}> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/ntfy/test`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ topic, server_url }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }));
+    throw new Error(err.detail || `HTTP ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function fetchNotificationHealth(): Promise<{
+  status: string;
+  providers: Array<{ type: string; status: string; details: string; missing_env?: string[] }>;
+  configured_channels_count: number;
+  dead_letter_count: number;
+}> {
+  const res = await fetch(`${API_BASE}/api/v1/notifications/health`);
+  if (!res.ok) throw new Error(`Failed to fetch notifications health: HTTP ${res.status}`);
+  return await res.json();
+}
+
+
 
