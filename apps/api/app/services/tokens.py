@@ -185,7 +185,10 @@ async def verify_and_consume_linking_token(
         raise ValueError("Invalid or unknown linking code.")
 
     now = datetime.now(UTC)
-    if db_token.expires_at < now:
+    exp = db_token.expires_at
+    if exp.tzinfo is None:
+        exp = exp.replace(tzinfo=UTC)
+    if exp < now:
         raise ValueError("Linking code has expired.")
 
     if db_token.used_at is not None:

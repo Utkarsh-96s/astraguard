@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.db.models import Alert, NotificationChannel
 from app.services.adapters.base import BaseProviderAdapter, ProviderResult
 from app.services.adapters.fake import FakeProviderAdapter
+from app.services.adapters.telegram import TelegramBotAdapter
 
 
 class StubProviderAdapter(BaseProviderAdapter):
@@ -68,7 +69,7 @@ class AdapterRegistry:
     def __init__(self) -> None:
         self._adapters: dict[str, BaseProviderAdapter] = {
             "fake": FakeProviderAdapter("fake"),
-            "telegram": StubProviderAdapter("telegram", ["TELEGRAM_BOT_TOKEN"]),
+            "telegram": TelegramBotAdapter(),
             "webpush": StubProviderAdapter("webpush", ["VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY"]),
             "ntfy": StubProviderAdapter("ntfy", ["NTFY_BASE_URL"]),
             "email": StubProviderAdapter("email", ["SMTP_HOST", "SMTP_FROM"]),
