@@ -49,11 +49,11 @@
 - [x] Alerts Audit & Everything: Stage 1 — Notification Core (Outbox, Escalation, HMAC Tokens, Adapters)
 - [x] Alerts Audit & Everything: Stage 2 — Telegram Bot (Real Webhook/Polling & Inline HITL Actions)
 - [x] Alerts Audit & Everything: Stage 3 — Phone Alerts (Web Push PWA & ntfy)
-- [ ] Alerts Audit & Everything: Stage 4 — Email (SMTP), Webhooks, and SMS
+- [x] Alerts Audit & Everything: Stage 4 — Email (SMTP), Webhooks, and SMS
 - [ ] Alerts Audit & Everything: Stage 5 — Alerts Page UI Wiring & Realtime
 - [ ] Alerts Audit & Everything: Stage 6 — Reliability, Security, Tests & Docs
 
-**Current phase:** Alerts Audit & Everything: Stage 3 Phone Alerts Completed & Verified · **Last updated:** 2026-10-22 21:20 · **Last action:** Implemented WebPushAdapter (VAPID, standard P-256 EC keys, Service Worker payload with signed action tokens, tag replacement for ack, 404/410 expiration handling) and NtfyAdapter (ntfy.sh priority levels 1-5, tags, lock-screen interactive action buttons). Exposed /push and /ntfy endpoints in notifications router. Built frontend Service Worker (sw.js), PWA manifest.json, and PhoneAlertsModal component in Next.js console with honest status, iOS instructions, key generator, and real test dispatch. All 114 backend tests passing, ruff lint clean, Next.js tsc clean.
+**Current phase:** Alerts Audit & Everything: Stage 4 Email, Webhook, SMS Completed & Verified · **Last updated:** 2026-10-22 21:28 · **Last action:** Implemented real EmailAdapter (multipart MIME, intermediate confirmation links to protect against security scanners, SMTP health check), WebhookAdapter (HMAC-SHA256 signature headers, timestamp replay guard, strict SSRF blocking private/loopback/cloud metadata IPs), and SmsAdapter (strict E.164 phone validation, daily dispatch rate limiter, Twilio REST API). Registered all adapters in AdapterRegistry. Verified exit gate with 6/6 tests in test_stage4_email_webhook_sms.py and 41/41 suite tests passing.
 
 ## 5. Measured Metrics (fill from evaluation outputs only)
 | Module | Metric | Value | Dataset | Commit |

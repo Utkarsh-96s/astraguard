@@ -71,6 +71,9 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: str = ""
     TWILIO_FROM_NUMBER: str = ""
 
+    # Webhooks & SSRF Protection
+    ALLOW_LOCAL_WEBHOOKS: bool = False
+
     # Outbox & Escalation Worker
     OUTBOX_WORKER_INTERVAL_SEC: float = 1.0
     ESCALATION_CHECK_INTERVAL_SEC: float = 2.0
