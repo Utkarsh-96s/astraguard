@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "last_updated": "2026-10-22T07:23:07.910269+00:00",
+  "last_updated": "2026-10-22T08:29:09.971237+00:00",
   "figures": {
     "FIG-MOD-FOUNDATION-DUMMY-001-LOSS": {
       "figure_id": "FIG-MOD-FOUNDATION-DUMMY-001-LOSS",
@@ -13,8 +13,8 @@
       "model_version": "0.1.0",
       "dataset": "synthetic_sine_waves",
       "data_hash": "b661be8b24c1e2f0ef915c73ea9429b1fa6fcafb11e0e8203e0d6497932b3b41",
-      "commit": "4460f25",
-      "timestamp": "2026-10-22T07:23:07.910269+00:00",
+      "commit": "0913082",
+      "timestamp": "2026-10-22T08:29:09.971237+00:00",
       "tags": [
         "loss_curve",
         "convergence",
@@ -33,8 +33,8 @@
       "model_version": "1.0.0",
       "dataset": "test_synth",
       "data_hash": "abc123hash",
-      "commit": "4460f25",
-      "timestamp": "2026-10-22T07:23:05.677395+00:00",
+      "commit": "0913082",
+      "timestamp": "2026-10-22T08:29:09.277803+00:00",
       "tags": [
         "unit_test"
       ],

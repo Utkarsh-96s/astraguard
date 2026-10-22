@@ -67,7 +67,9 @@ yarn-error.log*
 # IDE & OS
 .idea/
 .vscode/
+.kilo/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
+

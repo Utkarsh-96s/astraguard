@@ -38,6 +38,8 @@ test:
 audit:
 	python scripts/honesty_audit.py
 
+audit-figures: audit
+
 ci: lint type-check test audit
 
 up:

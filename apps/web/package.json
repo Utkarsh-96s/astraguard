@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "design:lint": "node scripts/design-lint.mjs"
+    "design:lint": "node scripts/design-lint.mjs",
+    "audit:figures": "node scripts/audit-figures.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.0",
