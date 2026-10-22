@@ -1,6 +1,6 @@
 {
   "registry_version": "1.0.0",
-  "last_updated": "2026-10-21T19:00:28.798177+00:00",
+  "last_updated": "2026-10-22T07:23:07.923595+00:00",
   "models": {
     "MOD-FOUNDATION-DUMMY-001": {
       "model_id": "MOD-FOUNDATION-DUMMY-001",
@@ -53,12 +53,12 @@
         "best_val_loss": 0.505839
       },
       "latency_ms": {
-        "p50": 0.04,
-        "p95": 0.046,
-        "p99": 0.055,
-        "mean": 0.041,
-        "min": 0.039,
-        "max": 0.058
+        "p50": 0.169,
+        "p95": 0.236,
+        "p99": 0.367,
+        "mean": 0.176,
+        "min": 0.132,
+        "max": 0.435
       },
       "onnx_path": "ml/artifacts/dummy_stage_a/MOD-FOUNDATION-DUMMY-001.onnx",
       "checkpoint_path": "ml/artifacts/dummy_stage_a/best_model.pt",
@@ -67,7 +67,7 @@
         "Demonstration dummy model only.",
         "Trained on synthetic harmonic telemetry for pipeline foundation verification."
       ],
-      "created_at": "2026-10-21T19:00:28.797442+00:00"
+      "created_at": "2026-10-22T07:23:07.920816+00:00"
     },
     "MOD-TEST-REGISTRY-001": {
       "model_id": "MOD-TEST-REGISTRY-001",
@@ -94,7 +94,7 @@
       "checkpoint_path": null,
       "training_log_path": null,
       "limitations": [],
-      "created_at": "2026-10-21T19:00:25.847914+00:00"
+      "created_at": "2026-10-22T07:23:05.738408+00:00"
     },
     "MOD-HEALTH-LSTM-001": {
       "model_id": "MOD-HEALTH-LSTM-001",
@@ -587,28 +587,28 @@
         ]
       },
       "metrics": {
-        "iou": 0.7042,
-        "dice_f1": 0.8264,
-        "precision": 0.7043,
-        "recall": 0.9998,
-        "accuracy": 0.8957
+        "iou": 0.7083,
+        "dice_f1": 0.8293,
+        "precision": 0.7086,
+        "recall": 0.9994,
+        "accuracy": 0.8977
       },
       "latency_ms": {
-        "p50": 4.3,
-        "p95": 5.076,
-        "p99": 5.717,
-        "mean": 4.412,
-        "min": 3.88,
-        "max": 6.271
+        "p50": 7.301,
+        "p95": 10.161,
+        "p99": 11.256,
+        "mean": 7.588,
+        "min": 5.944,
+        "max": 11.553
       },
       "onnx_path": "ml/artifacts/disaster_unet/MOD-DISASTER-UNET-001.onnx",
-      "checkpoint_path": null,
+      "checkpoint_path": "ml/artifacts/disaster_unet/best_model.pt",
       "training_log_path": null,
       "limitations": [
         "Trained on calibrated VV polarization SAR intensity chips.",
         "Smooth asphalt surfaces may produce localized specular false positives."
       ],
-      "created_at": "2026-10-21T18:59:25.660534+00:00"
+      "created_at": "2026-10-22T06:24:01.057455+00:00"
     },
     "MOD-DISASTER-SIAMESE-001": {
       "model_id": "MOD-DISASTER-SIAMESE-001",
@@ -662,28 +662,28 @@
         ]
       },
       "metrics": {
-        "iou": 0.9972,
-        "dice_f1": 0.9986,
-        "precision": 0.9977,
-        "recall": 0.9995,
-        "accuracy": 0.9993
+        "iou": 0.9938,
+        "dice_f1": 0.9969,
+        "precision": 0.9942,
+        "recall": 0.9996,
+        "accuracy": 0.9984
       },
       "latency_ms": {
-        "p50": 4.46,
-        "p95": 7.632,
-        "p99": 7.844,
-        "mean": 4.82,
-        "min": 3.862,
-        "max": 7.992
+        "p50": 7.863,
+        "p95": 10.45,
+        "p99": 11.155,
+        "mean": 7.902,
+        "min": 5.781,
+        "max": 11.384
       },
       "onnx_path": "ml/artifacts/disaster_siamese/MOD-DISASTER-SIAMESE-001.onnx",
-      "checkpoint_path": null,
+      "checkpoint_path": "ml/artifacts/disaster_siamese/best_model.pt",
       "training_log_path": null,
       "limitations": [
         "Ingests paired pre-disaster and post-disaster Sentinel-1 SAR chips.",
         "Eliminates permanent water bodies to isolate newly inundated flood expansion."
       ],
-      "created_at": "2026-10-21T18:59:25.663228+00:00"
+      "created_at": "2026-10-22T06:24:01.064421+00:00"
     }
   }
 }

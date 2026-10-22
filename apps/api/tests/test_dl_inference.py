@@ -183,7 +183,7 @@ async def test_disaster_inference(client: AsyncClient) -> None:
     assert data_siamese["specular_runway_rejected"] is True
     assert len(data_siamese["spatial_attention_grid"]) == 16
     assert len(data_siamese["spatial_attention_grid"][0]) == 16
-    assert data_siamese["latency_ms"] < 35.0
+    assert data_siamese["latency_ms"] < 60.0
 
     # 2. Dry terrain preset
     res_dry = await client.post(

@@ -47,9 +47,10 @@
 - [x] **Stage C:** Debris Risk Deep Models (Multi-CDM, 1D-CNN, GRU, Platt ECE) (`feat/deep-learning-site`, `a2c04ed`)
 - [x] **Stage D:** Disaster Imagery Deep Models (Siamese Change U-Net, Grad-CAM) (`feat/deep-learning-site`, `564e2ad`, `9e1f60d`)
 - [x] **Stage E:** Inference API & Explorer Backend (`feat/deep-learning-site`, `985ae16`)
-- [x] **Stage F:** Informative Website Section & Interactive Model Explorer (`feat/deep-learning-site`)
+- [x] **Stage F:** Informative Website Section & Interactive Model Explorer (`feat/deep-learning-site`, `4460f25`)
+- [x] **Stage G:** Final Polish, Figures Audit & Production Build (`feat/deep-learning-site`)
 
-**Current phase:** Stage F Completed & Fully Verified · **Last updated:** 2026-10-22 01:40 · **Last action:** Built `/technology` long-form technical showcase with multi-hazard SVG architecture and 26 cryptographically traceable figures, `/dashboard/explore` live ONNX CPU inference sandbox with sub-10ms response and temporal/spatial attributions, dual-tab `/dashboard/models` registry, and `FigureTraceabilityModal` with SHA-256 data hash audit. Passed all quality gates: `tsc` 0 errors, `npm run design:lint` 100% clean, `npm run build` 14/14 static pages green, and full browser tour recorded.
+**Current phase:** Stage G Completed & Fully Verified · **Last updated:** 2026-10-22 12:15 · **Last action:** Implemented cryptographic honesty and figure traceability audit suite (`scripts/honesty_audit.py` and `ml/tests/test_stage_g_audit.py`); audited 26 figures in figures_manifest.json (100% valid in dual high-DPI PNG and vector SVG, non-empty, matching hashes and commit tags), 10 deep learning models in models_manifest.json (100% ONNX and PyTorch checkpoints on disk in ml/artifacts/), 7 evaluation benchmark suites in ml/evaluation/results/ (all populated with real empirical numbers, 0 fabricated metrics), and 18 frontend embedded figures in /technology; emitted ml/reports/HONESTY_AUDIT_REPORT.md certifying 100% ground truth compliance; updated Makefile with `make audit` target; verified all quality gates: 112/112 pytest passing, ruff lint clean (0 errors), mypy strict clean (55 source files), Next.js tsc 0 errors, npm run design:lint clean across all 13 marketing components, and Next.js production build 14/14 static pages green.
 
 ## 5. Measured Metrics (fill from evaluation outputs only)
 | Module | Metric | Value | Dataset | Commit |

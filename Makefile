@@ -1,4 +1,4 @@
-.PHONY: help setup dev-api dev-web lint type-check test ci up down demo
+.PHONY: help setup dev-api dev-web lint type-check test audit ci up down demo
 
 help:
 	@echo "ASTRA-GUARD Makefile commands:"
@@ -8,7 +8,8 @@ help:
 	@echo "  make lint         - Run ruff on Python and eslint on TypeScript"
 	@echo "  make type-check   - Run mypy and tsc"
 	@echo "  make test         - Run pytest"
-	@echo "  make ci           - Run full CI checks (lint, type-check, test)"
+	@echo "  make audit        - Run cryptographic honesty and figure audit"
+	@echo "  make ci           - Run full CI checks (lint, type-check, test, audit)"
 	@echo "  make up           - Start full stack via docker compose"
 	@echo "  make down         - Stop docker compose containers"
 	@echo "  make demo         - Build and run demo mode stack"
@@ -34,7 +35,10 @@ type-check:
 test:
 	cd apps/api && pytest -v
 
-ci: lint type-check test
+audit:
+	python scripts/honesty_audit.py
+
+ci: lint type-check test audit
 
 up:
 	docker compose up -d

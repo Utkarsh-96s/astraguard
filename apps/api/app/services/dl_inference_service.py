@@ -480,18 +480,18 @@ class DLInferenceService:
         if sample_id == "monsoon_flood_runway_present":
             # Add permanent dry asphalt runway at yy ~ 0.25 (specular: low backscatter in both pre and post)
             runway_mask = (yy > 0.22) & (yy < 0.28) & (xx > 0.15) & (xx < 0.85)
-            pre[runway_mask] = 0.16 + 0.02 * rng.standard_normal(np.sum(runway_mask))
+            pre[runway_mask] = 0.16 + 0.02 * rng.standard_normal(int(np.sum(runway_mask)))
 
             post = pre.copy()
             # Inundate river basin in bottom half (yy > 0.55) -> backscatter drops from 0.70 to 0.12
             flood_mask = (yy > 0.55) & (xx > 0.10) & (xx < 0.90)
-            post[flood_mask] = 0.12 + 0.03 * rng.standard_normal(np.sum(flood_mask))
+            post[flood_mask] = 0.12 + 0.03 * rng.standard_normal(int(np.sum(flood_mask)))
             # Notice runway did NOT change between pre and post, but has low backscatter in both!
         elif sample_id == "dense_canopy_flooding":
             # Heavy canopy: pre is rough 0.82; flooded post is 0.35 (double-bounce attenuation)
             post = pre.copy()
             flood_mask = (yy > 0.40)
-            post[flood_mask] = 0.35 + 0.04 * rng.standard_normal(np.sum(flood_mask))
+            post[flood_mask] = 0.35 + 0.04 * rng.standard_normal(int(np.sum(flood_mask)))
         else:  # nominal_dry_season
             post = pre + 0.03 * rng.standard_normal((128, 128))
 

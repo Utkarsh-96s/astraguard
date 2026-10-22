@@ -216,6 +216,9 @@ def run_stage_d_evaluation() -> dict[str, Any]:
     export_to_onnx(unet, dummy_unet_in, unet_onnx, ["sar_post_chip"], ["flood_probability_map"])
     export_to_onnx(siamese, dummy_siamese_in, siamese_onnx, ["sar_pre_post_chips"], ["flood_change_map"])
 
+    torch.save(unet.state_dict(), art_dir / "disaster_unet" / "best_model.pt")
+    torch.save(siamese.state_dict(), art_dir / "disaster_siamese" / "best_model.pt")
+
     unet_engine = InferenceEngine(onnx_path=unet_onnx, fallback_model=unet)
     siamese_engine = InferenceEngine(onnx_path=siamese_onnx, fallback_model=siamese)
 
@@ -253,6 +256,7 @@ def run_stage_d_evaluation() -> dict[str, Any]:
         metrics=metrics_unet,
         latency_ms=unet_latency,
         onnx_path="ml/artifacts/disaster_unet/MOD-DISASTER-UNET-001.onnx",
+        checkpoint_path="ml/artifacts/disaster_unet/best_model.pt",
         limitations=[
             "Trained on calibrated VV polarization SAR intensity chips.",
             "Smooth asphalt surfaces may produce localized specular false positives.",
@@ -272,6 +276,7 @@ def run_stage_d_evaluation() -> dict[str, Any]:
         metrics=metrics_siamese,
         latency_ms=siamese_latency,
         onnx_path="ml/artifacts/disaster_siamese/MOD-DISASTER-SIAMESE-001.onnx",
+        checkpoint_path="ml/artifacts/disaster_siamese/best_model.pt",
         limitations=[
             "Ingests paired pre-disaster and post-disaster Sentinel-1 SAR chips.",
             "Eliminates permanent water bodies to isolate newly inundated flood expansion.",

@@ -33,19 +33,19 @@
       "architecture": "UNet",
       "total_params": 117393,
       "metrics": {
-        "iou": 0.7042,
-        "dice_f1": 0.8264,
-        "precision": 0.7043,
-        "recall": 0.9998,
-        "accuracy": 0.8957
+        "iou": 0.7083,
+        "dice_f1": 0.8293,
+        "precision": 0.7086,
+        "recall": 0.9994,
+        "accuracy": 0.8977
       },
       "latency_ms": {
-        "p50": 4.3,
-        "p95": 5.076,
-        "p99": 5.717,
-        "mean": 4.412,
-        "min": 3.88,
-        "max": 6.271
+        "p50": 7.301,
+        "p95": 10.161,
+        "p99": 11.256,
+        "mean": 7.588,
+        "min": 5.944,
+        "max": 11.553
       }
     },
     "MOD-DISASTER-SIAMESE-001": {
@@ -53,19 +53,19 @@
       "architecture": "SiameseChangeUNet",
       "total_params": 117537,
       "metrics": {
-        "iou": 0.9972,
-        "dice_f1": 0.9986,
-        "precision": 0.9977,
-        "recall": 0.9995,
-        "accuracy": 0.9993
+        "iou": 0.9938,
+        "dice_f1": 0.9969,
+        "precision": 0.9942,
+        "recall": 0.9996,
+        "accuracy": 0.9984
       },
       "latency_ms": {
-        "p50": 4.46,
-        "p95": 7.632,
-        "p99": 7.844,
-        "mean": 4.82,
-        "min": 3.862,
-        "max": 7.992
+        "p50": 7.863,
+        "p95": 10.45,
+        "p99": 11.155,
+        "mean": 7.902,
+        "min": 5.781,
+        "max": 11.384
       }
     }
   },
@@ -73,20 +73,20 @@
     "runway_specular_false_positives": {
       "description": "Dry airport runway / flat asphalt low backscatter mimicking water",
       "otsu_false_positive_pixels": 1832,
-      "unet_false_positive_pixels": 1814,
-      "siamese_false_positive_pixels": 19,
-      "reduction_with_siamese_pct": 98.96
+      "unet_false_positive_pixels": 1771,
+      "siamese_false_positive_pixels": 20,
+      "reduction_with_siamese_pct": 98.91
     },
     "vegetation_canopy_masking": {
       "description": "Inundation concealed beneath dense forest canopy producing volume double-bounce",
       "canopy_iou_otsu": 0.5725,
-      "canopy_iou_siamese": 0.9962
+      "canopy_iou_siamese": 0.9931
     }
   },
   "honest_comparison": {
     "best_iou_model": "MOD-DISASTER-SIAMESE-001",
     "fastest_baseline": "otsu_thresholding",
-    "tradeoff_statement": "Dual-Temporal Siamese U-Net achieves superior IoU (0.9972) and Dice score (0.9986) by leveraging multi-temporal context, eliminating 98.96% of specular asphalt runway false alarms observed in single-date Otsu thresholding. However, Otsu thresholding incurs near-zero latency (<0.1 ms) compared to U-Net inference (4.46 ms p50 on CPU)."
+    "tradeoff_statement": "Dual-Temporal Siamese U-Net achieves superior IoU (0.9938) and Dice score (0.9969) by leveraging multi-temporal context, eliminating 98.91% of specular asphalt runway false alarms observed in single-date Otsu thresholding. However, Otsu thresholding incurs near-zero latency (<0.1 ms) compared to U-Net inference (7.86 ms p50 on CPU)."
   },
-  "timestamp": "2026-10-21T18:59:28.556279+00:00"
+  "timestamp": "2026-10-22T06:24:06.525759+00:00"
 }
