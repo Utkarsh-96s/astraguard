@@ -49,12 +49,22 @@ export function FullBleedSection({
             onError={() => setHasImageError(true)}
             className="object-cover object-center"
           />
-          {/* Theme-aware overlay: dim scrim in night mode, clean ethereal wash in day mode */}
+          {/* Uniform dim overlay: rgba(0,0,0, 0.50) */}
           <div
-            className="absolute inset-0 transition-colors duration-300"
-            style={{ backgroundColor: "var(--color-space-overlay)" }}
+            className="absolute inset-0 transition-colors duration-300 pointer-events-none"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.50)" }}
             aria-hidden="true"
           />
+          {/* Pure black horizontal legibility scrim behind text */}
+          {align === "left" && (
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "linear-gradient(to right, rgba(0, 0, 0, 0.70) 0%, rgba(0, 0, 0, 0.40) 35%, transparent 60%)",
+              }}
+              aria-hidden="true"
+            />
+          )}
         </div>
       ) : (
         <DotFieldFallback />

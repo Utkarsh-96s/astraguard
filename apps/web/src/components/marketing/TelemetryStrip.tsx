@@ -113,33 +113,33 @@ export function TelemetryStrip() {
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       <div className="flex items-center gap-1.5">
-        <span className="text-space-secondary font-medium">ASSET</span>
+        <span className="text-[#f0f0fa] font-medium tracking-[0.14em] text-[10.5px]">ASSET</span>
         <span className="text-space-separator opacity-70">/</span>
-        <span className="text-space-fg">{assetName}</span>
+        <span className="text-[#f0f0fa] tabular-nums">{assetName}</span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-space-secondary font-medium">MISSION RISK</span>
+        <span className="text-[#f0f0fa] font-medium tracking-[0.14em] text-[10.5px]">MISSION RISK</span>
         <span className="text-space-separator opacity-70">/</span>
-        <span className="text-space-fg">{isStandby ? "STANDBY" : scoreFormatted}</span>
+        <span className="text-[#f0f0fa] tabular-nums">{isStandby ? "STANDBY" : scoreFormatted}</span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-space-secondary font-medium">LEVEL</span>
+        <span className="text-[#f0f0fa] font-medium tracking-[0.14em] text-[10.5px]">LEVEL</span>
         <span className="text-space-separator opacity-70">/</span>
-        <span className="text-space-fg">{isStandby ? "STANDBY" : riskLevel}</span>
+        <span className="text-[#f0f0fa] tabular-nums">{isStandby ? "STANDBY" : riskLevel}</span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-space-secondary font-medium">UTC</span>
+        <span className="text-[#f0f0fa] font-medium tracking-[0.14em] text-[10.5px]">UTC</span>
         <span className="text-space-separator opacity-70">/</span>
-        <span className="text-space-fg">{utcTime}</span>
+        <span className="text-[#f0f0fa] tabular-nums">{utcTime}</span>
       </div>
 
       {isSimulated && (
         <div className="flex items-center gap-1.5">
           <span className="text-space-separator opacity-70">/</span>
-          <span className="text-space-fg text-[9px] font-mono tracking-[0.10em] leading-none">
+          <span className="text-[#f0f0fa] text-[9.5px] font-mono tracking-[0.14em] leading-none">
             SIMULATED
           </span>
         </div>

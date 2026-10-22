@@ -20,8 +20,8 @@
 | D7 | "On-board disaster mapping" reframed as ground-segment processing | Realism |
 | D8 | Deck metrics (92%, 85%, <1 km, <30 min, >99%) are *targets*, replaced by measured values | Honesty |
 | D9 | Data: ESA-ADB, CelesTrak, Kelvins CDM, Sen1Floods11/xBD + synthetic fallback | Public & real |
-| D10 | Cinematic marketing homepage at /; dashboard under /dashboard/*; Day & Night modes with WCAG AAA contrast | SpaceX-style design reference, public presentation and accessibility |
-| D11 | Deep learning stack additions: PyTorch, onnx, onnxruntime, onnxscript, torchinfo, captum, segmentation_models_pytorch, matplotlib; config-driven trainer with --fast, model registry with torchinfo & latency, ONNX export/runtime engine, SpaceX monochrome figure pipeline with figures_manifest.json | Unified DL foundation, reproducibility, and verified real outputs |
+| D11 | T3 Legibility scrim — uniform photo overlay increased to 0.45–0.55 and pure-black horizontal scrim added behind left-aligned text to achieve WCAG AA on high-contrast space photography without card wrappers. | WCAG AA compliance over space photography while preserving SpaceX monochrome aesthetic |
+| D12 | Deep learning stack additions: PyTorch, onnx, onnxruntime, onnxscript, torchinfo, captum, segmentation_models_pytorch, matplotlib; config-driven trainer with --fast, model registry with torchinfo & latency, ONNX export/runtime engine, SpaceX monochrome figure pipeline with figures_manifest.json | Unified DL foundation, reproducibility, and verified real outputs |
 
 ## 3. Glossary
 - **TCA** time of closest approach · **Pc** probability of collision · **CDM** Conjunction Data Message · **TLE/GP** orbital element sets · **SGP4** analytic propagator · **SHAP** Shapley additive explanations · **XAI** explainable AI · **EO** Earth observation · **HITL** human-in-the-loop.

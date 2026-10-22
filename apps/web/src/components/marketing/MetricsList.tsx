@@ -121,12 +121,12 @@ export function MetricsList() {
           className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] uppercase font-bold tracking-[0.09em]"
         >
           <div className="flex flex-col gap-0.5 max-w-sm">
-            <span className="text-space-fg">{m.label}</span>
-            <span className="text-[11px] text-space-secondary font-normal normal-case tracking-normal truncate">
+            <span className="text-[#f0f0fa] font-bold">{m.label}</span>
+            <span className="text-[11px] text-[#f0f0fa]/80 font-medium normal-case tracking-normal truncate">
               {m.dataset}
             </span>
           </div>
-          <span className="text-space-fg text-[13px] self-start sm:self-auto font-bold">
+          <span className="text-[#f0f0fa] text-[13px] self-start sm:self-auto font-bold tabular-nums">
             {isLoading ? "NOT YET EVALUATED" : m.value}
           </span>
         </div>

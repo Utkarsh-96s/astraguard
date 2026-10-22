@@ -9,6 +9,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "design:lint": "node scripts/design-lint.mjs",
+    "contrast:check": "node scripts/contrast_check.mjs",
     "audit:figures": "node scripts/audit-figures.mjs"
   },
   "dependencies": {

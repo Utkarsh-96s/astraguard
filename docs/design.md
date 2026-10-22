@@ -126,3 +126,11 @@ All buttons are un-tinted ghost outlines:
   --font-d-din-bold: var(--font-barlow), sans-serif;
 }
 ```
+
+---
+
+## 9. Logged Deviations
+
+- **Deviation D11 — T3 Legibility scrim:**
+  Uniform photo overlay increased to 0.45–0.55 (`rgba(0,0,0,0.50)`) and pure-black horizontal scrim (`linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 35%, transparent 60%)`) added behind left-aligned text to achieve WCAG AA on high-contrast space photography without card wrappers. All body copy and micro-labels standardized to `#f0f0fa` with medium font weight (`500`).
+
