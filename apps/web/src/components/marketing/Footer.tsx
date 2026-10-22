@@ -16,7 +16,7 @@ export function Footer() {
     <footer
       id="team"
       role="contentinfo"
-      className="w-full bg-space-canvas border-t border-space-separator py-16 px-6 sm:px-10 lg:px-16 select-none transition-colors duration-300"
+      className="w-full bg-space-canvas py-16 px-6 sm:px-10 lg:px-16 select-none transition-colors duration-300"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       <div className="max-w-7xl mx-auto flex flex-col gap-10">
@@ -64,7 +64,7 @@ export function Footer() {
         </div>
 
         {/* Middle: Data Sources & Attribution */}
-        <div className="border-t border-space-separator pt-8 flex flex-col gap-3">
+        <div className="pt-8 flex flex-col gap-3">
           <span className="text-space-fg text-[11px] font-bold uppercase tracking-[0.10em]">
             DATA SOURCES & TELEMETRY PROTOCOLS
           </span>
@@ -74,7 +74,7 @@ export function Footer() {
         </div>
 
         {/* Bottom: Image Credits from CREDITS.md */}
-        <div className="border-t border-space-separator pt-6 flex flex-col gap-2">
+        <div className="pt-6 flex flex-col gap-2">
           <span className="text-space-fg text-[10px] font-bold uppercase tracking-[0.10em]">
             IMAGE ASSET ATTRIBUTION (PUBLIC DOMAIN & OPEN LICENCE VIA CREDITS.MD)
           </span>
@@ -89,7 +89,7 @@ export function Footer() {
         </div>
 
         {/* Copyright notice */}
-        <div className="border-t border-space-separator pt-6 flex items-center justify-between text-[10px] text-space-secondary uppercase tracking-[0.10em] font-medium">
+        <div className="pt-6 flex items-center justify-between text-[10px] text-space-secondary uppercase tracking-[0.10em] font-medium">
           <span>© 2026 ASTRA-GUARD MISSION SAFETY</span>
           <span>AEROSPACE HYPERSCALE SPEC</span>
         </div>

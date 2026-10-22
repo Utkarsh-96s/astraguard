@@ -37,7 +37,7 @@ export function SiteNav() {
       {/* Transparent Fixed Header */}
       <header
         role="banner"
-        className="fixed top-0 left-0 right-0 z-40 w-full bg-space-canvas/70 backdrop-blur-md border-b border-space-separator/30 transition-colors select-none pointer-events-none"
+        className="fixed top-0 left-0 right-0 z-40 w-full bg-transparent transition-colors select-none pointer-events-none"
         style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 h-20 flex items-center justify-between pointer-events-auto">

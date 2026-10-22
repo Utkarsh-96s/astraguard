@@ -45,7 +45,7 @@ export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       {/* Top Header */}
-      <div className="flex items-center justify-between border-b border-space-separator pb-6">
+      <div className="flex items-center justify-between pb-6">
         <span className="text-space-fg text-[14px] font-bold tracking-[0.10em] uppercase">
           ASTRA-GUARD
         </span>
@@ -75,7 +75,7 @@ export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
       </nav>
 
       {/* Footer Controls */}
-      <div className="border-t border-space-separator pt-6 flex flex-col gap-4">
+      <div className="pt-6 flex flex-col gap-4">
         {/* Appearance Row */}
         <div className="flex items-center justify-between">
           <span className="text-space-secondary text-[11px] font-bold uppercase tracking-[0.10em]">

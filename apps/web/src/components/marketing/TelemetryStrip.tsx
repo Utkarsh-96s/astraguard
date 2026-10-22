@@ -109,7 +109,7 @@ export function TelemetryStrip() {
   return (
     <div
       aria-live="polite"
-      className="w-full pt-4 border-t border-space-separator flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase font-bold tracking-[0.10em] select-none tnum transition-colors duration-200"
+      className="w-full pt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase font-bold tracking-[0.10em] select-none tnum transition-colors duration-200"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       <div className="flex items-center gap-1.5">
@@ -139,7 +139,7 @@ export function TelemetryStrip() {
       {isSimulated && (
         <div className="flex items-center gap-1.5">
           <span className="text-space-separator opacity-70">/</span>
-          <span className="text-space-fg border border-space-separator rounded px-1.5 py-0.5 text-[9px] leading-none">
+          <span className="text-space-fg text-[9px] font-mono tracking-[0.10em] leading-none">
             SIMULATED
           </span>
         </div>

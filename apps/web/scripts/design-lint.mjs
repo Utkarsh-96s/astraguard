@@ -41,10 +41,51 @@ const FORBIDDEN_RADIUS_REGEX = /\brounded-(?:md|lg|xl|2xl|3xl)\b/i;
 const FORBIDDEN_TAILWIND_COLORS_REGEX = /\b(text|bg|border)-(?:red|green|blue|yellow|amber|emerald|indigo|purple|pink|cyan|sky|teal|rose|violet|orange)-(?:[0-9]{2,3})\b/i;
 const FORBIDDEN_FILLED_BUTTON_REGEX = /<button[^>]*\b(bg-(?:\[#f0f0fa\]|white|slate|gray|zinc|neutral|bone))\b/i;
 
+// Non-interactive marketing components where borders, outlines, rings, and shadows are forbidden
+const NON_INTERACTIVE_COMPONENTS = new Set([
+  'BodyParagraph.tsx',
+  'SectionHeadline.tsx',
+  'FullBleedSection.tsx',
+  'TelemetryStrip.tsx',
+  'MetricsList.tsx',
+  'Footer.tsx',
+]);
+
+const FORBIDDEN_TEXT_BORDER_REGEX = /<(?:p|h[1-6]|span)[^>]*\b(?:border(?:-[a-z0-9[\]#_-]+)?|ring(?:-[a-z0-9[\]#_-]+)?|outline(?:-[a-z0-9[\]#_-]+)?)\b/i;
+const BORDER_OR_FRAME_REGEX = /\b(?:border|border-(?:t|b|l|r|x|y|space-separator|white|neutral|zinc|gray)|ring|outline)\b(?!\s*[:=])/i;
+
 filesToLint.forEach((filePath) => {
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.split('\n');
   const relativePath = path.relative(webRoot, filePath);
+  const baseName = path.basename(filePath);
+
+  // 7. Check non-interactive components for borders/outlines/frames
+  if (NON_INTERACTIVE_COMPONENTS.has(baseName)) {
+    lines.forEach((line, idx) => {
+      const lineNum = idx + 1;
+      // Skip comments or imports
+      if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.trim().startsWith('*')) return;
+      if (line.includes('import ') || line.includes('export interface')) return;
+      
+      // Focus-visible is allowed on interactive elements only, not in these non-interactive components
+      if (BORDER_OR_FRAME_REGEX.test(line)) {
+        console.error(`[design:lint] Error at ${relativePath}:${lineNum} - Non-interactive marketing component cannot have borders/rings/outlines: "${line.trim()}"`);
+        hasErrors = true;
+      }
+    });
+  }
+
+  // 8. Check text tags across all files
+  if (FORBIDDEN_TEXT_BORDER_REGEX.test(content)) {
+    lines.forEach((line, idx) => {
+      const lineNum = idx + 1;
+      if (FORBIDDEN_TEXT_BORDER_REGEX.test(line)) {
+        console.error(`[design:lint] Error at ${relativePath}:${lineNum} - Direct border/ring/outline on text element (<p>, <h*>, <span>) is forbidden: "${line.trim()}"`);
+        hasErrors = true;
+      }
+    });
+  }
 
   lines.forEach((line, idx) => {
     const lineNum = idx + 1;

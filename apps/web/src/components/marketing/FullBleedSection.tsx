@@ -70,10 +70,6 @@ export function FullBleedSection({
       >
         <div
           className={`w-full max-w-[520px] flex flex-col gap-[18px] transition-all duration-300 ${
-            shouldRenderImage
-              ? "backdrop-blur-[3px] bg-space-canvas/30 rounded p-4 sm:p-6 -ml-4 sm:-ml-6 border border-space-separator/25"
-              : ""
-          } ${
             align === "center" ? "mx-auto text-center items-center" : "self-end sm:self-auto pb-12 sm:pb-0"
           }`}
         >

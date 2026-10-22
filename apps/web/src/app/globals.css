@@ -179,6 +179,70 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
 }
 
+/* ========================================================================== */
+/* Marketing Scope Global Reset & Focus Standards (T1)                        */
+/* ========================================================================== */
+.marketing-scope p,
+.marketing-scope h1,
+.marketing-scope h2,
+.marketing-scope h3,
+.marketing-scope h4,
+.marketing-scope h5,
+.marketing-scope h6,
+.marketing-scope span:not([role="button"]),
+.marketing-scope .telemetry-strip,
+.marketing-scope .metrics-list,
+.marketing-scope section > div {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Strip borders on non-interactive marketing text blocks */
+.marketing-scope .non-interactive-text,
+.marketing-scope p,
+.marketing-scope h1,
+.marketing-scope h2,
+.marketing-scope h3 {
+  border: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+}
+
+/* Strict focus styles: :focus-visible ONLY, on interactive elements ONLY */
+:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.marketing-scope a:focus:not(:focus-visible),
+.marketing-scope button:focus:not(:focus-visible),
+.marketing-scope input:focus:not(:focus-visible),
+.marketing-scope select:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.marketing-scope a:focus-visible,
+.marketing-scope button:focus-visible,
+.marketing-scope select:focus-visible {
+  outline: 1px solid var(--color-space-fg) !important;
+  outline-offset: 3px !important;
+  box-shadow: none !important;
+}
+
+/* Never show focus rings on non-interactive containers, divs, or headings */
+div:focus,
+section:focus,
+main:focus,
+h1:focus,
+h2:focus,
+h3:focus,
+p:focus,
+span:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

@@ -124,7 +124,7 @@ export function ScenarioSelector() {
           aria-orientation="vertical"
           className="absolute right-0 mt-2 w-72 bg-space-canvas border border-space-separator rounded p-1.5 z-50 flex flex-col gap-1 focus:outline-none"
         >
-          <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-space-secondary tracking-[0.10em] border-b border-space-separator">
+          <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-space-secondary tracking-[0.10em]">
             SELECT MISSION SCENARIO
           </div>
           {scenarios.map((s) => (

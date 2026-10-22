@@ -112,7 +112,7 @@ export function MetricsList() {
 
   return (
     <div
-      className="w-full flex flex-col divide-y divide-space-separator pt-4 select-none tnum transition-colors duration-200"
+      className="w-full flex flex-col pt-4 select-none tnum transition-colors duration-200"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
       {metrics.map((m, idx) => (

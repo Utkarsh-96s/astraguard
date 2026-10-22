@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function MarketingHomePage() {
   return (
-    <div className="w-full bg-space-canvas text-space-fg min-h-screen relative overflow-x-hidden selection:bg-space-secondary/20 selection:text-space-fg transition-colors duration-300">
+    <div className="marketing-scope w-full bg-space-canvas text-space-fg min-h-screen relative overflow-x-hidden selection:bg-space-secondary/20 selection:text-space-fg transition-colors duration-300">
       {/* 1. Top Navigation */}
       <SiteNav />
 
