@@ -163,6 +163,8 @@ class Alert(Base):
 
     snapshot = relationship("RiskSnapshot", back_populates="alerts")
     actions = relationship("OperatorAction", back_populates="alert")
+    outbox_deliveries = relationship("NotificationOutbox", back_populates="alert", cascade="all, delete-orphan")
+    escalation_states = relationship("EscalationState", back_populates="alert", cascade="all, delete-orphan")
 
 
 class OperatorAction(Base):
@@ -172,11 +174,127 @@ class OperatorAction(Base):
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     alert_id: Mapped[str] = mapped_column(String(64), ForeignKey("alerts.id"), nullable=False)
     user: Mapped[str] = mapped_column(String(128), default="Operator")
-    action: Mapped[str] = mapped_column(String(32), nullable=False)  # approve / dismiss / snooze
+    action: Mapped[str] = mapped_column(String(32), nullable=False)  # approve / dismiss / snooze / assign / note / escalate
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
     ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
     alert = relationship("Alert", back_populates="actions")
+
+
+class NotificationChannel(Base):
+    """Destination notification channel configured for an operator or group."""
+    __tablename__ = "notification_channels"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String(64), default="default_operator", index=True)
+    type: Mapped[str] = mapped_column(String(32), nullable=False, index=True)  # telegram, webpush, ntfy, email, webhook, sms
+    name: Mapped[str] = mapped_column(String(128), default="Default Channel")
+    encrypted_address: Mapped[str] = mapped_column(Text, nullable=False)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="NOT CONFIGURED")  # NOT CONFIGURED | PENDING VERIFICATION | CONNECTED | ERROR
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    prefs: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    subscriptions = relationship("Subscription", back_populates="channel", cascade="all, delete-orphan")
+    outbox_items = relationship("NotificationOutbox", back_populates="channel", cascade="all, delete-orphan")
+
+
+class Subscription(Base):
+    """Channel subscription rules: minimum severity, asset filter, and quiet hours."""
+    __tablename__ = "subscriptions"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    channel_id: Mapped[str] = mapped_column(String(64), ForeignKey("notification_channels.id"), nullable=False, index=True)
+    min_level: Mapped[str] = mapped_column(String(32), default="WATCH")  # WATCH, WARNING, CRITICAL
+    asset_filter: Mapped[str | None] = mapped_column(String(64), nullable=True)  # None = all assets
+    quiet_hours: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    channel = relationship("NotificationChannel", back_populates="subscriptions")
+
+
+class NotificationOutbox(Base):
+    """Outbox delivery queue item ensuring reliable, deduplicated asynchronous delivery."""
+    __tablename__ = "notification_outbox"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    alert_id: Mapped[str] = mapped_column(String(64), ForeignKey("alerts.id"), nullable=False, index=True)
+    channel_id: Mapped[str] = mapped_column(String(64), ForeignKey("notification_channels.id"), nullable=False, index=True)
+    escalation_level: Mapped[int] = mapped_column(Integer, default=1)
+    idempotency_key: Mapped[str] = mapped_column(String(128), unique=True, index=True)
+    status: Mapped[str] = mapped_column(String(32), default="queued", index=True)  # queued, sending, sent, delivered, failed, dead
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, default=3)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    provider_message_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    acked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    test: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    alert = relationship("Alert", back_populates="outbox_deliveries")
+    channel = relationship("NotificationChannel", back_populates="outbox_items")
+
+
+class EscalationPolicy(Base):
+    """Tiered escalation policy configuration (L1 immediate -> L2 -> L3)."""
+    __tablename__ = "escalation_policies"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    l1_channels: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    l2_delay_sec: Mapped[int] = mapped_column(Integer, default=300)
+    l2_channels: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    l3_delay_sec: Mapped[int] = mapped_column(Integer, default=900)
+    l3_channels: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class EscalationState(Base):
+    """Active escalation status and countdown for an active alert."""
+    __tablename__ = "escalation_state"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    alert_id: Mapped[str] = mapped_column(String(64), ForeignKey("alerts.id"), nullable=False, index=True)
+    policy_id: Mapped[str | None] = mapped_column(String(64), ForeignKey("escalation_policies.id"), nullable=True)
+    current_level: Mapped[int] = mapped_column(Integer, default=1)
+    next_escalation_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    halted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    halted_reason: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    alert = relationship("Alert", back_populates="escalation_states")
+    policy = relationship("EscalationPolicy")
+
+
+class LinkToken(Base):
+    """Expiring one-time tokens for channel linking and single-use signed actions."""
+    __tablename__ = "link_tokens"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    token_hash: Mapped[str] = mapped_column(String(128), unique=True, index=True)
+    token_type: Mapped[str] = mapped_column(String(32), nullable=False)  # telegram_start, action, verify
+    user_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    channel_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    alert_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    action: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class InboundEvent(Base):
+    """Audit log of raw incoming provider webhook events (redacted PII/secrets)."""
+    __tablename__ = "inbound_events"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    channel_type: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
+    raw_payload_redacted: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
 class ModelRegistry(Base):

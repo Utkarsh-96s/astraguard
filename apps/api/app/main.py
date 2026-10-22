@@ -23,6 +23,7 @@ from app.routers.ingest import router as ingest_router
 from app.routers.maneuver import router as maneuver_router
 from app.routers.metrics import router as metrics_router
 from app.routers.models import router as models_router
+from app.routers.notifications import router as notifications_router
 from app.routers.objects import router as objects_router
 from app.routers.observations import router as observations_router
 from app.routers.provenance import router as provenance_router
@@ -73,6 +74,7 @@ def create_app() -> FastAPI:
     app.include_router(assets_router)
     app.include_router(risk_router)
     app.include_router(alerts_router)
+    app.include_router(notifications_router)
     app.include_router(provenance_router)
     app.include_router(models_router)
     app.include_router(figures_router)

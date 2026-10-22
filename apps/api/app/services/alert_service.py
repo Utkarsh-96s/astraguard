@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import logger
 from app.core.websocket import ws_manager
-from app.db.models import Alert, OperatorAction, RiskSnapshot
+from app.db.models import Alert, EscalationState, OperatorAction, RiskSnapshot
 
 LEVEL_SEVERITY: dict[str, int] = {
     "NOMINAL": 0,
@@ -121,6 +121,11 @@ class AlertService:
         await db.refresh(alert)
 
         logger.info(f"Generated new Alert: id={alert.id}, level={alert.level}, asset={snapshot.asset_id}")
+
+        # Initialize escalation policy and queue L1 outbox items
+        from app.services.escalation_engine import escalation_engine
+        await escalation_engine.initialize_alert_escalation(db, alert, test=snapshot.synthetic)
+
         await self.broadcast_alert_event(alert, "CREATED")
         return alert
 
@@ -149,23 +154,39 @@ class AlertService:
         action: str,
         note: str | None = None,
     ) -> OperatorAction:
-        """Record an operator action (approve, dismiss, snooze) and update alert status."""
+        """Record an operator action (approve, dismiss, snooze, assign, note, escalate) and update alert status."""
         alert = await db.get(Alert, alert_id)
         if not alert:
             raise ValueError(f"Alert with id '{alert_id}' not found.")
 
-        valid_actions = {"approve", "dismiss", "snooze"}
+        valid_actions = {"approve", "dismiss", "snooze", "assign", "note", "escalate"}
         clean_action = action.lower()
         if clean_action not in valid_actions:
             raise ValueError(f"Invalid operator action '{action}'. Must be one of {valid_actions}.")
 
+        from app.services.escalation_engine import escalation_engine
+        from app.services.outbox_worker import outbox_worker
+
         # State transition
         if clean_action == "approve":
             alert.status = "ACKNOWLEDGED"
+            await escalation_engine.halt_escalation(db, alert_id, reason="acknowledged")
+            await outbox_worker.edit_message_after_ack(db, alert_id, operator=user, action="ACKNOWLEDGED")
         elif clean_action == "dismiss":
             alert.status = "DISMISSED"
+            await escalation_engine.halt_escalation(db, alert_id, reason="dismissed")
+            await outbox_worker.edit_message_after_ack(db, alert_id, operator=user, action="DISMISSED")
         elif clean_action == "snooze":
             alert.status = "SNOOZED"
+            await escalation_engine.halt_escalation(db, alert_id, reason="snoozed")
+            await outbox_worker.edit_message_after_ack(db, alert_id, operator=user, action="SNOOZED")
+        elif clean_action == "escalate":
+            # Force advance escalation level
+            stmt = select(EscalationState).where(EscalationState.alert_id == alert_id)
+            state = (await db.execute(stmt)).scalars().first()
+            if state:
+                state.next_escalation_at = datetime.now(UTC)
+                await escalation_engine.advance_escalations(db)
 
         action_id = f"ACT-{uuid.uuid4().hex[:12].upper()}"
         op_action = OperatorAction(
@@ -184,6 +205,65 @@ class AlertService:
         logger.info(f"Operator action recorded: id={action_id}, alert={alert_id}, user={user}, action={clean_action}")
         await self.broadcast_alert_event(alert, f"OPERATOR_{clean_action.upper()}")
         return op_action
+
+    async def fire_test_alert(
+        self,
+        db: AsyncSession,
+        level: str = "CRITICAL",
+        asset_id: str = "SENTINEL-2A",
+    ) -> Alert:
+        """Trigger an end-to-end verified test alert through outbox and connected channels."""
+        now = datetime.now(UTC)
+        clean_level = level.upper()
+        if clean_level not in {"WATCH", "WARNING", "CRITICAL"}:
+            clean_level = "CRITICAL"
+
+        # Check for dummy snapshot or create one
+        stmt = select(RiskSnapshot).where(RiskSnapshot.asset_id == asset_id).order_by(RiskSnapshot.ts.desc()).limit(1)
+        snapshot = (await db.execute(stmt)).scalars().first()
+        if not snapshot:
+            snapshot = RiskSnapshot(
+                id=f"RSN-TEST-{uuid.uuid4().hex[:8].upper()}",
+                asset_id=asset_id,
+                ts=now,
+                r_h=0.85 if clean_level == "CRITICAL" else 0.4,
+                r_d=0.90 if clean_level == "CRITICAL" else 0.3,
+                r_e=0.10,
+                score=88.5 if clean_level == "CRITICAL" else 45.0,
+                level=clean_level,
+                drivers={"drivers": [{"driver": "test_verification_pulse", "contribution": 0.85}]},
+                synthetic=True,
+                created_at=now,
+            )
+            db.add(snapshot)
+            await db.commit()
+            await db.refresh(snapshot)
+
+        alert_id = f"ALT-TEST-{uuid.uuid4().hex[:8].upper()}"
+        dedup_key = self.compute_dedup_key(asset_id, "test_pulse", clean_level)
+
+        alert = Alert(
+            id=alert_id,
+            snapshot_id=snapshot.id,
+            level=clean_level,
+            title=f"[SIMULATED] {clean_level} Safety Pipeline Test: {asset_id}",
+            rationale="[TEST] Simulated flight safety pipeline test fired by operator console. All notifications flagged test=true.",
+            recommendation="Verify delivery in external channels and test one-click acknowledgment.",
+            status="ACTIVE",
+            dedup_key=dedup_key,
+            synthetic=True,
+            created_at=now,
+        )
+        db.add(alert)
+        await db.commit()
+        await db.refresh(alert)
+
+        from app.services.escalation_engine import escalation_engine
+        await escalation_engine.initialize_alert_escalation(db, alert, test=True)
+
+        logger.info(f"Fired test alert: id={alert.id}, level={alert.level}, asset={asset_id}")
+        await self.broadcast_alert_event(alert, "CREATED")
+        return alert
 
 
 alert_service = AlertService()
