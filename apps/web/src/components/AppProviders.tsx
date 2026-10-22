@@ -17,7 +17,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       <TimeProvider>
         <AssetProvider>
           <Navbar onStartTour={() => setIsTourOpen(true)} />
-          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <main className="flex-1 w-full px-[clamp(16px,2vw,40px)] py-6">
             {children}
           </main>
           <JudgeTourOverlay isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />

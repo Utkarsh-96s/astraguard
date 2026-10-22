@@ -74,8 +74,8 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
   const levelColor = getLevelColor(selectedAsset.latest_level);
 
   return (
-    <header className="sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-white/10 transition-colors w-full">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-white/10 transition-colors w-full max-w-full overflow-x-clip">
+      <div className="w-full px-[clamp(16px,2vw,40px)]">
         <div className="flex items-center justify-between h-16 w-full gap-2">
           {/* Logo & Platform Name */}
           <div className="flex items-center gap-2.5 shrink-0">
@@ -122,8 +122,8 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
             </div>
           </div>
 
-          {/* Nav Links (Desktop >= 1024px) */}
-          <nav className="hidden lg:flex items-center space-x-0.5 shrink-0">
+          {/* Nav Links (Desktop >= 1536px) */}
+          <nav className="hidden 2xl:flex items-center space-x-0.5 shrink-0">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -147,7 +147,11 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
           {/* Actions & Telemetry Widgets */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             {/* Q1 Guided Judge Tour */}
-            {onStartTour && <JudgeTourTriggerButton onStartTour={onStartTour} />}
+            {onStartTour && (
+              <div className="hidden sm:block">
+                <JudgeTourTriggerButton onStartTour={onStartTour} />
+              </div>
+            )}
 
             {/* Q4 Command Palette Trigger */}
             <button
@@ -178,7 +182,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
             {/* Q5 Voice Announcer Toggle */}
             <button
               onClick={toggleVoice}
-              className={`p-1.5 rounded-nav border transition-colors ${
+              className={`hidden sm:flex p-1.5 rounded-nav border transition-colors ${
                 voiceEnabled
                   ? "bg-smoke border-emerald-500/30 text-emerald-300 hover:border-emerald-500/60"
                   : "bg-charcoal border-white/10 text-pebble hover:text-bone"
@@ -189,7 +193,9 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
             </button>
 
             {/* Q3 Pipeline Observability */}
-            <ObservabilityWidget />
+            <div className="hidden md:block">
+              <ObservabilityWidget />
+            </div>
 
             {/* Live Stream indicator */}
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-nav bg-smoke border border-emerald-500/30 text-[10px] sm:text-[11px] font-mono text-emerald-400">
@@ -200,9 +206,9 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
         </div>
       </div>
 
-      {/* Sub-navigation bar for screens < 1024px */}
-      <div className="lg:hidden border-t border-white/5 bg-charcoal px-3 py-2 flex overflow-x-auto space-x-2 scrollbar-none items-center justify-between">
-        <div className="flex space-x-2 overflow-x-auto scrollbar-none">
+      {/* Sub-navigation bar for screens < 1536px */}
+      <div className="2xl:hidden border-t border-white/5 bg-charcoal px-3 py-2 flex items-center justify-between w-full max-w-full overflow-hidden">
+        <div className="flex space-x-2 overflow-x-auto scrollbar-none min-w-0 flex-1">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -221,7 +227,7 @@ export function Navbar({ onStartTour }: { onStartTour?: () => void }) {
           })}
         </div>
         {onStartTour && (
-          <div className="shrink-0 pl-2">
+          <div className="shrink-0 pl-2 sm:hidden">
             <JudgeTourTriggerButton onStartTour={onStartTour} />
           </div>
         )}

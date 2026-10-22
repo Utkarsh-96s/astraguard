@@ -16,10 +16,10 @@ export function Footer() {
     <footer
       id="team"
       role="contentinfo"
-      className="w-full bg-space-canvas py-16 px-6 sm:px-10 lg:px-16 select-none transition-colors duration-300"
+      className="w-full bg-space-canvas py-16 select-none transition-colors duration-300"
       style={{ fontFamily: "var(--font-d-din, var(--font-barlow, sans-serif))" }}
     >
-      <div className="max-w-7xl mx-auto flex flex-col gap-10">
+      <div className="w-full px-[clamp(16px,2vw,40px)] flex flex-col gap-10">
         {/* Top: Team / Track / Links */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-1.5">

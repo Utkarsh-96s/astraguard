@@ -78,7 +78,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${playfair.variable} ${barlow.variable} bg-space-canvas text-space-fg antialiased min-h-screen flex flex-col font-sans selection:bg-space-secondary/20 selection:text-space-fg transition-colors duration-300`}
+        className={`${inter.variable} ${playfair.variable} ${barlow.variable} bg-space-canvas text-space-fg antialiased min-h-screen min-h-[100dvh] w-full flex flex-col font-sans selection:bg-space-secondary/20 selection:text-space-fg transition-colors duration-300`}
       >
         <ThemeProvider>{children}</ThemeProvider>
       </body>

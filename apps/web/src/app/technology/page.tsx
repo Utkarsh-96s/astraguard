@@ -15,6 +15,7 @@ import {
 import { fetchFigures, FigureEntry } from "@/lib/api";
 import { TraceableFigure } from "@/components/TraceableFigure";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 
 export const revalidate = 0;
 
@@ -26,12 +27,12 @@ export default async function TechnologyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-[#f0f0fa] selection:bg-white selection:text-black">
+    <div className="min-h-screen min-h-[100dvh] w-full flex flex-col bg-black text-[#f0f0fa] selection:bg-white selection:text-black">
       {/* Global Marketing Navigation */}
       <SiteNav />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-32 pb-24 space-y-24">
+      <main className="flex-1 w-full px-[clamp(16px,2vw,40px)] pt-32 pb-24 space-y-24">
         {/* ================================================================== */}
         {/* HERO SECTION                                                       */}
         {/* ================================================================== */}
@@ -530,6 +531,7 @@ export default async function TechnologyPage() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

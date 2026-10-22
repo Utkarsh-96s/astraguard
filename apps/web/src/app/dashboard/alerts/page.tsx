@@ -112,10 +112,10 @@ export default function AlertsPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => setIncidentAlert(alerts[0] || FALLBACK_ALERTS[0])}
-            className="px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/50 text-xs font-mono text-red-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/50 text-xs font-mono text-red-300 hover:text-white flex items-center gap-1.5 transition-colors"
             title="Generate and print formal mission safety incident report"
           >
             <FileText className="w-3.5 h-3.5 text-arterial" />
@@ -123,7 +123,7 @@ export default function AlertsPage() {
           </button>
 
           {/* Advisory Only Badge */}
-          <div className="px-3 py-1.5 rounded-nav bg-smoke border border-arterial/40 text-xs font-mono text-red-300 flex items-center gap-1.5">
+          <div className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-smoke border border-arterial/40 text-xs font-mono text-red-300 flex items-center gap-1.5">
             <UserCheck className="w-3.5 h-3.5 text-arterial" />
             <span>Human-in-the-Loop Required</span>
           </div>
@@ -222,9 +222,9 @@ export default function AlertsPage() {
               </div>
 
               {/* Audit Actions Log & Action Trigger */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
-                <div className="flex items-center gap-2 text-[11px] font-mono text-pebble">
-                  <History className="w-3.5 h-3.5 text-ash" />
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 pt-2">
+                <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-pebble break-words">
+                  <History className="w-3.5 h-3.5 text-ash shrink-0" />
                   <span>
                     Audit Actions: {alert.audit_actions?.length || 0} recorded
                   </span>
@@ -235,10 +235,10 @@ export default function AlertsPage() {
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full lg:w-auto">
                   <button
                     onClick={() => setIncidentAlert(alert)}
-                    className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/40 hover:border-arterial/80 text-xs font-mono font-semibold text-red-300 flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-arterial/40 hover:border-arterial/80 text-xs font-mono font-semibold text-red-300 flex items-center gap-1.5 transition-colors"
                     title="Generate formal mission safety incident report (F7)"
                   >
                     <FileText className="w-3.5 h-3.5 text-arterial" />
@@ -247,7 +247,7 @@ export default function AlertsPage() {
 
                   <button
                     onClick={() => setBotAlertId(alert.id)}
-                    className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
                     title="Open Mobile Telegram Alert Bot Simulator (F10)"
                   >
                     <Send className="w-3.5 h-3.5 text-sky-400" />
@@ -256,7 +256,7 @@ export default function AlertsPage() {
 
                   <button
                     onClick={() => setProvenanceAlertId(alert.id)}
-                    className="px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-cyan-500/30 hover:border-cyan-500/60 text-xs font-mono font-semibold text-cyan-300 flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-cyan-500/30 hover:border-cyan-500/60 text-xs font-mono font-semibold text-cyan-300 flex items-center gap-1.5 transition-colors"
                     title="View cryptographic provenance and verify mathematical reproducibility"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
@@ -265,7 +265,7 @@ export default function AlertsPage() {
 
                   <button
                     onClick={() => setSelectedAlert(alert)}
-                    className="px-3.5 py-1.5 rounded-nav bg-smoke hover:bg-white/10 border border-white/20 text-xs font-mono font-semibold text-bone flex items-center gap-1.5 transition-colors"
+                    className="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-nav bg-smoke hover:bg-white/10 border border-white/20 text-xs font-mono font-semibold text-bone flex items-center gap-1.5 transition-colors"
                   >
                     <UserCheck className="w-3.5 h-3.5 text-arterial" />
                     <span>Take Operator Action</span>

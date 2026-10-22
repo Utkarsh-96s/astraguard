@@ -4,7 +4,7 @@ import { ShieldAlert } from "lucide-react";
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-white/10 bg-charcoal/60 backdrop-blur-sm text-ash text-xs py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-[clamp(16px,2vw,40px)]">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Advisory Notice */}
           <div className="flex items-start gap-2 max-w-2xl">

@@ -62,7 +62,7 @@ export function FullBleedSection({
 
       {/* Content Layer (Left-aligned in left third, 30-35% width, max 500px, 18px element gap) */}
       <div
-        className={`w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-24 sm:py-32 z-10 flex min-h-screen ${
+        className={`w-full px-[clamp(16px,2vw,40px)] py-24 sm:py-32 z-10 flex min-h-[100dvh] ${
           contentVerticalAlign === "top"
             ? "items-center sm:items-start sm:pt-36 lg:pt-40"
             : "items-center"

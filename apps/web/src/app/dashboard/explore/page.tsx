@@ -110,7 +110,7 @@ export default function ModelExplorerPage() {
   const activePreset = presets.find((p) => p.id === selectedPresetId);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 font-sans">
+    <div className="space-y-6 w-full pb-16 font-sans">
       {/* Title Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-[4px] bg-[#08080c] border border-white/10">
         <div className="space-y-1">
