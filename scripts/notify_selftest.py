@@ -113,8 +113,12 @@ class NotificationSelfTestRunner:
                 print("\n[Phase 6] Tiered Escalation Matrix & Cancellation...")
                 await self.test_escalation_lifecycle(db)
         finally:
+            await db.close()
             if fallback_engine:
                 await fallback_engine.dispose()
+            else:
+                from app.db.session import async_engine
+                await async_engine.dispose()
 
         # Print Final Summary Table
         print("\n" + "=" * 72)

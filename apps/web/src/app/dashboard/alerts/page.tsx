@@ -33,6 +33,7 @@ import { DeliveryChips } from "@/components/DeliveryChips";
 import { useAlertsWebSocket, AlertWebSocketEvent } from "@/hooks/useAlertsWebSocket";
 
 const KNOWN_ASSETS = ["ALL", "SENTINEL-2A", "LANDSAT-9", "ISS", "STARLINK-4122"];
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(FALLBACK_ALERTS);
@@ -486,9 +487,12 @@ export default function AlertsPage() {
                   </button>
 
                   <button
-                    onClick={() => setBotAlertId(alert.id)}
+                    onClick={() => {
+                      setBotAlertId(alert.id);
+                      fetch(`${API_BASE}/api/v1/bot/dispatch/${alert.id}`, { method: "POST" }).catch(() => {});
+                    }}
                     className="w-full sm:w-auto justify-center px-3 py-1.5 rounded-nav bg-charcoal hover:bg-smoke border border-sky-500/30 hover:border-sky-500/60 text-xs font-mono font-semibold text-sky-300 flex items-center gap-1.5 transition-colors"
-                    title="Open Mobile Telegram Alert Bot Simulator (F10)"
+                    title="Dispatch live alert to Telegram & open bot simulator (F10)"
                   >
                     <Send className="w-3.5 h-3.5 text-sky-400" />
                     <span>Telegram Bot (F10)</span>

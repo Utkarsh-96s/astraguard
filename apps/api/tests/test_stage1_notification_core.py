@@ -7,6 +7,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.db.models import (
     Alert,
     NotificationChannel,
@@ -31,8 +32,9 @@ def fake_adapter() -> FakeProviderAdapter:
 
 
 @pytest.mark.asyncio
-async def test_honest_health_status(client: AsyncClient) -> None:
+async def test_honest_health_status(client: AsyncClient, monkeypatch: pytest.MonkeyPatch) -> None:
     """Rule verification: Honest status reporting; missing credentials report exact env var."""
+    monkeypatch.setattr(settings, "TELEGRAM_BOT_TOKEN", "")
     res = await client.get("/api/v1/notifications/health")
     assert res.status_code == 200
     data = res.json()

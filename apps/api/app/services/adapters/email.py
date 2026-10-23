@@ -150,6 +150,7 @@ Notice: Link clicks open a secure verification confirmation page to protect agai
         msg_id = f"email_{uuid.uuid4().hex[:12]}"
 
         def _sync_send() -> None:
+            server: smtplib.SMTP | smtplib.SMTP_SSL
             if settings.SMTP_PORT == 465:
                 server = smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT, timeout=10.0)
             else:
@@ -214,6 +215,7 @@ The alert lifecycle has been updated in the mission console.
         msg["To"] = to_addr
 
         def _sync_send() -> None:
+            server: smtplib.SMTP | smtplib.SMTP_SSL
             if settings.SMTP_PORT == 465:
                 server = smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT, timeout=5.0)
             else:
@@ -256,6 +258,7 @@ The alert lifecycle has been updated in the mission console.
             }
 
         def _test_connect() -> bool:
+            s: smtplib.SMTP | smtplib.SMTP_SSL
             if settings.SMTP_PORT == 465:
                 s = smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT, timeout=4.0)
             else:

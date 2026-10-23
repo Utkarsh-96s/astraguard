@@ -1,6 +1,6 @@
 # ASTRA-GUARD Cryptographic Honesty & Traceability Audit Report
 
-**Audit Execution Time:** `2026-10-22T08:37:28Z`  
+**Audit Execution Time:** `2026-10-23T08:47:53Z`  
 **Overall Compliance Status:** `PASSED`  
 **Rule 2 Compliance (No Fabricated Results):** 100% Verified Ground Truth  
 
@@ -55,7 +55,7 @@ All figures are generated in dual formats (2x high-DPI PNG and vector SVG) and m
 | `MOD-DEBRIS-LSTM-001` | `DebrisLSTMClassifierNet` | `debris` | 39,745 | 0.109 ms | Verified | **PASS** |
 | `MOD-DISASTER-SIAMESE-001` | `SiameseChangeUNet` | `disaster` | 117,537 | 7.863 ms | Verified | **PASS** |
 | `MOD-DISASTER-UNET-001` | `UNet` | `disaster` | 117,393 | 7.301 ms | Verified | **PASS** |
-| `MOD-FOUNDATION-DUMMY-001` | `DummySequenceModel` | `foundation` | 1,260 | 0.033 ms | Verified | **PASS** |
+| `MOD-FOUNDATION-DUMMY-001` | `DummySequenceModel` | `foundation` | 1,260 | 0.076 ms | Verified | **PASS** |
 | `MOD-HEALTH-LSTM-001` | `LSTMAutoencoderNet` | `health` | 14,999 | 0.190 ms | Verified | **PASS** |
 | `MOD-HEALTH-TCN-001` | `TCNAutoencoderNet` | `health` | 49,847 | 0.279 ms | Verified | **PASS** |
 | `MOD-HEALTH-TRANSFORMER-001` | `TransformerAutoencoderNet` | `health` | 18,647 | 0.268 ms | Verified | **PASS** |

@@ -58,8 +58,31 @@ export function TelegramBotModal({ alertId, onClose, onActionComplete }: Telegra
   const [actionStatus, setActionStatus] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isActing, setIsActing] = useState(false);
+  const [isDispatching, setIsDispatching] = useState(false);
+  const [dispatchStatus, setDispatchStatus] = useState<string | null>(null);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+  const dispatchToLiveTelegram = async () => {
+    setIsDispatching(true);
+    setDispatchStatus(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/bot/dispatch/${alertId}`, {
+        method: "POST",
+      });
+      const json = await res.json();
+      if (res.ok && json.status === "dispatched") {
+        setDispatchStatus("Delivered to your Telegram phone (@Astrixobot)!");
+        soundFx.playSuccessChirp();
+      } else {
+        setDispatchStatus(json.message || "Dispatched");
+      }
+    } catch {
+      setDispatchStatus("Failed to dispatch to Telegram.");
+    } finally {
+      setIsDispatching(false);
+    }
+  };
 
   useEffect(() => {
     async function loadPreview() {
@@ -68,6 +91,16 @@ export function TelegramBotModal({ alertId, onClose, onActionComplete }: Telegra
         if (res.ok) {
           const json = await res.json();
           setData(json);
+          if (json.is_live_configured) {
+            fetch(`${API_BASE}/api/v1/bot/dispatch/${alertId}`, { method: "POST" })
+              .then((r) => r.json())
+              .then((d) => {
+                if (d.status === "dispatched") {
+                  setDispatchStatus("Delivered to your Telegram phone (@Astrixobot)!");
+                }
+              })
+              .catch(() => {});
+          }
         } else {
           setErrorMessage("Failed to load bot dispatch preview from backend.");
         }
@@ -217,6 +250,26 @@ export function TelegramBotModal({ alertId, onClose, onActionComplete }: Telegra
                   </span>
                 )}
               </div>
+
+              {/* Real Telegram Live Push Dispatch Button */}
+              {data?.is_live_configured && (
+                <div className="space-y-1">
+                  <button
+                    onClick={dispatchToLiveTelegram}
+                    disabled={isDispatching}
+                    className="w-full py-1.5 px-3 rounded-lg bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-semibold text-[11px] flex items-center justify-center gap-1.5 shadow-md transition-all disabled:opacity-50"
+                  >
+                    <Send className="w-3 h-3" />
+                    <span>{isDispatching ? "Dispatching to Phone..." : "Send Alert to Telegram Phone (@Astrixobot)"}</span>
+                  </button>
+                  {dispatchStatus && (
+                    <div className="px-2 py-1 rounded bg-sky-950/80 border border-sky-400/40 text-[10px] font-mono text-sky-200 text-center animate-in fade-in flex items-center justify-center gap-1">
+                      <Check className="w-3 h-3 text-emerald-400" />
+                      <span>{dispatchStatus}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Message Bubble */}
               <div className="space-y-2">

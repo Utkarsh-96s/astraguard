@@ -512,6 +512,15 @@ async def test_telegram_webhook_secret_token_verification(
         assert res_ok.status_code == 200
         assert res_ok.json()["ok"] is True
 
+        # 4. Alias route /api/v1/integrations/telegram/webhook also responds 200 OK
+        res_alias = await client.post(
+            "/api/v1/integrations/telegram/webhook",
+            json=payload,
+            headers={"X-Telegram-Bot-Api-Secret-Token": "super_secret_webhook_token_999"},
+        )
+        assert res_alias.status_code == 200
+        assert res_alias.json()["ok"] is True
+
         # Verify event was recorded in inbound_events table
         stmt = select(InboundEvent).where(InboundEvent.channel_type == "telegram")
         events = list((await db_session.execute(stmt)).scalars().all())

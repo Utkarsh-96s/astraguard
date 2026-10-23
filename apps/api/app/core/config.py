@@ -1,13 +1,18 @@
 """Application configuration via pydantic-settings."""
 
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_ROOT_DIR = Path(__file__).resolve().parents[4]
+_ENV_PATH = _ROOT_DIR / ".env"
 
 
 class Settings(BaseSettings):
     """Core settings loaded from environment variables and .env file."""
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(_ENV_PATH) if _ENV_PATH.exists() else ".env",
         env_file_encoding="utf-8",
         extra="ignore"
     )
@@ -45,6 +50,7 @@ class Settings(BaseSettings):
     # Telegram Bot
     TELEGRAM_BOT_TOKEN: str = ""
     TELEGRAM_BOT_USERNAME: str = "AstraGuardAlertsBot"
+    TELEGRAM_CHAT_ID: str = ""
     TELEGRAM_WEBHOOK_SECRET: str = ""
     TELEGRAM_MODE: str = "polling"
 

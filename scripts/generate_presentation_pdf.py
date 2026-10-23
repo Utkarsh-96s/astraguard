@@ -3,16 +3,23 @@ Master Presentation & Technical Reference Manual PDF Generator.
 Track 11: Aerospace, Telemetry & SpaceTech · Team OMEN · AITHON 2.0
 """
 import os
-import sys
-import math
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak, KeepTogether, HRFlowable
-)
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
-from reportlab.pdfgen import canvas
+
 from PIL import Image as PILImage
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.pdfgen import canvas
+from reportlab.platypus import (
+    HRFlowable,
+    Image,
+    KeepTogether,
+    PageBreak,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 OUTPUT_PDF = os.path.join(BASE_DIR, "ASTRA_GUARD_PRESENTATION_MANUAL.pdf")
@@ -1223,33 +1230,52 @@ def build_pdf():
     story.append(Paragraph("6.2 Tough Grilling Q&A Defense (Judge & Evaluator Questions)", styles['H2']))
 
     grilling_qas = [
-        ("Judge Q1: Why not let an autonomous Deep Reinforcement Learning agent execute collision avoidance maneuvers automatically without human sign-off?",
-         "Bulletproof Answer: In aerospace operations, autonomous thruster firing creates catastrophic legal liability, non-verifiable edge-case behaviors, and potential collision escalation. "
-         "If an autonomous agent fires based on a corrupted sensor feed or spoofed CDM, it could burn remaining propellant or veer into another active satellite. "
-         "ASTRA-GUARD enforces a strictly Advisory-Only Human-In-The-Loop (HITL) architecture: the AI computes what-if orbital burns and propellant budgets, but execution legally requires Flight Dynamics Officer approval."),
-
-        ("Judge Q2: Why did you choose Dilated Causal TCN over LSTM for Spacecraft Health anomaly detection?",
-         "Bulletproof Answer: Three fundamental engineering reasons: 1. Speed: LSTMs are inherently sequential, creating recurrent computational bottlenecks. TCN causal convolutions execute in parallel, achieving 0.262 ms CPU latency (2x faster than LSTM). "
-         "2. Gradient Stability: LSTMs suffer from vanishing/exploding gradients over long telemetry windows; TCN residual blocks avoid this completely. "
-         "3. Performance: In our empirical ESA-ADB benchmark, TCN achieved 0.6667 Event F1 and 10.2 false alarms/day, outperforming LSTM (0.4000 F1, 30.7 FA/day) with a 71.4% false alarm reduction."),
-
-        ("Judge Q3: Why use Foster's 2-D Encounter Plane method instead of full 3-D numerical Monte Carlo integration in production?",
-         "Bulletproof Answer: During a hypervelocity orbital encounter (relative velocity 10-15 km/s), the encounter duration is on the order of milliseconds—negligible compared to the 100-minute orbital period. "
-         "Linearizing relative motion onto the B-plane introduces less than 0.1% error compared to 3-D numerical integration. Foster's first-order series approximation evaluates in 0.04 milliseconds, "
-         "which is 13x faster than Monte Carlo. This sub-millisecond evaluation speed is what allows our What-If Maneuver Simulator to run live client-side parameter sweeps without server lag."),
-
-        ("Judge Q4: How does your Disaster AI prevent false alarms on airport runways and highways that look like water in SAR imagery?",
-         "Bulletproof Answer: Single-chip SAR models fail on airports because smooth tarmac reflects radar pulses away via specular scattering, creating dark backscatter nulls identical to open water. "
-         "Our Siamese Change U-Net solves this by ingesting paired pre-disaster and post-disaster SAR chips into twin weight-shared encoders. "
-         "Because an airport runway was flat before the flood and flat after the flood, the feature difference is zero (|f_post - f_pre| ≈ 0), suppressing 97.6% of runway false alarms. Only newly flooded land displays significant delta backscatter."),
-
-        ("Judge Q5: Why did you choose Pearl's Noisy-OR formulation instead of a weighted linear average for multi-hazard risk fusion?",
-         "Bulletproof Answer: A weighted linear average creates a fatal safety blind spot: if orbital debris collision probability is 1.0 (certain death) but the battery is healthy (0.0), a weighted average outputs 0.50 (WATCH), hiding a catastrophic crisis. "
-         "Pearl's Noisy-OR formulation (R_safety = 1 - (1 - r_h)(1 - r_d)) models independent causal failure modes: if ANY single hazard approaches 1.0, the safety risk unconditionally evaluates to 1.0. Survival requires the conjunction of non-occurrence of ALL hazards."),
-
-        ("Judge Q6: How do you guarantee your reported benchmarks aren't fabricated or hallucinated?",
-         "Bulletproof Answer: We enforce Rule 2: Zero Fabricated Metrics. Every single metric displayed on our frontend or cited in documentation is loaded from automated evaluation test harnesses (ml/evaluation/results/*.json). "
-         "Furthermore, our honesty audit script (scripts/honesty_audit.py) cryptographically verifies SHA-256 hashes of test data and git commit SHAs against public benchmarks (ESA-ADB, ESA Kelvins CDM Challenge, and Sen1Floods11). Zero numbers are hard-coded."),
+        (
+            "Judge Q1: Why not let an autonomous Deep Reinforcement Learning agent execute collision avoidance maneuvers automatically without human sign-off?",
+            (
+                "Bulletproof Answer: In aerospace operations, autonomous thruster firing creates catastrophic legal liability, non-verifiable edge-case behaviors, and potential collision escalation. "
+                "If an autonomous agent fires based on a corrupted sensor feed or spoofed CDM, it could burn remaining propellant or veer into another active satellite. "
+                "ASTRA-GUARD enforces a strictly Advisory-Only Human-In-The-Loop (HITL) architecture: the AI computes what-if orbital burns and propellant budgets, but execution legally requires Flight Dynamics Officer approval."
+            ),
+        ),
+        (
+            "Judge Q2: Why did you choose Dilated Causal TCN over LSTM for Spacecraft Health anomaly detection?",
+            (
+                "Bulletproof Answer: Three fundamental engineering reasons: 1. Speed: LSTMs are inherently sequential, creating recurrent computational bottlenecks. TCN causal convolutions execute in parallel, achieving 0.262 ms CPU latency (2x faster than LSTM). "
+                "2. Gradient Stability: LSTMs suffer from vanishing/exploding gradients over long telemetry windows; TCN residual blocks avoid this completely. "
+                "3. Performance: In our empirical ESA-ADB benchmark, TCN achieved 0.6667 Event F1 and 10.2 false alarms/day, outperforming LSTM (0.4000 F1, 30.7 FA/day) with a 71.4% false alarm reduction."
+            ),
+        ),
+        (
+            "Judge Q3: Why use Foster's 2-D Encounter Plane method instead of full 3-D numerical Monte Carlo integration in production?",
+            (
+                "Bulletproof Answer: During a hypervelocity orbital encounter (relative velocity 10-15 km/s), the encounter duration is on the order of milliseconds—negligible compared to the 100-minute orbital period. "
+                "Linearizing relative motion onto the B-plane introduces less than 0.1% error compared to 3-D numerical integration. Foster's first-order series approximation evaluates in 0.04 milliseconds, "
+                "which is 13x faster than Monte Carlo. This sub-millisecond evaluation speed is what allows our What-If Maneuver Simulator to run live client-side parameter sweeps without server lag."
+            ),
+        ),
+        (
+            "Judge Q4: How does your Disaster AI prevent false alarms on airport runways and highways that look like water in SAR imagery?",
+            (
+                "Bulletproof Answer: Single-chip SAR models fail on airports because smooth tarmac reflects radar pulses away via specular scattering, creating dark backscatter nulls identical to open water. "
+                "Our Siamese Change U-Net solves this by ingesting paired pre-disaster and post-disaster SAR chips into twin weight-shared encoders. "
+                "Because an airport runway was flat before the flood and flat after the flood, the feature difference is zero (|f_post - f_pre| ≈ 0), suppressing 97.6% of runway false alarms. Only newly flooded land displays significant delta backscatter."
+            ),
+        ),
+        (
+            "Judge Q5: Why did you choose Pearl's Noisy-OR formulation instead of a weighted linear average for multi-hazard risk fusion?",
+            (
+                "Bulletproof Answer: A weighted linear average creates a fatal safety blind spot: if orbital debris collision probability is 1.0 (certain death) but the battery is healthy (0.0), a weighted average outputs 0.50 (WATCH), hiding a catastrophic crisis. "
+                "Pearl's Noisy-OR formulation (R_safety = 1 - (1 - r_h)(1 - r_d)) models independent causal failure modes: if ANY single hazard approaches 1.0, the safety risk unconditionally evaluates to 1.0. Survival requires the conjunction of non-occurrence of ALL hazards."
+            ),
+        ),
+        (
+            "Judge Q6: How do you guarantee your reported benchmarks aren't fabricated or hallucinated?",
+            (
+                "Bulletproof Answer: We enforce Rule 2: Zero Fabricated Metrics. Every single metric displayed on our frontend or cited in documentation is loaded from automated evaluation test harnesses (ml/evaluation/results/*.json). "
+                "Furthermore, our honesty audit script (scripts/honesty_audit.py) cryptographically verifies SHA-256 hashes of test data and git commit SHAs against public benchmarks (ESA-ADB, ESA Kelvins CDM Challenge, and Sen1Floods11). Zero numbers are hard-coded."
+            ),
+        ),
     ]
 
     for q, a in grilling_qas:

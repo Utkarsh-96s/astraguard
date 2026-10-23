@@ -25,6 +25,7 @@ AsyncSessionLocal = async_sessionmaker(
     autocommit=False,
     autoflush=False,
 )
+async_session_factory = AsyncSessionLocal
 
 # Synchronous engine for Alembic migrations and utility scripts
 sync_engine = create_engine(

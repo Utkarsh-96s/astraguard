@@ -62,6 +62,9 @@ def format_telegram_alert_html(
 def build_alert_inline_keyboard(alert_id: str) -> dict[str, Any]:
     """Construct inline keyboard with Approve, Snooze, Dismiss, and Web Console URL button."""
     web_url = f"{settings.WEB_BASE_URL}/dashboard/alerts?id={alert_id}"
+    # Telegram Bot API rejects http://localhost or http://127.0.0.1 in inline button URLs
+    if web_url.startswith("http://localhost") or web_url.startswith("http://127.0.0.1"):
+        web_url = web_url.replace("http://localhost:3000", "https://astraguard.esa.int").replace("http://127.0.0.1:3000", "https://astraguard.esa.int")
     return {
         "inline_keyboard": [
             [
@@ -290,11 +293,11 @@ class TelegramService:
                 try:
                     token = await verify_and_consume_linking_token(db, code, channel_type="telegram")
                     # Check or create notification channel
-                    stmt = select(NotificationChannel).where(
+                    stmt_ch = select(NotificationChannel).where(
                         NotificationChannel.type == "telegram",
                         NotificationChannel.encrypted_address == str(chat_id),
                     )
-                    ch = (await db.execute(stmt)).scalars().first()
+                    ch = (await db.execute(stmt_ch)).scalars().first()
                     now = datetime.now(UTC)
 
                     if not ch:
@@ -374,8 +377,8 @@ class TelegramService:
 
         # 2. /status
         elif text == "/status":
-            stmt = select(RiskSnapshot).order_by(RiskSnapshot.ts.desc()).limit(5)
-            snapshots = list((await db.execute(stmt)).scalars().all())
+            stmt_snap = select(RiskSnapshot).order_by(RiskSnapshot.ts.desc()).limit(5)
+            snapshots = list((await db.execute(stmt_snap)).scalars().all())
 
             if not snapshots:
                 await self.send_message(chat_id, "ℹ️ No risk snapshots recorded yet.")
@@ -396,8 +399,8 @@ class TelegramService:
 
         # 3. /alerts
         elif text == "/alerts":
-            stmt = select(Alert).where(Alert.status == "ACTIVE").order_by(Alert.created_at.desc()).limit(10)
-            alerts = list((await db.execute(stmt)).scalars().all())
+            stmt_alerts = select(Alert).where(Alert.status == "ACTIVE").order_by(Alert.created_at.desc()).limit(10)
+            alerts = list((await db.execute(stmt_alerts)).scalars().all())
 
             if not alerts:
                 await self.send_message(chat_id, "✅ <b>No Active Alerts.</b> All spacecraft systems nominal.")
@@ -455,10 +458,10 @@ class TelegramService:
 
         # 6. /mute [hours]
         elif text.startswith("/mute"):
-            stmt = select(Subscription).join(NotificationChannel).where(NotificationChannel.encrypted_address == str(chat_id))
-            sub = (await db.execute(stmt)).scalars().first()
-            if sub:
-                sub.quiet_hours = {"start": "00:00", "end": "23:59", "allow_critical_override": True}
+            stmt_sub = select(Subscription).join(NotificationChannel).where(NotificationChannel.encrypted_address == str(chat_id))
+            sub_mute = (await db.execute(stmt_sub)).scalars().first()
+            if sub_mute:
+                sub_mute.quiet_hours = {"start": "00:00", "end": "23:59", "allow_critical_override": True}
                 await db.commit()
                 await self.send_message(chat_id, "🔇 Channel muted. Only CRITICAL safety alerts will break through.")
             else:
@@ -467,18 +470,18 @@ class TelegramService:
 
         # 7. /unmute
         elif text == "/unmute":
-            stmt = select(Subscription).join(NotificationChannel).where(NotificationChannel.encrypted_address == str(chat_id))
-            sub = (await db.execute(stmt)).scalars().first()
-            if sub:
-                sub.quiet_hours = {"start": "", "end": "", "allow_critical_override": True}
+            stmt_unmute = select(Subscription).join(NotificationChannel).where(NotificationChannel.encrypted_address == str(chat_id))
+            sub_unmute = (await db.execute(stmt_unmute)).scalars().first()
+            if sub_unmute:
+                sub_unmute.quiet_hours = {"start": "", "end": "", "allow_critical_override": True}
                 await db.commit()
                 await self.send_message(chat_id, "🔔 Channel unmuted. Standard alert stream restored.")
             return {"status": "unmuted"}
 
         # 8. /stop (Unsubscribe)
         elif text == "/stop":
-            stmt = select(NotificationChannel).where(NotificationChannel.encrypted_address == str(chat_id))
-            ch = (await db.execute(stmt)).scalars().first()
+            stmt_stop = select(NotificationChannel).where(NotificationChannel.encrypted_address == str(chat_id))
+            ch = (await db.execute(stmt_stop)).scalars().first()
             if ch:
                 ch.status = "NOT CONFIGURED"
                 ch.last_error = "Unsubscribed via /stop command."

@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.logging import logger, setup_logging
 from app.routers.alerts import router as alerts_router
 from app.routers.assets import router as assets_router
+from app.routers.bot import integrations_router
 from app.routers.bot import router as bot_router
 from app.routers.conjunctions import router as conjunctions_router
 from app.routers.constellation import router as constellation_router
@@ -37,6 +38,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application startup and shutdown lifecycle handler."""
     setup_logging()
     logger.info(f"Starting {settings.PROJECT_NAME} API v{settings.VERSION} [{settings.ENVIRONMENT}]")
+    try:
+        from app.db.models import Base
+        from app.db.session import async_engine
+        async with async_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database schema verified on startup.")
+    except Exception as e:
+        logger.warning(f"Could not verify database schema on startup: {e}")
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME} API")
 
@@ -84,6 +93,7 @@ def create_app() -> FastAPI:
     app.include_router(demo_router)
     app.include_router(health_lab_router, prefix="/api/v1")
     app.include_router(bot_router, prefix="/api/v1")
+    app.include_router(integrations_router, prefix="/api/v1")
     app.include_router(maneuver_router, prefix="/api/v1")
     app.include_router(features_router, prefix="/api/v1")
     app.include_router(metrics_router)
