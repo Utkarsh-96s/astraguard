@@ -1,0 +1,15 @@
+.git
+.github
+.kilo
+.mypy_cache
+.pytest_cache
+.ruff_cache
+apps/api
+data
+docs
+evaluation
+ml
+notebooks
+scripts
+*.pdf
+*.db
